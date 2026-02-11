@@ -582,7 +582,7 @@
     
     <header>
       <h1>吐槽列表 · 综合版</h1>
-      <p>统一管理您的吐槽记录。数据存储在本地，不会上传云端。</p>
+      <p>统一管理您的吐槽记录。数据来自后端服务（默认本机）。</p>
     </header>
 
     <main id="main-content">
@@ -654,6 +654,53 @@
     </main>
 
     <script>
+      const DEFAULT_API_BASE =
+        window.location.origin && window.location.origin !== "null"
+          ? ""
+          : "http://localhost:8000";
+      const API_BASE = localStorage.getItem("apiBase") || DEFAULT_API_BASE;
+
+      function apiUrl(path) {
+        if (!API_BASE) return path;
+        return `${API_BASE.replace(/\/+$/, "")}${path}`;
+      }
+
+      async function fetchComplaints() {
+        const res = await fetch(apiUrl("/api/complaints"));
+        if (!res.ok) throw new Error("fetch failed");
+        return res.json();
+      }
+
+      async function deleteComplaint(id) {
+        const res = await fetch(apiUrl(`/api/complaints/${encodeURIComponent(id)}`), {
+          method: "DELETE",
+        });
+        if (!res.ok) {
+          let message = "删除失败";
+          try {
+            const err = await res.json();
+            if (err && err.error) message = err.error;
+          } catch (e) {}
+          return { ok: false, error: message };
+        }
+        return { ok: true };
+      }
+
+      async function clearComplaints() {
+        const res = await fetch(apiUrl("/api/complaints"), { method: "DELETE" });
+        if (!res.ok) {
+          let message = "清空失败";
+          try {
+            const err = await res.json();
+            if (err && err.error) message = err.error;
+          } catch (e) {}
+          return { ok: false, error: message };
+        }
+        return { ok: true };
+      }
+    </script>
+
+    <script>
       // === 1. 初始化变量 ===
       const complaintList = document.getElementById("complaintList");
       const listEmpty = document.getElementById("listEmpty");
@@ -671,9 +718,6 @@
       const copyReportBtn = document.getElementById("copyReportBtn");
       const clearReportBtn = document.getElementById("clearReportBtn");
 
-      // 定义存储Key（同时支持两个版本的Key）
-      const KEY_V1 = "hearing-complaints"; // 来源：查看吐槽.html
-      const KEY_V2 = "vision_complaints_v1"; // 来源：查看吐槽.html
       const THEME_KEY = "merged-theme-pref";
 
       let allData = []; // 存放合并后的数据
@@ -702,7 +746,7 @@
       }
 
       function getSearchableText(item) {
-        return `${item.title} ${item.detail} ${item.meta}`.toLowerCase();
+        return `${item.title || ""} ${item.detail || ""} ${item.meta || ""}`.toLowerCase();
       }
 
       function filterByKeyword(list, keyword) {
@@ -785,91 +829,67 @@
         return lines.join("\n\n");
       }
 
-      // === 3. 数据处理逻辑 (核心合并部分) ===
-      function loadAllData() {
-        let merged = [];
-        
-        // 读取 V1 数据 (普通版)
-        try {
-          const raw1 = localStorage.getItem(KEY_V1);
-          if (raw1) {
-            const data1 = JSON.parse(raw1);
-            // 格式标准化
-            const standard1 = data1.map(item => ({
-              id: item.id || Date.now() + Math.random().toString(),
-              title: item.sentence || "无标题吐槽",
-              detail: item.problem || "",
-              meta: [item.scene, item.impact, item.wish].filter(Boolean).join(" · "),
-              date: item.createdAt || "未知时间",
-              attachment: null, // V1 没有附件
-              sourceKey: KEY_V1 // 标记来源，用于删除
-            }));
-            merged = merged.concat(standard1);
-          }
-        } catch (e) { console.error("V1 Data Error", e); }
-
-        // 读取 V2 数据 (视障版)
-        try {
-          const raw2 = localStorage.getItem(KEY_V2);
-          if (raw2) {
-            const data2 = JSON.parse(raw2);
-            // 格式标准化
-            const standard2 = data2.map((item, index) => ({
-              id: `v2-${index}-${Date.now()}`, // 临时ID
-              originalIndex: index, // 用于V2的数组索引删除
-              title: item.summary || "无标题",
-              detail: item.detail || "",
-              meta: [item.scene, item.severity].filter(Boolean).join(" · "),
-              date: item.created_at || "未知时间",
-              attachment: {
-                data: item.attachment_data,
-                name: item.attachment_name
-              },
-              sourceKey: KEY_V2
-            }));
-            merged = merged.concat(standard2);
-          }
-        } catch (e) { console.error("V2 Data Error", e); }
-
-        return merged;
+      // === 3. 数据处理逻辑 (后端数据) ===
+      function normalizeItem(item) {
+        const title = item.sentence || item.summary || item.subject || "无标题吐槽";
+        const detail = item.detail || item.problem || "";
+        const metaParts = [];
+        if (item.scene) metaParts.push(item.scene);
+        if (item.severity) metaParts.push(item.severity);
+        if (item.impact) metaParts.push(item.impact);
+        if (item.wish) metaParts.push(item.wish);
+        if (item.visibility) metaParts.push(`公开：${item.visibility}`);
+        if (item.emotion) metaParts.push(`情绪：${item.emotion}`);
+        if (Array.isArray(item.categories) && item.categories.length) {
+          metaParts.push(`类别：${item.categories.join("、")}`);
+        }
+        const attachment =
+          item.attachment_data || item.attachment_name
+            ? { data: item.attachment_data || null, name: item.attachment_name || "附件" }
+            : null;
+        return {
+          id: item.id || item._id || "",
+          title,
+          detail,
+          meta: metaParts.join(" · "),
+          date: item.created_at || item.createdAt || "未知时间",
+          attachment,
+        };
       }
 
-      function deleteItem(id) {
-        if (!confirm("确定要删除这条吐槽吗？")) return;
-
-        const item = allData.find(i => i.id === id);
-        if (!item) return;
-
-        // 根据来源不同，分别处理删除
-        if (item.sourceKey === KEY_V1) {
-          const raw = localStorage.getItem(KEY_V1);
-          let list = raw ? JSON.parse(raw) : [];
-          // V1 使用 ID 匹配 (如果是旧数据没有ID，可能需要模糊匹配，这里假设有ID)
-          // 为了兼容，如果V1原始数据没有ID，这里可能会有点问题，但通常应该有。
-          // 我们尝试通过内容匹配来删除
-          list = list.filter(i => (i.id && i.id !== id) || (i.sentence !== item.title));
-          localStorage.setItem(KEY_V1, JSON.stringify(list));
-        } else if (item.sourceKey === KEY_V2) {
-          // V2 是简单数组，最好重读并过滤
-          const raw = localStorage.getItem(KEY_V2);
-          let list = raw ? JSON.parse(raw) : [];
-          // 使用 originalIndex 或者内容匹配
-          if (list[item.originalIndex]) {
-             list.splice(item.originalIndex, 1);
-          } else {
-             // Fallback
-             list = list.filter(i => i.summary !== item.title);
-          }
-          localStorage.setItem(KEY_V2, JSON.stringify(list));
+      async function loadAllData() {
+        try {
+          const list = await fetchComplaints();
+          return Array.isArray(list) ? list.map(normalizeItem) : [];
+        } catch (e) {
+          setStatus("无法连接后端，暂时没有数据。", "warn");
+          return [];
         }
+      }
 
+      async function deleteItem(id) {
+        if (!confirm("确定要删除这条吐槽吗？")) return;
+        if (!id) {
+          setStatus("缺少记录ID，无法删除。", "warn");
+          return;
+        }
+        setStatus("正在删除…");
+        const result = await deleteComplaint(id);
+        if (!result.ok) {
+          setStatus(`删除失败：${result.error || "未知错误"}`, "warn");
+          return;
+        }
         renderAndReload("已删除该条记录。");
       }
 
-      function clearAll() {
-        if (!confirm("高能预警：这将清空 两个版本 的所有本地吐槽记录！确定吗？")) return;
-        localStorage.removeItem(KEY_V1);
-        localStorage.removeItem(KEY_V2);
+      async function clearAll() {
+        if (!confirm("高能预警：这将清空后端的所有吐槽记录！确定吗？")) return;
+        setStatus("正在清空…");
+        const result = await clearComplaints();
+        if (!result.ok) {
+          setStatus(`清空失败：${result.error || "未知错误"}`, "warn");
+          return;
+        }
         renderAndReload("所有记录已清空。", "warn");
       }
 
@@ -975,8 +995,8 @@
         }
       }
 
-      function renderAndReload(msg, type="info") {
-        allData = loadAllData();
+      async function renderAndReload(msg, type="info") {
+        allData = await loadAllData();
         renderList(searchInput.value);
         if (reportBtn) {
           reportBtn.disabled = allData.length === 0;

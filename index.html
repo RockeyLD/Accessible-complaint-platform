@@ -568,6 +568,47 @@
   </script>
 
   <script>
+    const DEFAULT_API_BASE =
+      window.location.origin && window.location.origin !== "null"
+        ? ""
+        : "http://localhost:8000";
+    const API_BASE = localStorage.getItem("apiBase") || DEFAULT_API_BASE;
+
+    function apiUrl(path) {
+      if (!API_BASE) return path;
+      return `${API_BASE.replace(/\/+$/, "")}${path}`;
+    }
+
+    async function postComplaint(payload) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      try {
+        const res = await fetch(apiUrl("/api/complaints"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        if (!res.ok) {
+          let message = "提交失败";
+          try {
+            const err = await res.json();
+            if (err && err.error) message = err.error;
+          } catch (e) {}
+          return { ok: false, error: message };
+        }
+        const data = await res.json().catch(() => ({}));
+        return { ok: true, data };
+      } catch (err) {
+        const message = err && err.name === "AbortError" ? "请求超时" : "无法连接后端";
+        return { ok: false, error: message };
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+  </script>
+
+  <script>
     // --- 1. 听障模式逻辑 ---
     function initHearingMode() {
         if(window.hearingInitialized) return;
@@ -792,13 +833,26 @@
 
         buildBtn.addEventListener("click", buildCard);
         
-        saveBtn.addEventListener("click", () => {
+        saveBtn.addEventListener("click", async () => {
             buildCard();
             const data = collectData();
             if (!data.subject || !data.problem) return;
-            // 此处简单alert示意，原逻辑保存到LS
-            window.alert("已保存到吐槽列表（模拟），内容已清空。");
-            resetForm();
+            saveBtn.disabled = true;
+            setStatus("正在提交到服务器…", "info");
+            const payload = {
+                ...data,
+                sentence: buildSentence(data),
+                created_at: new Date().toISOString(),
+                mode: "hearing",
+            };
+            const result = await postComplaint(payload);
+            if (result.ok) {
+                setStatus("提交成功，已保存到服务器。", "info");
+                resetForm();
+                return;
+            }
+            setStatus(`提交失败：${result.error || "未知错误"}`, "warn");
+            saveBtn.disabled = false;
         });
 
         copyBtn.addEventListener("click", () => {
@@ -968,7 +1022,7 @@
         }
 
         async function submitComplaint() {
-            setStatus("正在本地保存…");
+            setStatus("正在提交到服务器…");
             try {
                 const attachment = formFields.attachment.files[0];
                 let attachmentName = null;
@@ -993,19 +1047,22 @@
                     attachment_name: attachmentName,
                     attachment_data: attachmentData,
                     created_at: new Date().toISOString(),
+                    mode: "vision",
                 };
-                
-                const items = loadLocalData();
-                items.unshift(payload);
-                saveLocalData(items);
-                setStatus(`提交成功${sizeNotice}，已保存。`);
+
+                const result = await postComplaint(payload);
+                if (!result.ok) {
+                    setStatus(`提交失败：${result.error || "未知错误"}`, "warn");
+                    return;
+                }
+                setStatus(`提交成功${sizeNotice}，已保存到服务器。`);
                 
                 // 清空表单
                 formFields.summary.value = "";
                 formFields.detail.value = "";
                 formFields.attachment.value = "";
             } catch (err) {
-                setStatus("保存失败，请重试。");
+                setStatus("提交失败，请重试。", "warn");
             }
         }
 
