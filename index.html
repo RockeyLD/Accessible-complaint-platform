@@ -334,6 +334,10 @@
             <label>高对比</label>
             <button class="toggle-btn" type="button" data-toggle="contrast" aria-pressed="false">开启高对比</button>
           </div>
+          <div class="tool">
+            <label>提交密钥</label>
+            <button class="toggle-btn" type="button" id="setKeyBtn">设置密钥</button>
+          </div>
         </div>
 
         <form id="complaintForm" novalidate>
@@ -512,6 +516,7 @@
 
             <div class="actions">
               <button id="v-submitBtn" class="primary-btn" type="button">提交吐槽</button>
+              <button class="button-link" type="button" id="v-keyBtn">设置密钥</button>
               <a class="button-link" href="查看吐槽.html">吐槽广场</a>
               <span id="form-note" class="note">提交后会自动生成结构化报告，方便查看。</span>
             </div>
@@ -609,6 +614,19 @@
       } finally {
         clearTimeout(timer);
       }
+    }
+
+    function setApiKey() {
+      const current = localStorage.getItem("apiKey") || "";
+      const key = window.prompt("请输入 API Key（仅保存在本机浏览器）", current);
+      if (key === null) return;
+      const trimmed = key.trim();
+      if (!trimmed) {
+        window.alert("密钥不能为空。");
+        return;
+      }
+      localStorage.setItem("apiKey", trimmed);
+      window.alert("密钥已保存。");
     }
   </script>
 
