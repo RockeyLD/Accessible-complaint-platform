@@ -264,13 +264,13 @@
       .row { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
       #view-vision fieldset { border: 0; padding: 0; margin: 0; }
       #view-vision legend { font-weight: 600; margin-bottom: 6px; }
+      #view-vision .help-panel { margin: 12px 0; padding: 12px; border-radius: 12px; border: 1px dashed #cfcfcf; background: #fff; }
+      #view-vision .help-panel strong { display: block; margin-bottom: 8px; }
+      #view-vision .help-actions { display: flex; justify-content: center; margin-top: 8px; }
+      #view-vision .help-mic { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 999px; border: 0; background: var(--v-accent); color: #fff; cursor: pointer; }
+      #view-vision .help-mic:focus-visible { outline: 3px solid var(--v-focus); outline-offset: 2px; }
+      #view-vision .prompt-box { width: 100%; min-height: 110px; padding: 12px 14px; border-radius: 12px; border: 1px solid #cfcfcf; background: #f9f7f3; color: var(--v-ink); resize: none; }
       
-      .option-row { display: flex; flex-wrap: wrap; gap: 8px; }
-      
-      /* 选项按钮样式统一 */
-      .option-btn { background: #f0f0f0; color: var(--v-ink); border: 1px solid #d6d6d6; padding: 10px 14px; border-radius: 999px; cursor: pointer; font-size: 15px; }
-      /* 选中状态使用 Accent 色 */
-      .option-btn[aria-pressed="true"] { background: var(--v-accent); color: #fff; border-color: var(--v-accent); }
       
       #view-vision .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
       
@@ -442,45 +442,13 @@
       <section id="submit">
         <div class="v-card">
           <form aria-describedby="form-note">
-            <div class="row">
-              <fieldset aria-labelledby="scene-legend">
-                <legend id="scene-legend">发生场景</legend>
-                <div class="option-row">
-                  <button type="button" class="option-btn" data-target="v-scene" data-value="app" aria-pressed="false" aria-label="发生场景：App / 网站">App / 网站</button>
-                  <button type="button" class="option-btn" data-target="v-scene" data-value="service" aria-pressed="false" aria-label="发生场景：服务流程">服务流程</button>
-                  <button type="button" class="option-btn" data-target="v-scene" data-value="space" aria-pressed="false" aria-label="发生场景：线下空间">线下空间</button>
-                </div>
-                <input id="v-scene" name="scene" type="hidden" value="" />
-              </fieldset>
-              <fieldset aria-labelledby="severity-legend">
-                <legend id="severity-legend">影响程度</legend>
-                <div class="option-row">
-                  <button type="button" class="option-btn" data-target="v-severity" data-value="high" aria-pressed="false" aria-label="影响程度：非常影响">非常影响</button>
-                  <button type="button" class="option-btn" data-target="v-severity" data-value="medium" aria-pressed="false" aria-label="影响程度：比较影响">比较影响</button>
-                  <button type="button" class="option-btn" data-target="v-severity" data-value="low" aria-pressed="false" aria-label="影响程度：轻微影响">轻微影响</button>
-                </div>
-                <input id="v-severity" name="severity" type="hidden" value="" />
-              </fieldset>
-            </div>
-
-            <div>
-              <label for="v-summary">一句话描述</label>
-              <div class="input-with-mic">
-                <input id="v-summary" name="summary" type="text" placeholder="例：读屏只读出“按钮123”，无法购买车票" />
-                <button class="mic-btn" type="button" data-voice-target="v-summary" aria-label="语音输入到一句话描述">
-                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z" fill="currentColor"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label for="v-detail">详细描述</label>
-              <div class="input-with-mic">
-                <textarea id="v-detail" name="detail" placeholder="发生了什么？你尝试了哪些操作？哪里卡住了？"></textarea>
-                <button class="mic-btn" type="button" data-voice-target="v-detail" aria-label="语音输入到详细描述">
-                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <p class="note">点击下方麦克风，按提示补充信息。</p>
+            <div class="help-panel" id="visionHelp" hidden>
+              <strong>补全提示</strong>
+              <textarea id="visionPromptBox" class="prompt-box" readonly aria-live="polite"></textarea>
+              <div class="help-actions">
+                <button class="help-mic" type="button" id="visionHelpMic" aria-label="语音输入到补充框">
+                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z" fill="currentColor"/>
                   </svg>
                 </button>
@@ -488,24 +456,6 @@
             </div>
             <p class="note">提示：语音输入需要浏览器支持（建议 https 或 localhost）。</p>
 
-            <div class="row">
-              <div>
-                <label for="attachment">补充材料（可选）</label>
-                <input id="attachment" name="attachment" type="file" />
-              </div>
-              <div>
-                <label for="v-contact">联系方式（可选）</label>
-                <div class="input-with-mic">
-                  <input id="v-contact" name="contact" type="text" placeholder="邮箱 / 微信 / 电话" />
-                  <button class="mic-btn" type="button" data-voice-target="v-contact" aria-label="语音输入到联系方式">
-                    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z" fill="currentColor"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <p class="note">本地模式可保存小文件预览（建议 1MB 以内）。</p>
 
             <div class="actions">
               <button id="v-submitBtn" class="primary-btn" type="button">提交吐槽</button>
@@ -992,21 +942,6 @@
     // --- 3. 视障模式业务逻辑 (API / Voice / File) ---
     // 移植自 "吐槽视障.html"
     
-    function selectOption(btn) {
-        const targetId = btn.getAttribute("data-target"); // e.g. "v-scene"
-        const value = btn.getAttribute("data-value");
-        if (!targetId) return;
-        const hiddenInput = document.getElementById(targetId);
-        if (!hiddenInput) return;
-        hiddenInput.value = value || "";
-        
-        document.querySelectorAll(`.option-btn[data-target="${targetId}"]`)
-            .forEach((node) => {
-                const isSelected = node === btn;
-                node.setAttribute("aria-pressed", isSelected ? "true" : "false");
-            });
-    }
-
     // 语音识别功能
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognitionInstance = null;
@@ -1034,6 +969,13 @@
                 .map((result) => result[0].transcript)
                 .join("").trim();
             if (!transcript) return;
+
+            if (activeVoiceTarget === "__vision_help__") {
+                if (typeof window.__visionHelpCommit === "function") {
+                    window.__visionHelpCommit(transcript);
+                }
+                return;
+            }
             
             const field = document.getElementById(activeVoiceTarget);
             if (!field) return;
@@ -1041,6 +983,7 @@
             const current = (field.value || "").trim();
             field.value = current ? `${current} ${transcript}` : transcript;
             field.focus();
+            field.dispatchEvent(new Event("input", { bubbles: true }));
         };
         
         recognitionInstance = recognition;
@@ -1059,99 +1002,156 @@
         if(window.visionInitialized) return;
         window.visionInitialized = true;
 
-        const STORAGE_KEY = "vision_complaints_v1";
         const submitBtn = document.getElementById("v-submitBtn");
         const statusEl = document.getElementById("v-status");
+        const helpPanel = document.getElementById("visionHelp");
+        const promptBox = document.getElementById("visionPromptBox");
+        const helpMic = document.getElementById("visionHelpMic");
+        let activeHelpKey = "";
 
-        const formFields = {
-            scene: document.getElementById("v-scene"),
-            severity: document.getElementById("v-severity"),
-            summary: document.getElementById("v-summary"),
-            detail: document.getElementById("v-detail"),
-            attachment: document.getElementById("attachment"),
-            contact: document.getElementById("v-contact"),
+        const state = {
+            scene: "",
+            severity: "",
+            summary: "",
+            detail: "",
+            contact: "",
         };
 
-        function setStatus(message) { statusEl.textContent = message; }
+        function setStatus(message) { if (statusEl) statusEl.textContent = message; }
 
-        function loadLocalData() {
-            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } 
-            catch (err) { return []; }
+        const questionMap = {
+            summary: "一句话描述（必填）",
+            detail: "详细描述（必填）",
+            scene: "发生场景（可选）",
+            severity: "影响程度（可选）",
+            contact: "联系方式（可选）",
+        };
+
+        function getDetailPrompts(text) {
+            const prompts = [
+                "发生了什么？",
+                "你尝试了哪些操作？",
+                "哪里卡住了？",
+            ];
+            if (/读屏|屏幕|看不见|朗读/.test(text)) {
+                prompts.unshift("读屏具体读出了什么？哪些信息缺失？");
+            }
+            if (/按钮|表单|验证码|购票|支付/.test(text)) {
+                prompts.unshift("具体卡在哪一步？");
+            }
+            return prompts.slice(0, 3);
         }
 
-        function saveLocalData(items) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        function formatStatePreview() {
+            const lines = [];
+            if (state.summary.trim()) lines.push(`已记录·一句话：${state.summary.trim()}`);
+            if (state.detail.trim()) lines.push(`已记录·详细：${state.detail.trim()}`);
+            if (state.scene.trim()) lines.push(`已记录·场景：${state.scene.trim()}`);
+            if (state.severity.trim()) lines.push(`已记录·影响：${state.severity.trim()}`);
+            if (state.contact.trim()) lines.push(`已记录·联系方式：${state.contact.trim()}`);
+            return lines.join("\n");
         }
-        
-        function readFileAsDataUrl(file) {
-            return new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result);
-              reader.onerror = () => reject(reader.error);
-              reader.readAsDataURL(file);
-            });
+
+        function renderHelp(requiredMissing, optionalMissing) {
+            if (!helpPanel || !promptBox) return;
+            helpPanel.hidden = false;
+
+            if (requiredMissing.length === 0 && optionalMissing.length === 0) {
+                activeHelpKey = "";
+                const preview = formatStatePreview();
+                promptBox.value = [preview, "信息已完整，可以提交或继续补充细节。"].filter(Boolean).join("\n\n");
+                return;
+            }
+
+            const queue = [...requiredMissing, ...optionalMissing];
+            activeHelpKey = queue[0] || "";
+
+            let promptLine = questionMap[activeHelpKey] || "请补充信息";
+            if (activeHelpKey === "detail") {
+                const prompts = getDetailPrompts(state.detail.trim() || state.summary.trim());
+                if (prompts.length) promptLine = prompts[0];
+            }
+            const preview = formatStatePreview();
+            promptBox.value = [preview, `请补充：${promptLine}`].filter(Boolean).join("\n\n");
+        }
+
+        function updateHelp() {
+            const requiredMissing = [];
+            const optionalMissing = [];
+            if (!state.summary.trim()) requiredMissing.push("summary");
+            if (!state.detail.trim()) requiredMissing.push("detail");
+            if (!state.scene.trim()) optionalMissing.push("scene");
+            if (!state.severity.trim()) optionalMissing.push("severity");
+            if (!state.contact.trim()) optionalMissing.push("contact");
+            renderHelp(requiredMissing, optionalMissing);
+        }
+
+        function commitHelpAnswer(value) {
+            const normalized = (value || "").trim();
+            if (!normalized) return;
+            const targetKey = activeHelpKey || (state.summary.trim() ? "detail" : "summary");
+            if (targetKey === "summary") {
+                state.summary = normalized;
+            } else if (targetKey === "detail") {
+                const current = state.detail.trim();
+                state.detail = current ? `${current}；${normalized}` : normalized;
+            } else if (targetKey === "scene") {
+                state.scene = normalized;
+            } else if (targetKey === "severity") {
+                state.severity = normalized;
+            } else if (targetKey === "contact") {
+                state.contact = normalized;
+            }
+            updateHelp();
+        }
+
+        function startHelpVoice() {
+            startVoiceInput("__vision_help__");
         }
 
         async function submitComplaint() {
+            if (!state.summary.trim() || !state.detail.trim()) {
+                updateHelp();
+                setStatus("请先补全必填信息再提交。");
+                return;
+            }
             setStatus("正在提交到服务器…");
             try {
-                const attachment = formFields.attachment.files[0];
-                let attachmentName = null;
-                let attachmentData = null;
-                let sizeNotice = "";
-                
-                if (attachment) {
-                    attachmentName = attachment.name;
-                    if (attachment.size <= 1024 * 1024) { // 1MB 限制
-                        attachmentData = await readFileAsDataUrl(attachment);
-                    } else {
-                        sizeNotice = "（文件过大仅记录名称）";
-                    }
-                }
-                
                 const payload = {
-                    scene: formFields.scene.value,
-                    severity: formFields.severity.value,
-                    summary: formFields.summary.value,
-                    detail: formFields.detail.value,
-                    contact: formFields.contact.value,
-                    attachment_name: attachmentName,
-                    attachment_data: attachmentData,
+                    scene: state.scene,
+                    severity: state.severity,
+                    summary: state.summary,
+                    detail: state.detail,
+                    contact: state.contact,
                     created_at: new Date().toISOString(),
                     mode: "vision",
                 };
 
                 const result = await postComplaint(payload);
                 if (!result.ok) {
-                    setStatus(`提交失败：${result.error || "未知错误"}`, "warn");
+                    setStatus(`提交失败：${result.error || "未知错误"}`);
                     return;
                 }
-                setStatus(`提交成功${sizeNotice}，已保存到服务器。`);
-                
-                // 清空表单
-                formFields.summary.value = "";
-                formFields.detail.value = "";
-                formFields.attachment.value = "";
+                setStatus("提交成功，已保存到服务器。");
+
+                state.summary = "";
+                state.detail = "";
+                state.scene = "";
+                state.severity = "";
+                state.contact = "";
+                updateHelp();
             } catch (err) {
-                setStatus("提交失败，请重试。", "warn");
+                setStatus("提交失败，请重试。");
             }
         }
 
-        submitBtn.addEventListener("click", submitComplaint);
+        if (submitBtn) submitBtn.addEventListener("click", submitComplaint);
+        if (helpMic) helpMic.addEventListener("click", startHelpVoice);
 
-        // 绑定语音按钮
-        document.querySelectorAll(".mic-btn").forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                const target = btn.getAttribute("data-voice-target");
-                startVoiceInput(target);
-            });
-        });
+        window.__visionHelpCommit = commitHelpAnswer;
 
-        // 选项按钮逻辑 (保留这个 listener 供 Tab 键回车等标准交互使用)
-        // 双击逻辑已经由全局 handler 拦截并调用 selectOption 了，这里主要服务于键盘操作
-        document.querySelectorAll(".option-btn").forEach((btn) => {
-            btn.addEventListener("click", () => selectOption(btn));
-        });
+        updateHelp();
+
     }
   </script>
 </body>
