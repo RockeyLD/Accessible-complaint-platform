@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>吐槽列表 (综合版)</title>
+    <style>
+      :root {
+        --bg-1: #fef6e4;
+        --bg-2: #dff4ef;
+        --ink: #102a43;
+        --muted: #5b6b7a;
+        --accent: #0b6e4f;
+        --accent-strong: #0a8a63;
+        --accent-2: #f08a24;
+        --accent-soft: rgba(11, 110, 79, 0.14);
+        --danger: #d64550;
+        --card: #ffffff;
+        --paper: rgba(255, 255, 255, 0.86);
+        --focus: #1c7ed6;
+        --glow-1: rgba(240, 138, 36, 0.18);
+        --glow-2: rgba(11, 110, 79, 0.18);
+        --shadow: 0 24px 60px rgba(16, 42, 67, 0.16);
+        --shadow-soft: 0 12px 24px rgba(16, 42, 67, 0.12);
+        --shadow-strong: 0 30px 70px rgba(16, 42, 67, 0.18);
+        --border: rgba(16, 42, 67, 0.12);
+        --ring: 0 0 0 3px rgba(28, 126, 214, 0.25);
+        --radius: 18px;
+        --radius-sm: 12px;
+        --font-title: "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", serif;
+        --font-body: "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei",
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font-body);
+        color: var(--ink);
+        background-color: var(--bg-1);
+        background-image: radial-gradient(circle at top left, var(--glow-1), transparent 55%),
+          radial-gradient(circle at 80% 20%, var(--glow-2), transparent 50%),
+          linear-gradient(130deg, var(--bg-1), var(--bg-2)),
+          repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0 2px, transparent 2px 12px);
+        background-size: auto, auto, auto, 200px 200px;
+        background-blend-mode: normal, normal, normal, soft-light;
+        min-height: 100vh;
+        line-height: 1.6;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* 高对比模式 */
+      body.contrast {
+        --bg-1: #ffffff;
+        --bg-2: #f2f2f2;
+        --ink: #000000;
+        --muted: #2a2a2a;
+        --accent: #004f3a;
+        --accent-2: #b45309;
+        --accent-soft: rgba(0, 0, 0, 0.08);
+        --card: #ffffff;
+        --paper: #ffffff;
+        --glow-1: rgba(0, 0, 0, 0);
+        --glow-2: rgba(0, 0, 0, 0);
+        --shadow: 0 0 0 2px #000;
+        --shadow-soft: 0 0 0 1px #000;
+        --shadow-strong: 0 0 0 2px #000;
+        --border: #000000;
+        background-image: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+        background-size: auto;
+        background-blend-mode: normal;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        width: 420px;
+        height: 420px;
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.35;
+      }
+
+      body::before {
+        top: -140px;
+        right: -120px;
+        background: radial-gradient(circle, rgba(11, 110, 79, 0.28), transparent 70%);
+      }
+
+      body::after {
+        bottom: -160px;
+        left: -140px;
+        background: radial-gradient(circle, rgba(240, 138, 36, 0.28), transparent 70%);
+      }
+
+      body.contrast::before,
+      body.contrast::after {
+        opacity: 0;
+      }
+
+      header,
+      main {
+        position: relative;
+        z-index: 1;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* 视障辅助：跳过链接 */
+      .skip-link {
+        position: absolute;
+        left: -999px;
+        top: 10px;
+        background: var(--card);
+        color: var(--ink);
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 2px solid var(--accent);
+        z-index: 100;
+      }
+      .skip-link:focus {
+        left: 12px;
+      }
+
+      header {
+        padding: 48px 24px 20px;
+        text-align: center;
+        animation: fade-up 0.6s ease-out both;
+      }
+
+      header h1 {
+        font-family: var(--font-title);
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        margin: 0 0 12px;
+        letter-spacing: 0.04em;
+        text-shadow: 0 8px 24px rgba(16, 42, 67, 0.15);
+      }
+
+      header p {
+        margin: 0 auto;
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+
+      header::after {
+        content: "";
+        display: block;
+        width: min(180px, 55vw);
+        height: 4px;
+        margin: 18px auto 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        opacity: 0.85;
+      }
+
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px 24px 70px;
+      }
+
+      .panel {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92));
+        border-radius: var(--radius);
+        padding: 30px 24px 24px;
+        box-shadow: var(--shadow-strong);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(16, 42, 67, 0.08);
+        animation: fade-up 0.7s ease-out 0.1s both;
+      }
+
+      .panel::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        opacity: 0.85;
+      }
+
+      .toolbar {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        margin-bottom: 18px;
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      }
+
+      .tool {
+        background: var(--accent-soft);
+        border-radius: var(--radius-sm);
+        padding: 12px;
+        border: 1px solid rgba(11, 110, 79, 0.12);
+      }
+
+      .tool label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+      }
+
+      .toggle-btn {
+        border: 2px solid var(--accent);
+        background: transparent;
+        color: var(--accent);
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        font-size: 0.9rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .toggle-btn[aria-pressed="true"] {
+        background: var(--accent);
+        color: #fff;
+        box-shadow: 0 10px 24px rgba(11, 110, 79, 0.25);
+      }
+
+      .toggle-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-soft);
+      }
+
+      input[type="text"],
+      select {
+        width: 100%;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      button {
+        font-family: inherit;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent);
+      }
+
+      input:focus-visible,
+      select:focus-visible,
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid var(--focus);
+        outline-offset: 2px;
+        box-shadow: var(--ring);
+      }
+
+      .status {
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        background: var(--accent-soft);
+        color: var(--ink);
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid rgba(11, 110, 79, 0.12);
+      }
+
+      .status::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+      .status.warn {
+        background: rgba(214, 69, 80, 0.12);
+        color: var(--danger);
+        border-color: rgba(214, 69, 80, 0.35);
+      }
+      .status.warn::before {
+        background: var(--danger);
+      }
+
+      .list-panel {
+        padding: 16px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: var(--paper);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .list-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .list-header h3 {
+        font-family: var(--font-title);
+        font-size: 1.2rem;
+        letter-spacing: 0.03em;
+        margin: 0;
+      }
+
+      .list-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        flex: 1 1 420px;
+        justify-content: flex-end;
+      }
+
+      .list-actions input {
+        flex: 1 1 220px;
+        min-width: 180px;
+      }
+
+      .ghost {
+        background: rgba(16, 42, 67, 0.06);
+        color: var(--ink);
+        border: 1px solid transparent;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      }
+
+      .ghost:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-soft);
+        background: rgba(16, 42, 67, 0.1);
+      }
+
+      .ghost:active {
+        transform: translateY(0);
+      }
+      .ghost.danger {
+        color: var(--danger);
+        background: rgba(214, 69, 80, 0.1);
+      }
+
+      .complaint-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 16px;
+      }
+
+      .complaint-item {
+        padding: 16px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.95);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        position: relative;
+        box-shadow: var(--shadow-soft);
+        animation: fade-up 0.35s ease-out both;
+      }
+
+      .complaint-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+        background: linear-gradient(180deg, var(--accent), var(--accent-2));
+        opacity: 0.75;
+      }
+
+      .complaint-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-strong);
+        border-color: rgba(11, 110, 79, 0.25);
+      }
+
+      .complaint-item:focus-within {
+        border-color: var(--focus);
+        box-shadow: 0 0 0 2px rgba(28, 126, 214, 0.2), var(--shadow-soft);
+      }
+
+      .item-title {
+        margin: 0 0 8px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        font-family: var(--font-title);
+      }
+
+      .item-detail {
+        margin: 0 0 12px;
+        white-space: pre-wrap;
+        color: var(--ink);
+      }
+
+      .complaint-meta {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      /* 附件样式 (整合自文件2) */
+      .attachment-block {
+        margin: 12px 0;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 8px;
+        border: 1px dashed var(--border);
+      }
+      .attachment-preview {
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 6px;
+        display: block;
+        margin-bottom: 8px;
+      }
+      .download-link {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .complaint-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+
+      .empty-list {
+        text-align: center;
+        padding: 40px;
+        color: var(--muted);
+        border-radius: var(--radius-sm);
+        border: 1px dashed var(--border);
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      @keyframes fade-up {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 720px) {
+        header {
+          padding: 36px 18px 16px;
+        }
+
+        .panel {
+          padding: 24px 18px 20px;
+        }
+
+        .list-actions {
+          justify-content: flex-start;
+        }
+
+        .list-actions input {
+          flex-basis: 100%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    
+    <header>
+      <h1>吐槽列表 · 综合版</h1>
+      <p>统一管理您的吐槽记录。数据存储在本地，不会上传云端。</p>
+    </header>
+
+    <main id="main-content">
+      <section class="panel" aria-labelledby="panel-title">
+        <h2 id="panel-title" class="sr-only">管理面板</h2>
+        
+        <div class="toolbar" role="group" aria-label="显示工具">
+          <div class="tool">
+            <label for="bgTheme">主题风格</label>
+            <select id="bgTheme">
+              <option value="warm">暖晨橙绿</option>
+              <option value="sea">海风蓝绿</option>
+              <option value="sun">日光米黄</option>
+              <option value="stone">清爽灰白</option>
+            </select>
+          </div>
+          <div class="tool">
+            <label for="fontSize">文字大小</label>
+            <input id="fontSize" type="range" min="90" max="130" value="100" />
+          </div>
+          <div class="tool">
+            <label>高对比度</label>
+            <button class="toggle-btn" type="button" id="contrastToggle" aria-pressed="false">
+              开启高对比
+            </button>
+          </div>
+          <div class="tool">
+            <label>语音辅助</label>
+            <button class="toggle-btn" type="button" id="ttsToggle" aria-pressed="false">
+              开启点击朗读
+            </button>
+          </div>
+        </div>
+
+        <div class="status" id="status" role="status" aria-live="polite">
+          正在加载本地数据...
+        </div>
+
+        <div class="list-panel">
+          <div class="list-header">
+            <h3>历史记录</h3>
+            <div class="list-actions">
+              <input id="searchInput" type="text" placeholder="搜索关键词..." aria-label="搜索吐槽" />
+              <a class="ghost" href="javascript:history.back()">返回上一页</a>
+              <button class="ghost" type="button" id="refreshBtn">刷新</button>
+              <button class="ghost danger" type="button" id="clearListBtn">清空所有</button>
+            </div>
+          </div>
+
+          <div class="empty-list" id="listEmpty" style="display:none">
+            还没有保存的吐槽记录。
+          </div>
+          <ul class="complaint-list" id="complaintList"></ul>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // === 1. 初始化变量 ===
+      const complaintList = document.getElementById("complaintList");
+      const listEmpty = document.getElementById("listEmpty");
+      const searchInput = document.getElementById("searchInput");
+      const clearListBtn = document.getElementById("clearListBtn");
+      const refreshBtn = document.getElementById("refreshBtn");
+      const statusBox = document.getElementById("status");
+      const fontSize = document.getElementById("fontSize");
+      const bgTheme = document.getElementById("bgTheme");
+      const contrastToggle = document.getElementById("contrastToggle");
+      const ttsToggle = document.getElementById("ttsToggle");
+
+      // 定义存储Key（同时支持两个版本的Key）
+      const KEY_V1 = "hearing-complaints"; // 来源：查看吐槽.html
+      const KEY_V2 = "vision_complaints_v1"; // 来源：视障吐槽查看.html
+      const THEME_KEY = "merged-theme-pref";
+
+      let allData = []; // 存放合并后的数据
+
+      // === 2. 主题与显示逻辑 ===
+      const themeMap = {
+        warm: { bg1: "#fef6e4", bg2: "#dff4ef", glow1: "rgba(240, 138, 36, 0.18)", glow2: "rgba(11, 110, 79, 0.18)" },
+        sea: { bg1: "#e8f3ff", bg2: "#d9f7f3", glow1: "rgba(59, 130, 246, 0.16)", glow2: "rgba(20, 184, 166, 0.18)" },
+        sun: { bg1: "#fff3d6", bg2: "#fceee1", glow1: "rgba(245, 158, 11, 0.18)", glow2: "rgba(251, 191, 36, 0.16)" },
+        stone: { bg1: "#f2f4f8", bg2: "#ffffff", glow1: "rgba(148, 163, 184, 0.16)", glow2: "rgba(100, 116, 139, 0.12)" },
+      };
+
+      function applyTheme(key) {
+        const theme = themeMap[key] || themeMap.warm;
+        const root = document.documentElement.style;
+        root.setProperty("--bg-1", theme.bg1);
+        root.setProperty("--bg-2", theme.bg2);
+        root.setProperty("--glow-1", theme.glow1);
+        root.setProperty("--glow-2", theme.glow2);
+      }
+
+      function setStatus(msg, type = "info") {
+        statusBox.textContent = msg;
+        statusBox.className = `status ${type === "warn" ? "warn" : ""}`;
+      }
+
+      // === 3. 数据处理逻辑 (核心合并部分) ===
+      function loadAllData() {
+        let merged = [];
+        
+        // 读取 V1 数据 (普通版)
+        try {
+          const raw1 = localStorage.getItem(KEY_V1);
+          if (raw1) {
+            const data1 = JSON.parse(raw1);
+            // 格式标准化
+            const standard1 = data1.map(item => ({
+              id: item.id || Date.now() + Math.random().toString(),
+              title: item.sentence || "无标题吐槽",
+              detail: item.problem || "",
+              meta: [item.scene, item.impact, item.wish].filter(Boolean).join(" · "),
+              date: item.createdAt || "未知时间",
+              attachment: null, // V1 没有附件
+              sourceKey: KEY_V1 // 标记来源，用于删除
+            }));
+            merged = merged.concat(standard1);
+          }
+        } catch (e) { console.error("V1 Data Error", e); }
+
+        // 读取 V2 数据 (视障版)
+        try {
+          const raw2 = localStorage.getItem(KEY_V2);
+          if (raw2) {
+            const data2 = JSON.parse(raw2);
+            // 格式标准化
+            const standard2 = data2.map((item, index) => ({
+              id: `v2-${index}-${Date.now()}`, // 临时ID
+              originalIndex: index, // 用于V2的数组索引删除
+              title: item.summary || "无标题",
+              detail: item.detail || "",
+              meta: [item.scene, item.severity].filter(Boolean).join(" · "),
+              date: item.created_at || "未知时间",
+              attachment: {
+                data: item.attachment_data,
+                name: item.attachment_name
+              },
+              sourceKey: KEY_V2
+            }));
+            merged = merged.concat(standard2);
+          }
+        } catch (e) { console.error("V2 Data Error", e); }
+
+        return merged;
+      }
+
+      function deleteItem(id) {
+        if (!confirm("确定要删除这条吐槽吗？")) return;
+
+        const item = allData.find(i => i.id === id);
+        if (!item) return;
+
+        // 根据来源不同，分别处理删除
+        if (item.sourceKey === KEY_V1) {
+          const raw = localStorage.getItem(KEY_V1);
+          let list = raw ? JSON.parse(raw) : [];
+          // V1 使用 ID 匹配 (如果是旧数据没有ID，可能需要模糊匹配，这里假设有ID)
+          // 为了兼容，如果V1原始数据没有ID，这里可能会有点问题，但通常应该有。
+          // 我们尝试通过内容匹配来删除
+          list = list.filter(i => (i.id && i.id !== id) || (i.sentence !== item.title));
+          localStorage.setItem(KEY_V1, JSON.stringify(list));
+        } else if (item.sourceKey === KEY_V2) {
+          // V2 是简单数组，最好重读并过滤
+          const raw = localStorage.getItem(KEY_V2);
+          let list = raw ? JSON.parse(raw) : [];
+          // 使用 originalIndex 或者内容匹配
+          if (list[item.originalIndex]) {
+             list.splice(item.originalIndex, 1);
+          } else {
+             // Fallback
+             list = list.filter(i => i.summary !== item.title);
+          }
+          localStorage.setItem(KEY_V2, JSON.stringify(list));
+        }
+
+        renderAndReload("已删除该条记录。");
+      }
+
+      function clearAll() {
+        if (!confirm("高能预警：这将清空 两个版本 的所有本地吐槽记录！确定吗？")) return;
+        localStorage.removeItem(KEY_V1);
+        localStorage.removeItem(KEY_V2);
+        renderAndReload("所有记录已清空。", "warn");
+      }
+
+      // === 4. 渲染逻辑 ===
+      function createAttachmentDOM(att) {
+        if (!att || !att.data) return null;
+        const wrapper = document.createElement("div");
+        wrapper.className = "attachment-block";
+        
+        const data = att.data;
+        let previewEl = null;
+
+        if (data.startsWith("data:image/")) {
+          previewEl = document.createElement("img");
+          previewEl.alt = "图片附件";
+        } else if (data.startsWith("data:video/")) {
+          previewEl = document.createElement("video");
+          previewEl.controls = true;
+        } else if (data.startsWith("data:audio/")) {
+          previewEl = document.createElement("audio");
+          previewEl.controls = true;
+        }
+
+        if (previewEl) {
+          previewEl.src = data;
+          previewEl.className = "attachment-preview";
+          wrapper.appendChild(previewEl);
+        }
+
+        const link = document.createElement("a");
+        link.href = data;
+        link.download = att.name || "附件下载";
+        link.textContent = `下载附件 (${att.name || "未命名"})`;
+        link.className = "download-link";
+        wrapper.appendChild(link);
+
+        return wrapper;
+      }
+
+      function renderList(filterKeyword = "") {
+        const keyword = filterKeyword.trim().toLowerCase();
+        
+        // 过滤
+        const displayItems = allData.filter(item => {
+          if (!keyword) return true;
+          return (item.title + item.detail + item.meta).toLowerCase().includes(keyword);
+        });
+
+        complaintList.innerHTML = "";
+        
+        if (displayItems.length === 0) {
+          listEmpty.style.display = "block";
+          listEmpty.textContent = keyword ? "没有搜到相关吐槽。" : "本地没有保存的吐槽记录。";
+        } else {
+          listEmpty.style.display = "none";
+          displayItems.forEach(item => {
+            const li = document.createElement("li");
+            li.className = "complaint-item";
+            li.setAttribute("tabindex", "0"); // 让项目可聚焦
+
+            const h4 = document.createElement("h4");
+            h4.className = "item-title";
+            h4.textContent = item.title;
+
+            const meta = document.createElement("div");
+            meta.className = "complaint-meta";
+            meta.textContent = `${item.date} · ${item.meta}`;
+
+            const p = document.createElement("p");
+            p.className = "item-detail";
+            p.textContent = item.detail;
+
+            li.appendChild(h4);
+            li.appendChild(meta);
+            li.appendChild(p);
+
+            // 附件处理
+            const attDom = createAttachmentDOM(item.attachment);
+            if (attDom) li.appendChild(attDom);
+
+            // 按钮区域
+            const actions = document.createElement("div");
+            actions.className = "complaint-buttons";
+            
+            // 复制按钮
+            const copyBtn = document.createElement("button");
+            copyBtn.className = "ghost";
+            copyBtn.textContent = "复制内容";
+            copyBtn.onclick = () => {
+              navigator.clipboard.writeText(`${item.title}\n${item.detail}`).then(
+                () => setStatus("已复制到剪贴板。"),
+                () => setStatus("复制失败。", "warn")
+              );
+            };
+
+            // 删除按钮
+            const delBtn = document.createElement("button");
+            delBtn.className = "ghost danger";
+            delBtn.textContent = "删除";
+            delBtn.onclick = () => deleteItem(item.id);
+
+            actions.appendChild(copyBtn);
+            actions.appendChild(delBtn);
+            li.appendChild(actions);
+
+            complaintList.appendChild(li);
+          });
+        }
+      }
+
+      function renderAndReload(msg, type="info") {
+        allData = loadAllData();
+        renderList(searchInput.value);
+        if (msg) setStatus(msg, type);
+      }
+
+      // === 5. 事件监听 ===
+      searchInput.addEventListener("input", () => renderList(searchInput.value));
+      refreshBtn.addEventListener("click", () => renderAndReload("列表已刷新。"));
+      clearListBtn.addEventListener("click", clearAll);
+      
+      bgTheme.addEventListener("change", () => {
+        applyTheme(bgTheme.value);
+        localStorage.setItem(THEME_KEY, bgTheme.value);
+      });
+
+      fontSize.addEventListener("input", () => {
+        document.documentElement.style.fontSize = `${fontSize.value}%`;
+      });
+
+      contrastToggle.addEventListener("click", () => {
+        const pressed = contrastToggle.getAttribute("aria-pressed") === "true";
+        contrastToggle.setAttribute("aria-pressed", String(!pressed));
+        contrastToggle.textContent = pressed ? "开启高对比" : "关闭高对比";
+        document.body.classList.toggle("contrast", !pressed);
+      });
+
+      // === 6. 语音辅助 (从文件2移植并优化) ===
+      let ttsEnabled = false;
+      const ttsConfig = { clickDelay: 300, lastClickTime: 0, clickTimer: null };
+
+      ttsToggle.addEventListener("click", () => {
+        ttsEnabled = !ttsEnabled;
+        ttsToggle.setAttribute("aria-pressed", ttsEnabled);
+        ttsToggle.textContent = ttsEnabled ? "关闭点击朗读" : "开启点击朗读";
+        setStatus(ttsEnabled ? "语音辅助已开启。点击文字可朗读。" : "语音辅助已关闭。");
+      });
+
+      function speak(text) {
+        if (!ttsEnabled || !text) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "zh-CN";
+        window.speechSynthesis.speak(utter);
+      }
+
+      function getReadableText(el) {
+        if (!el) return "";
+        // 优先读取 aria-label
+        if (el.getAttribute("aria-label")) return el.getAttribute("aria-label");
+        // 读取输入框内容
+        if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+           return (document.querySelector(`label[for="${el.id}"]`)?.textContent || "") + " " + el.value;
+        }
+        return el.textContent || "";
+      }
+
+      document.addEventListener("click", (event) => {
+        if (!ttsEnabled) return;
+        
+        // 简单的交互防抖逻辑
+        const now = Date.now();
+        if (now - ttsConfig.lastClickTime < ttsConfig.clickDelay) {
+           // 双击行为：取消朗读，允许原生交互
+           clearTimeout(ttsConfig.clickTimer);
+           window.speechSynthesis.cancel();
+           return; 
+        }
+        ttsConfig.lastClickTime = now;
+
+        // 查找可读目标
+        const target = event.target.closest("button, a, p, h1, h2, h3, h4, label, input, select, li");
+        if (target) {
+            // 如果不是输入控件，阻止默认行为以便只朗读（双击才激活）
+            // 但为了不破坏复制按钮等，我们只针对文本标签做阻止
+            if (["P", "H1", "H2", "H3", "H4", "LI"].includes(target.tagName)) {
+               // event.preventDefault(); // 可选：视体验而定，这里暂不阻止
+            }
+            
+            const text = getReadableText(target);
+            ttsConfig.clickTimer = setTimeout(() => speak(text), 200);
+        }
+      }, true); // 使用捕获阶段
+
+      // === 7. 启动初始化 ===
+      window.addEventListener("DOMContentLoaded", () => {
+        // 加载主题
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        if (savedTheme && themeMap[savedTheme]) {
+          bgTheme.value = savedTheme;
+          applyTheme(savedTheme);
+        }
+        
+        // 加载数据
+        renderAndReload("数据已加载。");
+      });
+    </script>
+  </body>
+</html>

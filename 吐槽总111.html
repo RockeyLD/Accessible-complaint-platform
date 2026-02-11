@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>无障碍吐槽平台 - 综合版</title>
+
+  <style id="style-landing">
+    :root {
+      --lp-bg: #f0f4f8;
+      --lp-text: #102a43;
+      --lp-accent: #0b6e4f;
+      --lp-focus: #1c7ed6;
+    }
+    body { margin: 0; font-family: "Noto Sans SC", sans-serif; background: var(--lp-bg); }
+    
+    #view-landing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .landing-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 40px;
+      color: var(--lp-text);
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      max-width: 900px;
+    }
+
+    .role-card {
+      background: white;
+      border: 3px solid transparent;
+      border-radius: 20px;
+      padding: 40px;
+      width: 300px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .role-card:hover, .role-card:focus {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      border-color: var(--lp-accent);
+      outline: 4px solid var(--lp-focus);
+      outline-offset: 4px;
+    }
+
+    .role-icon { font-size: 4rem; margin-bottom: 20px; display: block; }
+    .role-name { font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; color: var(--lp-text); }
+    .role-desc { color: #555; font-size: 1rem; line-height: 1.5; }
+
+    .back-home-btn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 9999;
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .back-home-btn:hover, .back-home-btn:focus { 
+        background: #000; 
+        outline: 3px solid var(--lp-focus);
+    }
+
+    .hidden-view { display: none !important; }
+  </style>
+
+  <style id="style-hearing" disabled>
+    :root {
+        --bg-1: #fef6e4;
+        --bg-2: #dff4ef;
+        --ink: #102a43;
+        --muted: #5b6b7a;
+        --accent: #0b6e4f;
+        --accent-2: #f08a24;
+        --danger: #d64550;
+        --card: #ffffff;
+        --focus: #1c7ed6;
+        --glow-1: rgba(240, 138, 36, 0.18);
+        --glow-2: rgba(11, 110, 79, 0.18);
+        --shadow: 0 24px 60px rgba(16, 42, 67, 0.16);
+        --radius: 18px;
+        --radius-sm: 12px;
+        --font-title: "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", serif;
+        --font-body: "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", "Heiti SC", sans-serif;
+      }
+
+      #view-hearing * { box-sizing: border-box; }
+      
+      #view-hearing {
+        font-family: var(--font-body);
+        color: var(--ink);
+        background: radial-gradient(circle at top left, var(--glow-1), transparent 55%),
+          radial-gradient(circle at 80% 20%, var(--glow-2), transparent 50%),
+          linear-gradient(130deg, var(--bg-1), var(--bg-2));
+        min-height: 100vh;
+        line-height: 1.6;
+        padding-top: 50px; 
+      }
+
+      body.contrast #view-hearing {
+        --bg-1: #ffffff;
+        --bg-2: #f2f2f2;
+        --ink: #0b0b0b;
+        --muted: #2a2a2a;
+        --accent: #004f3a;
+        --accent-2: #b45309;
+        --card: #ffffff;
+        --glow-1: rgba(0, 0, 0, 0);
+        --glow-2: rgba(0, 0, 0, 0);
+      }
+
+      #view-hearing header { padding: 40px 24px 12px; text-align: center; }
+      #view-hearing header h1 { font-family: var(--font-title); font-size: clamp(2rem, 4vw, 3.4rem); margin: 0 0 12px; letter-spacing: 0.04em; }
+      #view-hearing header p { margin: 0 auto; max-width: 760px; color: var(--muted); font-size: 1.05rem; }
+      #view-hearing main { max-width: 1200px; margin: 0 auto; padding: 24px 24px 60px; display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+      
+      .panel { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+      .panel::before { content: ""; position: absolute; width: 160px; height: 160px; background: rgba(11, 110, 79, 0.08); border-radius: 50%; top: -60px; right: -40px; }
+      .panel h2 { margin: 0 0 12px; font-size: 1.4rem; }
+      
+      .toolbar { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 18px; }
+      .tool { background: rgba(11, 110, 79, 0.08); border-radius: var(--radius-sm); padding: 12px; }
+      .tool label { display: block; font-weight: 600; margin-bottom: 6px; }
+      
+      .toggle-btn { border: 2px solid var(--accent); background: transparent; color: var(--accent); padding: 8px 12px; border-radius: 999px; font-weight: 600; cursor: pointer; width: 100%; transition: transform 0.2s ease, background 0.2s ease; }
+      .toggle-btn[aria-pressed="true"] { background: var(--accent); color: #fff; }
+      
+      .toggle-btn:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+      
+      .field { margin-bottom: 16px; }
+      .field label { display: block; font-weight: 600; margin-bottom: 6px; }
+      
+      #view-hearing input[type="text"], #view-hearing textarea, #view-hearing select { width: 100%; border-radius: var(--radius-sm); border: 2px solid rgba(16, 42, 67, 0.15); padding: 10px 12px; font-size: 1rem; font-family: inherit; transition: border 0.2s ease, box-shadow 0.2s ease; background: #fff; }
+      #view-hearing textarea { min-height: 96px; resize: vertical; }
+      
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+      .chip { border: 2px solid rgba(16, 42, 67, 0.2); padding: 6px 12px; border-radius: 999px; background: #fff; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
+      .chip[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: rgba(11, 110, 79, 0.08); }
+      
+      .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+      .range-wrap { display: flex; gap: 12px; align-items: center; }
+      .range-wrap input[type="range"] { flex: 1; }
+      .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: rgba(240, 138, 36, 0.18); font-size: 0.85rem; font-weight: 600; }
+      
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+      button.primary { background: var(--accent); color: #fff; border: none; padding: 12px 18px; border-radius: 999px; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+      button.secondary { background: transparent; color: var(--accent); border: 2px solid var(--accent); padding: 10px 18px; border-radius: 999px; font-weight: 600; cursor: pointer; }
+      button.ghost { background: rgba(16, 42, 67, 0.06); color: var(--ink); border: none; padding: 8px 12px; border-radius: 999px; font-weight: 600; cursor: pointer; }
+      button:disabled { opacity: 0.6; cursor: not-allowed; }
+      
+      .status { padding: 12px; border-radius: var(--radius-sm); background: rgba(11, 110, 79, 0.08); color: var(--ink); font-weight: 600; margin-bottom: 12px; }
+      .status.warn { background: rgba(214, 69, 80, 0.12); color: var(--danger); }
+      .status.info { background: rgba(240, 138, 36, 0.16); }
+      
+      .preview-card { border: 2px dashed rgba(16, 42, 67, 0.2); border-radius: var(--radius-sm); padding: 16px; background: rgba(255, 255, 255, 0.7); min-height: 180px; }
+      .preview-card h3 { margin: 0 0 8px; }
+      .missing-panel { margin-top: 16px; padding: 16px; border-radius: var(--radius-sm); background: rgba(214, 69, 80, 0.08); }
+      
+      .question { margin-bottom: 12px; }
+      .question input { margin-top: 6px; }
+      .progress-wrap { margin: 16px 0 10px; }
+      .progress-label { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--muted); margin-bottom: 6px; }
+      .progress-bar { height: 10px; background: rgba(16, 42, 67, 0.1); border-radius: 999px; overflow: hidden; }
+      .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.3s ease; }
+      
+      .access-list { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; color: var(--muted); }
+      .access-list li::before { content: "●"; color: var(--accent-2); margin-right: 8px; }
+  </style>
+
+  <style id="style-vision" disabled>
+    :root {
+        /* 使用视障吐槽.html 的配色变量 */
+        --v-bg: #f5f3ef;
+        --v-bg-2: #efe7dd;
+        --v-ink: #141414;
+        --v-muted: #3d3d3d;
+        --v-accent: #0f5c5c;  /* 深青色 */
+        --v-danger: #a02920;
+        --v-card: #ffffff;
+        --v-focus: #ffb100;   /* 高对比黄 */
+        --v-shadow: 0 14px 35px rgba(0, 0, 0, 0.12);
+      }
+      #view-vision * { box-sizing: border-box; }
+      #view-vision {
+        font-family: "Source Serif 4", "Noto Serif SC", "Songti SC", serif;
+        color: var(--v-ink);
+        /* 背景渐变保持原设计 */
+        background:
+          radial-gradient(1200px 600px at 20% -20%, #f0d9c7 0%, transparent 60%),
+          radial-gradient(1000px 500px at 90% 10%, #d9f0ea 0%, transparent 55%),
+          linear-gradient(180deg, var(--v-bg), var(--v-bg-2));
+        min-height: 100vh;
+        padding-top: 50px;
+      }
+      
+      /* 统一链接颜色 */
+      #view-vision a { color: var(--v-accent); }
+      
+      /* 统一聚焦样式 - 黄色高亮 */
+      #view-vision a:focus,
+      #view-vision button:focus,
+      #view-vision input:focus,
+      #view-vision textarea:focus,
+      #view-vision select:focus {
+        outline: 3px solid var(--v-focus);
+        outline-offset: 2px;
+      }
+      
+      .skip-link {
+        position: absolute;
+        left: -999px;
+        top: 10px;
+        background: var(--v-card);
+        color: var(--v-ink);
+        padding: 10px 14px;
+        border-radius: 8px;
+        box-shadow: var(--v-shadow);
+        z-index: 10;
+      }
+      .skip-link:focus { left: 12px; }
+      #view-vision header { padding: 28px 20px 16px; }
+      .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; }
+      .brand { font-family: "Noto Serif SC", "Source Serif 4", serif; letter-spacing: 1px; text-transform: uppercase; font-size: 12px; }
+      #view-vision h1 { font-size: clamp(28px, 4vw, 48px); margin: 10px 0 14px; }
+      .lead { font-size: 18px; line-height: 1.6; color: var(--v-muted); }
+      
+      .v-card { background: var(--v-card); border-radius: 16px; padding: 18px; box-shadow: var(--v-shadow); }
+      
+      #view-vision form { display: grid; gap: 14px; }
+      #view-vision label { font-weight: 600; }
+      
+      /* 输入框样式统一 */
+      #view-vision input, #view-vision textarea, #view-vision select { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #cfcfcf; font-size: 16px; }
+      .input-with-mic { position: relative; }
+      .input-with-mic input, .input-with-mic textarea { padding-right: 50px; }
+      
+      /* 麦克风按钮样式 */
+      .mic-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: #f0f0f0; color: var(--v-ink); border: 0; padding: 8px 10px; border-radius: 999px; cursor: pointer; }
+      .mic-btn svg { display: block; }
+      #view-vision textarea { min-height: 120px; resize: vertical; }
+      .row { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+      #view-vision fieldset { border: 0; padding: 0; margin: 0; }
+      #view-vision legend { font-weight: 600; margin-bottom: 6px; }
+      
+      .option-row { display: flex; flex-wrap: wrap; gap: 8px; }
+      
+      /* 选项按钮样式统一 */
+      .option-btn { background: #f0f0f0; color: var(--v-ink); border: 1px solid #d6d6d6; padding: 10px 14px; border-radius: 999px; cursor: pointer; font-size: 15px; }
+      /* 选中状态使用 Accent 色 */
+      .option-btn[aria-pressed="true"] { background: var(--v-accent); color: #fff; border-color: var(--v-accent); }
+      
+      #view-vision .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+      
+      /* 提交按钮使用 Accent 色 */
+      #view-vision .primary-btn { background: var(--v-accent); color: white; border: 0; padding: 12px 18px; border-radius: 999px; font-size: 16px; cursor: pointer; }
+      /* 次要按钮 */
+      #view-vision .button-link { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 12px 18px; border-radius: 999px; font-size: 16px; background: #f0f0f0; color: var(--v-ink); }
+      
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+      .note { font-size: 14px; color: var(--v-muted); }
+      #view-vision footer { margin-top: 50px; font-size: 12px; color: var(--v-muted); }
+  </style>
+</head>
+
+<body>
+
+  <div id="view-landing">
+    <h1 class="landing-title">欢迎使用无障碍吐槽平台</h1>
+    <p class="note" style="margin-bottom: 20px;">提示：支持鼠标点击、Tab 键切换焦点。单击或回车进入。</p>
+    <div class="card-container">
+      
+      <button class="role-card" onclick="switchMode('hearing')" aria-label="我是听障用户，进入文字辅助模式。单击进入。">
+        <span class="role-icon" aria-hidden="true">🧏</span>
+        <span class="role-name">我是听障用户</span>
+        <span class="role-desc">提供清晰的文字提示、高对比度界面，不依赖声音反馈。</span>
+      </button>
+
+      <button class="role-card" onclick="switchMode('vision')" aria-label="我是视障用户，进入视障辅助模式。单击进入。">
+        <span class="role-icon" aria-hidden="true">👨‍🦯</span>
+        <span class="role-name">我是视障用户</span>
+        <span class="role-desc">提供大号字体、清晰层级与键盘操作支持。</span>
+      </button>
+
+    </div>
+  </div>
+
+  <div id="view-hearing" class="hidden-view">
+    <button class="back-home-btn" onclick="switchMode('landing')">← 返回首页</button>
+    <header>
+      <h1>听障友好 · 吐槽平台</h1>
+      <p>用清晰的文字说清楚你的吐槽。平台不依赖声音提示，全部反馈都有明确的视觉提醒与可读文本。</p>
+    </header>
+    <main>
+      <section class="panel" aria-labelledby="form-title">
+        <h2 id="form-title">写下你的吐槽</h2>
+        <div class="toolbar" role="group" aria-label="无障碍工具">
+          <div class="tool">
+            <label for="bgTheme">背景主题</label>
+            <select id="bgTheme">
+              <option value="warm">暖晨橙绿</option>
+              <option value="sea">海风蓝绿</option>
+              <option value="sun">日光米黄</option>
+              <option value="stone">清爽灰白</option>
+            </select>
+          </div>
+          <div class="tool">
+            <label for="fontSize">文字大小</label>
+            <input id="fontSize" type="range" min="90" max="120" value="100" />
+          </div>
+          <div class="tool">
+            <label>高对比</label>
+            <button class="toggle-btn" type="button" data-toggle="contrast" aria-pressed="false">开启高对比</button>
+          </div>
+        </div>
+
+        <form id="complaintForm" novalidate>
+          <div class="field">
+            <label>类别（可多选）</label>
+            <div class="chips" id="categoryChips">
+              <button class="chip" type="button" aria-pressed="false">公共服务</button>
+              <button class="chip" type="button" aria-pressed="false">出行</button>
+              <button class="chip" type="button" aria-pressed="false">医疗</button>
+              <button class="chip" type="button" aria-pressed="false">教育</button>
+              <button class="chip" type="button" aria-pressed="false">线上平台</button>
+              <button class="chip" type="button" aria-pressed="false">工作场所</button>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="subject">吐槽对象（必填）</label>
+              <input id="subject" type="text" placeholder="如：地铁站服务台 / 某应用客服" />
+            </div>
+            <div class="field">
+              <label for="scene">发生场景（推荐）</label>
+              <input id="scene" type="text" placeholder="如：早高峰 / 线上咨询 / 医院窗口" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="problem">具体问题（必填）</label>
+            <textarea id="problem" placeholder="问题发生了什么？有哪些信息没有被文字化？"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="impact">影响了什么（推荐）</label>
+            <textarea id="impact" placeholder="例：错过排队号，无法及时办理业务。"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="wish">期望的改进（推荐）</label>
+            <textarea id="wish" placeholder="例：提供屏幕实时字幕、写字板或短信提醒。"></textarea>
+          </div>
+
+          <div class="field">
+            <label>情绪强度</label>
+            <div class="range-wrap">
+              <input id="emotion" type="range" min="1" max="5" value="3" />
+              <span class="badge" id="emotionLabel">中等</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="visibility">公开方式</label>
+            <select id="visibility">
+              <option value="匿名">匿名</option>
+              <option value="署名">署名</option>
+            </select>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-label">
+              <span>填写进度</span>
+              <span id="progressText">0 / 2</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="primary" type="button" id="buildBtn">生成吐槽卡片</button>
+            <button class="secondary" type="reset">清空内容</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel" aria-labelledby="preview-title">
+        <h2 id="preview-title">吐槽卡片预览</h2>
+        <div class="status info" id="statusBox" role="status" aria-live="polite">
+          填写内容后会在这里生成清晰可读的吐槽卡片。
+        </div>
+        <div class="preview-card" id="preview">
+          <p>填写后会生成一句话吐槽，方便直接复制或提交。</p>
+        </div>
+        <div class="missing-panel" id="missingPanel" hidden aria-live="polite"></div>
+        <div class="actions">
+          <button class="secondary" type="button" id="saveBtn" disabled>保存到列表</button>
+          <button class="secondary" type="button" id="copyBtn" disabled>复制吐槽文本</button>
+          <button class="secondary" type="button" id="downloadBtn" disabled>下载为 TXT</button>
+          <button class="ghost" type="button" id="sampleBtn">填入示例</button>
+        </div>
+        <ul class="access-list">
+          <li>所有反馈均为文字提示，无语音依赖。</li>
+          <li>高对比、字号调节与减少动画适配听障用户与多样视觉需求。</li>
+          <li>缺失信息会自动询问并提示补全。</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <div id="view-vision" class="hidden-view">
+    <button class="back-home-btn" onclick="switchMode('landing')" aria-label="返回首页">← 返回首页</button>
+    <header class="wrap">
+      <div class="brand">Vision-First</div>
+      <h1>直接吐槽</h1>
+      <p class="lead">把问题说清楚就行，表单尽量短。</p>
+      <p class="note">单击或按 Tab 切换焦点即可操作。</p>
+    </header>
+
+    <main id="main-vision" class="wrap">
+      <section id="submit">
+        <div class="v-card">
+          <form aria-describedby="form-note">
+            <div class="row">
+              <fieldset aria-labelledby="scene-legend">
+                <legend id="scene-legend">发生场景</legend>
+                <div class="option-row">
+                  <button type="button" class="option-btn" data-target="v-scene" data-value="app" aria-pressed="false" aria-label="发生场景：App / 网站">App / 网站</button>
+                  <button type="button" class="option-btn" data-target="v-scene" data-value="service" aria-pressed="false" aria-label="发生场景：服务流程">服务流程</button>
+                  <button type="button" class="option-btn" data-target="v-scene" data-value="space" aria-pressed="false" aria-label="发生场景：线下空间">线下空间</button>
+                </div>
+                <input id="v-scene" name="scene" type="hidden" value="" />
+              </fieldset>
+              <fieldset aria-labelledby="severity-legend">
+                <legend id="severity-legend">影响程度</legend>
+                <div class="option-row">
+                  <button type="button" class="option-btn" data-target="v-severity" data-value="high" aria-pressed="false" aria-label="影响程度：非常影响">非常影响</button>
+                  <button type="button" class="option-btn" data-target="v-severity" data-value="medium" aria-pressed="false" aria-label="影响程度：比较影响">比较影响</button>
+                  <button type="button" class="option-btn" data-target="v-severity" data-value="low" aria-pressed="false" aria-label="影响程度：轻微影响">轻微影响</button>
+                </div>
+                <input id="v-severity" name="severity" type="hidden" value="" />
+              </fieldset>
+            </div>
+
+            <div>
+              <label for="v-summary">一句话描述</label>
+              <div class="input-with-mic">
+                <input id="v-summary" name="summary" type="text" placeholder="例：读屏只读出“按钮123”，无法购买车票" />
+                <button class="mic-btn" type="button" data-voice-target="v-summary" aria-label="语音输入到一句话描述">
+                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label for="v-detail">详细描述</label>
+              <div class="input-with-mic">
+                <textarea id="v-detail" name="detail" placeholder="发生了什么？你尝试了哪些操作？哪里卡住了？"></textarea>
+                <button class="mic-btn" type="button" data-voice-target="v-detail" aria-label="语音输入到详细描述">
+                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <p class="note">提示：语音输入需要浏览器支持（建议 https 或 localhost）。</p>
+
+            <div class="row">
+              <div>
+                <label for="attachment">补充材料（可选）</label>
+                <input id="attachment" name="attachment" type="file" />
+              </div>
+              <div>
+                <label for="v-contact">联系方式（可选）</label>
+                <div class="input-with-mic">
+                  <input id="v-contact" name="contact" type="text" placeholder="邮箱 / 微信 / 电话" />
+                  <button class="mic-btn" type="button" data-voice-target="v-contact" aria-label="语音输入到联系方式">
+                    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z" fill="currentColor"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p class="note">本地模式可保存小文件预览（建议 1MB 以内）。</p>
+
+            <div class="actions">
+              <button id="v-submitBtn" class="primary-btn" type="button">提交吐槽</button>
+              <a class="button-link" href="#" onclick="alert('即将前往吐槽广场（演示链接）'); return false;">吐槽广场</a>
+              <span id="form-note" class="note">提交后会自动生成结构化报告，方便查看。</span>
+            </div>
+            <p class="sr-only" aria-live="polite">提示：所有输入项均支持键盘访问。</p>
+            <p id="v-status" class="note" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <p>提示：页面为视障优先原型，所有交互元素支持键盘访问。</p>
+    </footer>
+  </div>
+
+  <script>
+    // --- 0. 全局状态与路由控制 ---
+    let currentMode = 'landing';
+
+    function switchMode(mode) {
+        const landing = document.getElementById('view-landing');
+        const hearing = document.getElementById('view-hearing');
+        const vision = document.getElementById('view-vision');
+        const styleHearing = document.getElementById('style-hearing');
+        const styleVision = document.getElementById('style-vision');
+
+        currentMode = mode;
+
+        if (mode === 'landing') {
+            landing.classList.remove('hidden-view');
+            hearing.classList.add('hidden-view');
+            vision.classList.add('hidden-view');
+            styleHearing.disabled = true;
+            styleVision.disabled = true;
+            document.title = "无障碍吐槽平台 - 首页";
+        } else if (mode === 'hearing') {
+            landing.classList.add('hidden-view');
+            hearing.classList.remove('hidden-view');
+            vision.classList.add('hidden-view');
+            styleHearing.disabled = false;
+            styleVision.disabled = true;
+            document.title = "听障友好吐槽平台";
+            initHearingMode();
+        } else if (mode === 'vision') {
+            landing.classList.add('hidden-view');
+            hearing.classList.add('hidden-view');
+            vision.classList.remove('hidden-view');
+            styleHearing.disabled = true;
+            styleVision.disabled = false;
+            document.title = "吐槽广场 - 视障模式";
+            initVisionMode();
+        }
+    }
+  </script>
+
+  <script>
+    // --- 1. 听障模式逻辑 ---
+    function initHearingMode() {
+        if(window.hearingInitialized) return;
+        window.hearingInitialized = true;
+        
+        const form = document.getElementById("complaintForm");
+        const subject = document.getElementById("subject");
+        const scene = document.getElementById("scene");
+        const problem = document.getElementById("problem");
+        const impact = document.getElementById("impact");
+        const wish = document.getElementById("wish");
+        const emotion = document.getElementById("emotion");
+        const emotionLabel = document.getElementById("emotionLabel");
+        const visibility = document.getElementById("visibility");
+        const progressText = document.getElementById("progressText");
+        const progressFill = document.getElementById("progressFill");
+        const preview = document.getElementById("preview");
+        const statusBox = document.getElementById("statusBox");
+        const missingPanel = document.getElementById("missingPanel");
+        const saveBtn = document.getElementById("saveBtn");
+        const copyBtn = document.getElementById("copyBtn");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const buildBtn = document.getElementById("buildBtn");
+        const sampleBtn = document.getElementById("sampleBtn");
+        const toggleButtons = document.querySelectorAll(".toggle-btn");
+        const chips = document.querySelectorAll("#categoryChips .chip");
+        const fontSize = document.getElementById("fontSize");
+        const bgTheme = document.getElementById("bgTheme");
+
+        const state = { categories: new Set() };
+        const storeKey = "hearing-complaints";
+        const themeKey = "hearing-theme";
+
+        const questionMap = {
+            subject: "你在吐槽哪个对象/服务/平台？",
+            scene: "发生场景（地点/时间，如：医院窗口/早高峰）？",
+            problem: "具体问题是什么？缺少了哪些文字或视觉提示？",
+            impact: "造成了什么影响或不便？",
+            wish: "你希望对方如何改进？",
+        };
+
+        const emotionMap = { 1: "很平静", 2: "轻微不满", 3: "中等", 4: "明显不满", 5: "非常生气" };
+
+        const themeMap = {
+            warm: { bg1: "#fef6e4", bg2: "#dff4ef", glow1: "rgba(240, 138, 36, 0.18)", glow2: "rgba(11, 110, 79, 0.18)" },
+            sea: { bg1: "#e8f3ff", bg2: "#d9f7f3", glow1: "rgba(59, 130, 246, 0.16)", glow2: "rgba(20, 184, 166, 0.18)" },
+            sun: { bg1: "#fff3d6", bg2: "#fceee1", glow1: "rgba(245, 158, 11, 0.18)", glow2: "rgba(251, 191, 36, 0.16)" },
+            stone: { bg1: "#f2f4f8", bg2: "#ffffff", glow1: "rgba(148, 163, 184, 0.16)", glow2: "rgba(100, 116, 139, 0.12)" }
+        };
+
+        function setStatus(message, type = "info") {
+            statusBox.textContent = message;
+            statusBox.className = `status ${type}`;
+        }
+
+        function applyTheme(key) {
+            const theme = themeMap[key] || themeMap.warm;
+            const root = document.documentElement.style;
+            root.setProperty("--bg-1", theme.bg1);
+            root.setProperty("--bg-2", theme.bg2);
+            root.setProperty("--glow-1", theme.glow1);
+            root.setProperty("--glow-2", theme.glow2);
+        }
+
+        function updateEmotionLabel() { emotionLabel.textContent = emotionMap[emotion.value]; }
+
+        function updateProgress() {
+            const filled = [subject.value.trim(), problem.value.trim()].filter(Boolean).length;
+            progressText.textContent = `${filled} / 2`;
+            progressFill.style.width = `${(filled / 2) * 100}%`;
+        }
+
+        function collectData() {
+            return {
+                subject: subject.value.trim(),
+                scene: scene.value.trim(),
+                problem: problem.value.trim(),
+                impact: impact.value.trim(),
+                wish: wish.value.trim(),
+                emotion: emotionMap[emotion.value],
+                emotionValue: emotion.value,
+                visibility: visibility.value,
+                categories: Array.from(state.categories),
+            };
+        }
+
+        function buildSentence(data) {
+            const parts = [];
+            const subjectText = data.subject || "【待补充】";
+            const problemText = data.problem || "【待补充】";
+            const sceneText = data.scene ? data.scene.trim() : "";
+
+            let intro = `我想吐槽${subjectText}`;
+            if (sceneText) {
+                if (!subjectText.includes(sceneText)) intro = `在${sceneText}，我想吐槽${subjectText}`;
+            }
+
+            parts.push(intro.trim());
+            parts.push(`主要问题是${problemText}`);
+            if (data.impact) parts.push(`导致${data.impact}`);
+            if (data.wish) parts.push(`希望${data.wish}`);
+
+            const meta = [];
+            if (data.categories.length) meta.push(`类别：${data.categories.join("、")}`);
+            meta.push(`情绪：${data.emotion}`);
+            meta.push(`公开方式：${data.visibility}`);
+            if (meta.length) parts.push(`（${meta.join("，")}）`);
+
+            return `${parts.join("，").replace(/，（/g, "（")}。`;
+        }
+
+        function renderPreview(data) {
+            preview.innerHTML = "";
+            const title = document.createElement("h3");
+            title.textContent = "一句话吐槽";
+            const sentence = document.createElement("p");
+            sentence.textContent = buildSentence(data);
+            preview.appendChild(title);
+            preview.appendChild(sentence);
+        }
+
+        function renderMissing(requiredMissing, optionalMissing) {
+            if (requiredMissing.length === 0 && optionalMissing.length === 0) {
+                missingPanel.hidden = true;
+                missingPanel.innerHTML = "";
+                return;
+            }
+            missingPanel.hidden = false;
+            missingPanel.innerHTML = "";
+
+            const heading = document.createElement("strong");
+            heading.textContent = requiredMissing.length > 0 ? "缺少关键信息，请回答以下问题：" : "可选补充，让吐槽更完整：";
+            missingPanel.appendChild(heading);
+
+            const appendQuestion = (key, isOptional = false) => {
+                const wrap = document.createElement("div");
+                wrap.className = "question";
+                const label = document.createElement("label");
+                label.textContent = `${questionMap[key]}${isOptional ? "（可选）" : ""}`;
+                const input = document.createElement("input");
+                input.type = "text";
+                input.placeholder = "输入后会自动补全";
+                input.addEventListener("input", () => {
+                    const value = input.value.trim();
+                    if (!value) return;
+                    if (key === "subject") subject.value = value;
+                    if (key === "scene") scene.value = value;
+                    if (key === "problem") problem.value = value;
+                    if (key === "impact") impact.value = value;
+                    if (key === "wish") wish.value = value;
+                    updateProgress();
+                    const data = collectData();
+                    renderPreview(data);
+                });
+                wrap.appendChild(label);
+                wrap.appendChild(input);
+                missingPanel.appendChild(wrap);
+            };
+
+            requiredMissing.forEach((key) => appendQuestion(key, false));
+            optionalMissing.forEach((key) => appendQuestion(key, true));
+        }
+
+        function buildCard() {
+            const data = collectData();
+            const requiredMissing = [];
+            const optionalMissing = [];
+            if (!data.subject) requiredMissing.push("subject");
+            if (!data.problem) requiredMissing.push("problem");
+            if (!data.scene) optionalMissing.push("scene");
+            if (!data.impact) optionalMissing.push("impact");
+            if (!data.wish) optionalMissing.push("wish");
+
+            renderPreview(data);
+            renderMissing(requiredMissing, optionalMissing);
+            updateProgress();
+
+            if (requiredMissing.length > 0) {
+                setStatus("还缺少关键内容，请先补全再生成一句话吐槽。", "warn");
+                saveBtn.disabled = true;
+                copyBtn.disabled = true;
+                downloadBtn.disabled = true;
+                return;
+            }
+
+            setStatus("一句话吐槽已生成，可提交、复制或下载。", "info");
+            saveBtn.disabled = false;
+            copyBtn.disabled = false;
+            downloadBtn.disabled = false;
+        }
+
+        chips.forEach((chip) => {
+            chip.addEventListener("click", () => {
+                const name = chip.textContent.trim();
+                const selected = chip.getAttribute("aria-pressed") === "true";
+                chip.setAttribute("aria-pressed", String(!selected));
+                if (selected) state.categories.delete(name);
+                else state.categories.add(name);
+            });
+        });
+
+        toggleButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const type = btn.dataset.toggle;
+                const pressed = btn.getAttribute("aria-pressed") === "true";
+                btn.setAttribute("aria-pressed", String(!pressed));
+                if (type === "contrast") document.body.classList.toggle("contrast", !pressed);
+            });
+        });
+
+        fontSize.addEventListener("input", () => {
+            document.documentElement.style.fontSize = `${fontSize.value}%`;
+        });
+
+        bgTheme.addEventListener("change", () => {
+            applyTheme(bgTheme.value);
+            localStorage.setItem(themeKey, bgTheme.value);
+        });
+
+        [subject, scene, problem, impact, wish].forEach((input) => input.addEventListener("input", updateProgress));
+        emotion.addEventListener("input", updateEmotionLabel);
+
+        buildBtn.addEventListener("click", buildCard);
+        
+        saveBtn.addEventListener("click", () => {
+            buildCard();
+            const data = collectData();
+            if (!data.subject || !data.problem) return;
+            // 此处简单alert示意，原逻辑保存到LS
+            window.alert("已保存到吐槽列表（模拟），内容已清空。");
+            resetForm();
+        });
+
+        copyBtn.addEventListener("click", () => {
+            const data = collectData();
+            navigator.clipboard.writeText(buildSentence(data)).then(
+                () => setStatus("已复制到剪贴板。", "info"),
+                () => setStatus("复制失败，请手动复制。", "warn")
+            );
+        });
+
+        downloadBtn.addEventListener("click", () => {
+             const data = collectData();
+             const blob = new Blob([buildSentence(data)], { type: "text/plain;charset=utf-8" });
+             const url = URL.createObjectURL(blob);
+             const link = document.createElement("a");
+             link.href = url;
+             link.download = "吐槽卡片.txt";
+             document.body.appendChild(link);
+             link.click();
+             link.remove();
+        });
+
+        sampleBtn.addEventListener("click", () => {
+            subject.value = "医院窗口";
+            scene.value = "挂号大厅";
+            problem.value = "只用语音叫号，没有屏幕字幕或短信提示。";
+            impact.value = "错过叫号，需要重新排队。";
+            wish.value = "提供大屏字幕、震动呼叫器或短信提醒。";
+            emotion.value = "4";
+            visibility.value = "匿名";
+            updateEmotionLabel();
+            updateProgress();
+            buildCard();
+        });
+        
+        function resetForm() {
+            state.categories.clear();
+            chips.forEach((chip) => chip.setAttribute("aria-pressed", "false"));
+            missingPanel.hidden = true;
+            missingPanel.innerHTML = "";
+            preview.innerHTML = "<p>填写后会生成一句话吐槽，方便直接复制或提交。</p>";
+            saveBtn.disabled = true;
+            copyBtn.disabled = true;
+            downloadBtn.disabled = true;
+            updateProgress();
+            updateEmotionLabel();
+            setStatus("内容已清空，可以重新填写。", "info");
+        }
+        
+        form.addEventListener("reset", resetForm);
+
+        // 初始化
+        updateEmotionLabel();
+        updateProgress();
+        const savedTheme = localStorage.getItem(themeKey);
+        if (savedTheme && themeMap[savedTheme]) {
+            bgTheme.value = savedTheme;
+            applyTheme(savedTheme);
+        } else {
+            applyTheme(bgTheme.value);
+        }
+    }
+  </script>
+
+  <script>
+    // --- 3. 视障模式业务逻辑 (API / Voice / File) ---
+    // 移植自 "吐槽视障.html"
+    
+    function selectOption(btn) {
+        const targetId = btn.getAttribute("data-target"); // e.g. "v-scene"
+        const value = btn.getAttribute("data-value");
+        if (!targetId) return;
+        const hiddenInput = document.getElementById(targetId);
+        if (!hiddenInput) return;
+        hiddenInput.value = value || "";
+        
+        document.querySelectorAll(`.option-btn[data-target="${targetId}"]`)
+            .forEach((node) => {
+                const isSelected = node === btn;
+                node.setAttribute("aria-pressed", isSelected ? "true" : "false");
+            });
+    }
+
+    // 语音识别功能
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognitionInstance = null;
+    let activeVoiceTarget = null;
+    let isListening = false;
+
+    function ensureRecognition() {
+        if (!SpeechRecognition) {
+            alert("当前浏览器不支持语音输入。");
+            return null;
+        }
+        if (recognitionInstance) return recognitionInstance;
+        
+        const recognition = new SpeechRecognition();
+        recognition.lang = "zh-CN";
+        recognition.interimResults = false;
+        recognition.continuous = false;
+        
+        recognition.onstart = () => { isListening = true; };
+        recognition.onend = () => { isListening = false; };
+        recognition.onerror = () => { isListening = false; };
+        
+        recognition.onresult = (event) => {
+            const transcript = Array.from(event.results)
+                .map((result) => result[0].transcript)
+                .join("").trim();
+            if (!transcript) return;
+            
+            const field = document.getElementById(activeVoiceTarget);
+            if (!field) return;
+            
+            const current = (field.value || "").trim();
+            field.value = current ? `${current} ${transcript}` : transcript;
+            field.focus();
+        };
+        
+        recognitionInstance = recognition;
+        return recognitionInstance;
+    }
+
+    function startVoiceInput(targetId) {
+        if (isListening) return;
+        const recognition = ensureRecognition();
+        if (!recognition) return;
+        activeVoiceTarget = targetId;
+        recognition.start();
+    }
+
+    function initVisionMode() {
+        if(window.visionInitialized) return;
+        window.visionInitialized = true;
+
+        const STORAGE_KEY = "vision_complaints_v1";
+        const submitBtn = document.getElementById("v-submitBtn");
+        const statusEl = document.getElementById("v-status");
+
+        const formFields = {
+            scene: document.getElementById("v-scene"),
+            severity: document.getElementById("v-severity"),
+            summary: document.getElementById("v-summary"),
+            detail: document.getElementById("v-detail"),
+            attachment: document.getElementById("attachment"),
+            contact: document.getElementById("v-contact"),
+        };
+
+        function setStatus(message) { statusEl.textContent = message; }
+
+        function loadLocalData() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } 
+            catch (err) { return []; }
+        }
+
+        function saveLocalData(items) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        }
+        
+        function readFileAsDataUrl(file) {
+            return new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = () => reject(reader.error);
+              reader.readAsDataURL(file);
+            });
+        }
+
+        async function submitComplaint() {
+            setStatus("正在本地保存…");
+            try {
+                const attachment = formFields.attachment.files[0];
+                let attachmentName = null;
+                let attachmentData = null;
+                let sizeNotice = "";
+                
+                if (attachment) {
+                    attachmentName = attachment.name;
+                    if (attachment.size <= 1024 * 1024) { // 1MB 限制
+                        attachmentData = await readFileAsDataUrl(attachment);
+                    } else {
+                        sizeNotice = "（文件过大仅记录名称）";
+                    }
+                }
+                
+                const payload = {
+                    scene: formFields.scene.value,
+                    severity: formFields.severity.value,
+                    summary: formFields.summary.value,
+                    detail: formFields.detail.value,
+                    contact: formFields.contact.value,
+                    attachment_name: attachmentName,
+                    attachment_data: attachmentData,
+                    created_at: new Date().toISOString(),
+                };
+                
+                const items = loadLocalData();
+                items.unshift(payload);
+                saveLocalData(items);
+                setStatus(`提交成功${sizeNotice}，已保存。`);
+                
+                // 清空表单
+                formFields.summary.value = "";
+                formFields.detail.value = "";
+                formFields.attachment.value = "";
+            } catch (err) {
+                setStatus("保存失败，请重试。");
+            }
+        }
+
+        submitBtn.addEventListener("click", submitComplaint);
+
+        // 绑定语音按钮
+        document.querySelectorAll(".mic-btn").forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                const target = btn.getAttribute("data-voice-target");
+                startVoiceInput(target);
+            });
+        });
+
+        // 选项按钮逻辑 (保留这个 listener 供 Tab 键回车等标准交互使用)
+        // 双击逻辑已经由全局 handler 拦截并调用 selectOption 了，这里主要服务于键盘操作
+        document.querySelectorAll(".option-btn").forEach((btn) => {
+            btn.addEventListener("click", () => selectOption(btn));
+        });
+    }
+  </script>
+</body>
+</html>
