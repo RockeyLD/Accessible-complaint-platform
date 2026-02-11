@@ -383,14 +383,6 @@
             </div>
           </div>
 
-          <div class="field">
-            <label for="visibility">公开方式</label>
-            <select id="visibility">
-              <option value="匿名">匿名</option>
-              <option value="署名">署名</option>
-            </select>
-          </div>
-
           <div class="progress-wrap">
             <div class="progress-label">
               <span>填写进度</span>
@@ -574,7 +566,6 @@
         const wish = document.getElementById("wish");
         const emotion = document.getElementById("emotion");
         const emotionLabel = document.getElementById("emotionLabel");
-        const visibility = document.getElementById("visibility");
         const progressText = document.getElementById("progressText");
         const progressFill = document.getElementById("progressFill");
         const preview = document.getElementById("preview");
@@ -646,7 +637,6 @@
                 wish: wish.value.trim(),
                 emotion: emotionMap[emotion.value],
                 emotionValue: emotion.value,
-                visibility: visibility.value,
                 categories: Array.from(state.categories),
             };
         }
@@ -670,7 +660,6 @@
             const meta = [];
             if (data.categories.length) meta.push(`类别：${data.categories.join("、")}`);
             meta.push(`情绪：${data.emotion}`);
-            meta.push(`公开方式：${data.visibility}`);
             if (meta.length) parts.push(`（${meta.join("，")}）`);
 
             return `${parts.join("，").replace(/，（/g, "（")}。`;
