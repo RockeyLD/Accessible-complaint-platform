@@ -1,0 +1,71 @@
+<view class="page vision-page">
+  <view class="header">
+    <text class="brand">Vision-First</text>
+    <text class="title">直接吐槽</text>
+    <text class="subtitle">把问题说清楚就行，表单尽量短。</text>
+  </view>
+
+  <view class="panel">
+    <text class="panel-title">补全提示</text>
+    <textarea class="prompt-box" value="{{promptText}}" disabled></textarea>
+    <view class="quick-answer">
+      <input
+        placeholder="快速补全：输入一句话后提交"
+        value="{{quickAnswer}}"
+        bindinput="onQuickAnswerInput"
+      />
+      <button class="primary" bindtap="onCommitAnswer">提交补全</button>
+    </view>
+  </view>
+
+  <view class="panel">
+    <text class="panel-title">详细信息</text>
+    <view class="field">
+      <text class="label">一句话描述（必填）</text>
+      <input
+        value="{{form.summary}}"
+        placeholder="例：读屏只读出按钮编号，无法购票"
+        data-field="summary"
+        bindinput="onFieldInput"
+      />
+    </view>
+    <view class="field">
+      <text class="label">详细描述（必填）</text>
+      <textarea
+        value="{{form.detail}}"
+        placeholder="发生了什么？哪里卡住了？"
+        data-field="detail"
+        bindinput="onFieldInput"
+      />
+    </view>
+    <view class="field">
+      <text class="label">发生场景（可选）</text>
+      <input
+        value="{{form.scene}}"
+        placeholder="如：App / 线下窗口"
+        data-field="scene"
+        bindinput="onFieldInput"
+      />
+    </view>
+    <view class="field">
+      <text class="label">影响程度（可选）</text>
+      <picker mode="selector" range="{{severityOptions}}" bindchange="onSeverityChange">
+        <view class="picker">{{form.severity || "请选择影响程度"}}</view>
+      </picker>
+    </view>
+    <view class="field">
+      <text class="label">联系方式（可选）</text>
+      <input
+        value="{{form.contact}}"
+        placeholder="邮箱 / 微信 / 电话"
+        data-field="contact"
+        bindinput="onFieldInput"
+      />
+    </view>
+    <view class="actions">
+      <button class="primary" bindtap="onSubmit">提交吐槽</button>
+      <button class="ghost" bindtap="goList">吐槽广场</button>
+    </view>
+    <text class="status">{{statusText}}</text>
+  </view>
+</view>

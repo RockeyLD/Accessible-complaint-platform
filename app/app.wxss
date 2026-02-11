@@ -1,0 +1,18 @@
+page {
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #102a43;
+  background-color: #f0f4f8;
+}
+
+button {
+  border-radius: 16rpx;
+}
+
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.text-muted {
+  color: #5b6b7a;
+}

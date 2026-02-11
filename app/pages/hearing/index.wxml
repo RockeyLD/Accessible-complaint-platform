@@ -1,0 +1,179 @@
+<view class="page hearing-page theme-{{theme}} {{contrast ? 'contrast' : ''}}" style="font-size: {{fontSize}}%;">
+  <view class="header">
+    <text class="title">听障友好 · 吐槽平台</text>
+    <text class="subtitle">用清晰的文字说清楚你的吐槽。平台不依赖声音提示，全部反馈都有明确的视觉提醒与可读文本。</text>
+  </view>
+
+  <view class="panel">
+    <text class="panel-title">写下你的吐槽</text>
+    <view class="toolbar">
+      <view class="tool">
+        <text class="tool-label">背景主题</text>
+        <picker mode="selector" range="{{themeOptions}}" range-key="label" bindchange="onThemeChange">
+          <view class="picker">{{currentThemeLabel}}</view>
+        </picker>
+      </view>
+      <view class="tool">
+        <text class="tool-label">文字大小</text>
+        <slider min="90" max="120" value="{{fontSize}}" bindchange="onFontSizeChange" />
+      </view>
+      <view class="tool">
+        <text class="tool-label">高对比</text>
+        <button class="toggle-btn {{contrast ? 'active' : ''}}" bindtap="onToggleContrast">
+          {{contrast ? "关闭高对比" : "开启高对比"}}
+        </button>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="label">类别（可多选）</text>
+      <view class="chips">
+        <button
+          class="chip {{item.selected ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="name"
+          data-index="{{index}}"
+          bindtap="onToggleCategory"
+        >
+          {{item.name}}
+        </button>
+      </view>
+    </view>
+
+    <view class="grid-2">
+      <view class="field">
+        <text class="label">吐槽对象（必填）</text>
+        <input
+          value="{{form.subject}}"
+          placeholder="如：地铁站服务台 / 某应用客服"
+          data-field="subject"
+          bindinput="onInputField"
+        />
+      </view>
+      <view class="field">
+        <text class="label">发生场景（推荐）</text>
+        <input
+          value="{{form.scene}}"
+          placeholder="如：早高峰 / 线上咨询 / 医院窗口"
+          data-field="scene"
+          bindinput="onInputField"
+        />
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="label">具体问题（必填）</text>
+      <textarea
+        value="{{form.problem}}"
+        placeholder="问题发生了什么？有哪些信息没有被文字化？"
+        data-field="problem"
+        bindinput="onInputField"
+      />
+    </view>
+
+    <view class="field">
+      <text class="label">影响了什么（推荐）</text>
+      <textarea
+        value="{{form.impact}}"
+        placeholder="例：错过排队号，无法及时办理业务。"
+        data-field="impact"
+        bindinput="onInputField"
+      />
+    </view>
+
+    <view class="field">
+      <text class="label">期望的改进（推荐）</text>
+      <textarea
+        value="{{form.wish}}"
+        placeholder="例：提供屏幕实时字幕、写字板或短信提醒。"
+        data-field="wish"
+        bindinput="onInputField"
+      />
+    </view>
+
+    <view class="field">
+      <text class="label">情绪强度</text>
+      <view class="range-wrap">
+        <slider min="1" max="5" value="{{form.emotion}}" bindchange="onEmotionChange" />
+        <text class="badge">{{emotionLabel}}</text>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="label">公开方式</text>
+      <picker mode="selector" range="{{visibilityOptions}}" bindchange="onVisibilityChange">
+        <view class="picker">{{form.visibility}}</view>
+      </picker>
+    </view>
+
+    <view class="progress-wrap">
+      <view class="progress-label">
+        <text>填写进度</text>
+        <text>{{progressText}}</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{progressPercent}}%;"></view>
+      </view>
+    </view>
+
+    <view class="actions">
+      <button class="primary" bindtap="buildCard">生成吐槽卡片</button>
+      <button class="secondary" bindtap="resetForm">清空内容</button>
+    </view>
+  </view>
+
+  <view class="panel">
+    <text class="panel-title">吐槽卡片预览</text>
+    <view class="status {{statusType}}">{{statusText}}</view>
+    <view class="preview-card">
+      <text>{{previewSentence}}</text>
+    </view>
+
+    <view class="missing-panel" wx:if="{{missingVisible}}">
+      <text class="missing-title">{{missingTitle}}</text>
+      <view wx:for="{{missingQuestions}}" wx:key="key" class="question">
+        <text class="question-label">
+          {{item.label}}{{item.optional ? "（可选）" : ""}}
+        </text>
+        <input
+          placeholder="输入后会自动补全"
+          data-field="{{item.key}}"
+          bindinput="onMissingInput"
+        />
+      </view>
+
+      <view wx:if="{{detailPromptsImpact.length}}">
+        <text class="question-group">为补全「{{detailLabelMap.impact}}」请回答：</text>
+        <view wx:for="{{detailPromptsImpact}}" wx:key="prompt" class="question">
+          <text class="question-label">{{item.prompt}}</text>
+          <input
+            value="{{item.value}}"
+            placeholder="回答后会自动补全到「影响了什么」"
+            data-key="impact"
+            data-index="{{index}}"
+            bindinput="onDetailInput"
+          />
+        </view>
+      </view>
+
+      <view wx:if="{{detailPromptsWish.length}}">
+        <text class="question-group">为补全「{{detailLabelMap.wish}}」请回答：</text>
+        <view wx:for="{{detailPromptsWish}}" wx:key="prompt" class="question">
+          <text class="question-label">{{item.prompt}}</text>
+          <input
+            value="{{item.value}}"
+            placeholder="回答后会自动补全到「期望的改进」"
+            data-key="wish"
+            data-index="{{index}}"
+            bindinput="onDetailInput"
+          />
+        </view>
+      </view>
+    </view>
+
+    <view class="actions">
+      <button class="secondary" bindtap="onSave" disabled="{{!canSubmit}}">保存到列表</button>
+      <button class="ghost" bindtap="goList">吐槽广场</button>
+    </view>
+  </view>
+</view>

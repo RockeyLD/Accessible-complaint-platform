@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/hearing/index",
+    "pages/vision/index",
+    "pages/list/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "无障碍吐槽平台",
+    "navigationBarBackgroundColor": "#f0f4f8",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f0f4f8",
+    "backgroundTextStyle": "light"
+  },
+  "style": "v2"
+}

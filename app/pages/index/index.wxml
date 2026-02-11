@@ -1,0 +1,16 @@
+<view class="page landing">
+  <view class="landing-title">欢迎使用无障碍吐槽平台</view>
+  <text class="landing-note">提示：支持点击与键盘操作。</text>
+  <view class="card-container">
+    <button class="role-card" bindtap="goHearing">
+      <text class="role-icon">🧏</text>
+      <text class="role-name">我是听障用户</text>
+      <text class="role-desc">提供清晰的文字提示、高对比度界面，不依赖声音反馈。</text>
+    </button>
+    <button class="role-card" bindtap="goVision">
+      <text class="role-icon">👨‍🦯</text>
+      <text class="role-name">我是视障用户</text>
+      <text class="role-desc">提供大号字体、清晰层级与键盘操作支持。</text>
+    </button>
+  </view>
+</view>
