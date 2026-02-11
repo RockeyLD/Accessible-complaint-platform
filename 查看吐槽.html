@@ -375,6 +375,63 @@
         background: rgba(214, 69, 80, 0.1);
       }
 
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      .report-panel {
+        margin: 16px 0 20px;
+        padding: 16px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .report-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .report-header h4 {
+        margin: 0;
+        font-family: var(--font-title);
+        font-size: 1.05rem;
+        letter-spacing: 0.02em;
+      }
+
+      .report-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .report-hint {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .report-content {
+        margin: 0;
+        padding: 12px 14px;
+        border-radius: var(--radius-sm);
+        border: 1px dashed var(--border);
+        background: rgba(255, 255, 255, 0.95);
+        white-space: pre-wrap;
+        min-height: 90px;
+      }
+
+      .report-content.empty {
+        color: var(--muted);
+      }
+
       .complaint-list {
         list-style: none;
         padding: 0;
@@ -575,6 +632,19 @@
             </div>
           </div>
 
+          <div class="report-panel" aria-labelledby="reportTitle">
+            <div class="report-header">
+              <h4 id="reportTitle">生成报告</h4>
+              <div class="report-actions">
+                <button class="ghost" type="button" id="reportBtn">生成报告</button>
+                <button class="ghost" type="button" id="copyReportBtn" disabled>复制报告</button>
+                <button class="ghost" type="button" id="clearReportBtn" disabled>清空报告</button>
+              </div>
+            </div>
+            <p class="report-hint" id="reportHint">点击“生成报告”，输入要查看的方面（如：场景、问题类型、影响、需求）。</p>
+            <p class="report-content empty" id="reportContent" role="region" aria-live="polite" aria-label="报告内容">暂无报告。</p>
+          </div>
+
           <div class="empty-list" id="listEmpty" style="display:none">
             还没有保存的吐槽记录。
           </div>
@@ -595,6 +665,11 @@
       const bgTheme = document.getElementById("bgTheme");
       const contrastToggle = document.getElementById("contrastToggle");
       const ttsToggle = document.getElementById("ttsToggle");
+      const reportBtn = document.getElementById("reportBtn");
+      const reportContent = document.getElementById("reportContent");
+      const reportHint = document.getElementById("reportHint");
+      const copyReportBtn = document.getElementById("copyReportBtn");
+      const clearReportBtn = document.getElementById("clearReportBtn");
 
       // 定义存储Key（同时支持两个版本的Key）
       const KEY_V1 = "hearing-complaints"; // 来源：查看吐槽.html
@@ -602,6 +677,7 @@
       const THEME_KEY = "merged-theme-pref";
 
       let allData = []; // 存放合并后的数据
+      let lastReportText = "";
 
       // === 2. 主题与显示逻辑 ===
       const themeMap = {
@@ -623,6 +699,90 @@
       function setStatus(msg, type = "info") {
         statusBox.textContent = msg;
         statusBox.className = `status ${type === "warn" ? "warn" : ""}`;
+      }
+
+      function getSearchableText(item) {
+        return `${item.title} ${item.detail} ${item.meta}`.toLowerCase();
+      }
+
+      function filterByKeyword(list, keyword) {
+        const key = (keyword || "").trim().toLowerCase();
+        if (!key) return list;
+        return list.filter(item => getSearchableText(item).includes(key));
+      }
+
+      function truncateText(text, maxLen = 60) {
+        const cleaned = (text || "").replace(/\s+/g, " ").trim();
+        if (!cleaned) return "";
+        return cleaned.length > maxLen ? `${cleaned.slice(0, maxLen)}...` : cleaned;
+      }
+
+      function collectTags(list) {
+        const map = new Map();
+        list.forEach(item => {
+          const raw = item.meta || "";
+          raw.split(/\s*路\s*|\s*[\/|、·]\s*/).forEach(tag => {
+            const t = tag.trim();
+            if (!t) return;
+            map.set(t, (map.get(t) || 0) + 1);
+          });
+        });
+        return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+      }
+
+      function setReportContent(text, aspect = "") {
+        lastReportText = text || "";
+        if (lastReportText) {
+          reportContent.textContent = lastReportText;
+          reportContent.classList.remove("empty");
+        } else {
+          reportContent.textContent = "暂无报告。";
+          reportContent.classList.add("empty");
+        }
+        reportHint.textContent = aspect
+          ? `已生成关于「${aspect}」的报告。`
+          : "点击“生成报告”，输入要查看的方面（如：场景、问题类型、影响、需求）。";
+        copyReportBtn.disabled = !lastReportText;
+        clearReportBtn.disabled = !lastReportText;
+      }
+
+      function buildReport(aspect, scopeList) {
+        const scopeKeyword = (searchInput.value || "").trim();
+        const scopeLabel = scopeKeyword ? `当前筛选「${scopeKeyword}」范围` : "全部吐槽";
+        const aspectList = filterByKeyword(scopeList, aspect);
+        const total = scopeList.length;
+        const matched = aspectList.length;
+        const ratio = total ? Math.round((matched / total) * 100) : 0;
+        const lines = [];
+
+        lines.push(`报告主题：${aspect}`);
+        lines.push(`生成时间：${new Date().toLocaleString()}`);
+        lines.push(`范围：${scopeLabel}`);
+        lines.push(`总体概览：共 ${total} 条吐槽，其中与「${aspect}」相关 ${matched} 条（${ratio}%）。`);
+
+        if (matched === 0) {
+          lines.push("提示：未找到匹配该方面的记录，请尝试更具体的关键词。");
+          return lines.join("\n");
+        }
+
+        const topTags = collectTags(aspectList)
+          .slice(0, 5)
+          .map(([tag, count]) => `${tag}（${count}）`);
+        if (topTags.length) {
+          lines.push(`高频标签：${topTags.join("、")}`);
+        }
+
+        const highlights = aspectList.slice(0, 3).map((item, index) => {
+          const detail = truncateText(item.detail, 70);
+          const meta = item.meta ? ` | ${item.meta}` : "";
+          return `${index + 1}. ${item.title}${meta}${detail ? `：${detail}` : ""}`;
+        });
+        if (highlights.length) {
+          lines.push("代表吐槽：");
+          lines.push(...highlights);
+        }
+
+        return lines.join("\n\n");
       }
 
       // === 3. 数据处理逻辑 (核心合并部分) ===
@@ -750,13 +910,8 @@
       }
 
       function renderList(filterKeyword = "") {
-        const keyword = filterKeyword.trim().toLowerCase();
-        
-        // 过滤
-        const displayItems = allData.filter(item => {
-          if (!keyword) return true;
-          return (item.title + item.detail + item.meta).toLowerCase().includes(keyword);
-        });
+        const keyword = (filterKeyword || "").trim().toLowerCase();
+        const displayItems = filterByKeyword(allData, keyword);
 
         complaintList.innerHTML = "";
         
@@ -823,6 +978,12 @@
       function renderAndReload(msg, type="info") {
         allData = loadAllData();
         renderList(searchInput.value);
+        if (reportBtn) {
+          reportBtn.disabled = allData.length === 0;
+        }
+        if (allData.length === 0) {
+          setReportContent("", "");
+        }
         if (msg) setStatus(msg, type);
       }
 
@@ -830,6 +991,36 @@
       searchInput.addEventListener("input", () => renderList(searchInput.value));
       refreshBtn.addEventListener("click", () => renderAndReload("列表已刷新。"));
       clearListBtn.addEventListener("click", clearAll);
+
+      reportBtn.addEventListener("click", () => {
+        const scopeList = filterByKeyword(allData, searchInput.value);
+        if (!scopeList.length) {
+          setStatus("当前没有可用的吐槽记录，无法生成报告。", "warn");
+          return;
+        }
+        const aspect = prompt("请输入您要看的方面（如：场景、问题类型、影响、需求）");
+        if (aspect === null) return;
+        const trimmed = aspect.trim();
+        if (!trimmed) {
+          setStatus("未输入方面，已取消生成。", "warn");
+          return;
+        }
+        const reportText = buildReport(trimmed, scopeList);
+        setReportContent(reportText, trimmed);
+        setStatus(`已基于“${trimmed}”生成报告。`);
+      });
+
+      copyReportBtn.addEventListener("click", () => {
+        if (!lastReportText) return;
+        navigator.clipboard.writeText(lastReportText).then(
+          () => setStatus("报告已复制到剪贴板。"),
+          () => setStatus("报告复制失败。", "warn")
+        );
+      });
+
+      clearReportBtn.addEventListener("click", () => {
+        setReportContent("", "");
+      });
       
       bgTheme.addEventListener("change", () => {
         applyTheme(bgTheme.value);
