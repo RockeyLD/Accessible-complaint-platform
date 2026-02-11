@@ -654,6 +654,13 @@
             impact: "造成了什么影响或不便？",
             wish: "你希望对方如何改进？",
         };
+        const detailLabelMap = {
+            impact: "影响了什么",
+            wish: "期望的改进",
+        };
+        const detailAnswers = { impact: [], wish: [] };
+        const autoFillCache = { impact: "", wish: "" };
+        let lastProblemSeed = "";
 
         const emotionMap = { 1: "很平静", 2: "轻微不满", 3: "中等", 4: "明显不满", 5: "非常生气" };
 
@@ -735,6 +742,52 @@
             preview.appendChild(sentence);
         }
 
+        function getDetailPrompts(problemText) {
+            const text = (problemText || "").trim();
+            const impactPrompts = [
+                "这个问题让你错过或延误了什么？",
+                "它导致你无法完成哪些具体操作？",
+            ];
+            const wishPrompts = [
+                "你希望增加哪些文字或视觉提示？",
+                "希望提供哪些替代沟通方式？",
+            ];
+            if (/语音|叫号|播报|广播|喊/.test(text)) {
+                wishPrompts.unshift("希望语音信息如何同步（字幕/短信/震动等）？");
+            }
+            if (/排队|窗口|柜台|现场|大厅|服务台/.test(text)) {
+                impactPrompts.unshift("是否影响排队/办理时机？");
+            }
+            if (/没有提示|未提示|缺少提示|提示不足|看不见/.test(text)) {
+                wishPrompts.unshift("希望哪些关键信息被文字化/可视化？");
+            }
+            return {
+                impact: impactPrompts.slice(0, 3),
+                wish: wishPrompts.slice(0, 3),
+            };
+        }
+
+        function buildAutoText(key) {
+            return detailAnswers[key].map((value) => value.trim()).filter(Boolean).join("；");
+        }
+
+        function applyAutoFill(key) {
+            const field = key === "impact" ? impact : wish;
+            const nextValue = buildAutoText(key);
+            const current = field.value.trim();
+            const last = autoFillCache[key];
+            if (!nextValue) {
+                if (!current || current === last) {
+                    field.value = "";
+                    autoFillCache[key] = "";
+                }
+                return;
+            }
+            if (current && current !== last) return;
+            field.value = nextValue;
+            autoFillCache[key] = nextValue;
+        }
+
         function renderMissing(requiredMissing, optionalMissing) {
             if (requiredMissing.length === 0 && optionalMissing.length === 0) {
                 missingPanel.hidden = true;
@@ -747,6 +800,16 @@
             const heading = document.createElement("strong");
             heading.textContent = requiredMissing.length > 0 ? "缺少关键信息，请回答以下问题：" : "可选补充，让吐槽更完整：";
             missingPanel.appendChild(heading);
+
+            const problemText = problem.value.trim();
+            const needDetail = problemText && (optionalMissing.includes("impact") || optionalMissing.includes("wish"));
+            if (problemText && problemText !== lastProblemSeed) {
+                lastProblemSeed = problemText;
+                detailAnswers.impact = [];
+                detailAnswers.wish = [];
+                autoFillCache.impact = "";
+                autoFillCache.wish = "";
+            }
 
             const appendQuestion = (key, isOptional = false) => {
                 const wrap = document.createElement("div");
@@ -773,8 +836,51 @@
                 missingPanel.appendChild(wrap);
             };
 
+            const appendDetailQuestions = (key, prompts) => {
+                const title = document.createElement("div");
+                title.className = "question";
+                const strong = document.createElement("strong");
+                strong.textContent = `为补全「${detailLabelMap[key]}」请回答：`;
+                title.appendChild(strong);
+                missingPanel.appendChild(title);
+
+                const nextPrompts = prompts || [];
+                detailAnswers[key] = detailAnswers[key].slice(0, nextPrompts.length);
+
+                nextPrompts.forEach((prompt, index) => {
+                    const wrap = document.createElement("div");
+                    wrap.className = "question";
+                    const label = document.createElement("label");
+                    label.textContent = prompt;
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.placeholder = `回答后会自动补全到「${detailLabelMap[key]}」`;
+                    input.value = detailAnswers[key][index] || "";
+                    input.addEventListener("input", () => {
+                        detailAnswers[key][index] = input.value || "";
+                        applyAutoFill(key);
+                        const data = collectData();
+                        renderPreview(data);
+                    });
+                    wrap.appendChild(label);
+                    wrap.appendChild(input);
+                    missingPanel.appendChild(wrap);
+                });
+
+                applyAutoFill(key);
+            };
+
             requiredMissing.forEach((key) => appendQuestion(key, false));
-            optionalMissing.forEach((key) => appendQuestion(key, true));
+            if (needDetail) {
+                const prompts = getDetailPrompts(problemText);
+                if (optionalMissing.includes("impact")) appendDetailQuestions("impact", prompts.impact);
+                if (optionalMissing.includes("wish")) appendDetailQuestions("wish", prompts.wish);
+                optionalMissing
+                    .filter((key) => key !== "impact" && key !== "wish")
+                    .forEach((key) => appendQuestion(key, true));
+            } else {
+                optionalMissing.forEach((key) => appendQuestion(key, true));
+            }
         }
 
         function buildCard() {
@@ -898,6 +1004,11 @@
             chips.forEach((chip) => chip.setAttribute("aria-pressed", "false"));
             missingPanel.hidden = true;
             missingPanel.innerHTML = "";
+            detailAnswers.impact = [];
+            detailAnswers.wish = [];
+            autoFillCache.impact = "";
+            autoFillCache.wish = "";
+            lastProblemSeed = "";
             preview.innerHTML = "<p>填写后会生成一句话吐槽，方便直接复制或提交。</p>";
             saveBtn.disabled = true;
             copyBtn.disabled = true;
