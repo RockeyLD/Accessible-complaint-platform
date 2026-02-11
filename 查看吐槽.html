@@ -666,8 +666,17 @@
         return `${API_BASE.replace(/\/+$/, "")}${path}`;
       }
 
+      function apiHeaders() {
+        const headers = {};
+        const apiKey = localStorage.getItem("apiKey");
+        if (apiKey) headers["X-API-Key"] = apiKey;
+        return headers;
+      }
+
       async function fetchComplaints() {
-        const res = await fetch(apiUrl("/api/complaints"));
+        const res = await fetch(apiUrl("/api/complaints"), {
+          headers: apiHeaders(),
+        });
         if (!res.ok) throw new Error("fetch failed");
         return res.json();
       }
@@ -675,6 +684,7 @@
       async function deleteComplaint(id) {
         const res = await fetch(apiUrl(`/api/complaints/${encodeURIComponent(id)}`), {
           method: "DELETE",
+          headers: apiHeaders(),
         });
         if (!res.ok) {
           let message = "删除失败";
@@ -688,7 +698,10 @@
       }
 
       async function clearComplaints() {
-        const res = await fetch(apiUrl("/api/complaints"), { method: "DELETE" });
+        const res = await fetch(apiUrl("/api/complaints"), {
+          method: "DELETE",
+          headers: apiHeaders(),
+        });
         if (!res.ok) {
           let message = "清空失败";
           try {

@@ -52,3 +52,13 @@ https://rockeyld.github.io/Accessible-complaint-platform/
 ### 6.4 前端指向后端
 浏览器控制台执行：
 `localStorage.setItem("apiBase", "https://你的Worker域名.workers.dev")`
+
+### 6.5 简单密钥保护（推荐）
+1) 设置后端密钥：
+`npx wrangler secret put API_KEY`
+2) 前端配置密钥（浏览器控制台）：
+`localStorage.setItem("apiKey", "你的密钥")`
+3) 重新部署（如需）：
+`npx wrangler deploy`
+
+说明：当前保护写入/删除接口；读取接口仍开放。若需要读取也加密钥，可告诉我再加。 
