@@ -568,10 +568,11 @@
   </script>
 
   <script>
-    const DEFAULT_API_BASE =
-      window.location.origin && window.location.origin !== "null"
-        ? ""
-        : "http://localhost:8000";
+    const DEFAULT_API_BASE = ["localhost", "127.0.0.1"].includes(
+      window.location.hostname
+    )
+      ? ""
+      : "https://complaints-api.rl-longdragon.workers.dev";
     const API_BASE = localStorage.getItem("apiBase") || DEFAULT_API_BASE;
 
     function apiUrl(path) {
