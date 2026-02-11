@@ -615,6 +615,10 @@
               开启点击朗读
             </button>
           </div>
+          <div class="tool">
+            <label>删除密钥</label>
+            <button class="toggle-btn" type="button" id="setKeyBtn" aria-pressed="false">进入管理员模式</button>
+          </div>
         </div>
 
         <div class="status" id="status" role="status" aria-live="polite">
@@ -673,6 +677,69 @@
         return headers;
       }
 
+      async function verifyAdminKey(key) {
+        const res = await fetch(apiUrl("/api/admin/verify"), {
+          headers: { "X-API-Key": key },
+        });
+        return res.ok;
+      }
+
+      function applyAdminState(enabled) {
+        isAdmin = enabled;
+        if (setKeyBtn) {
+          setKeyBtn.setAttribute("aria-pressed", String(enabled));
+          setKeyBtn.textContent = enabled ? "管理员模式已开启" : "进入管理员模式";
+        }
+        clearListBtn.disabled = !enabled;
+      }
+
+      async function enterAdminMode() {
+        if (isAdmin) {
+          if (!confirm("确定退出管理员模式吗？")) return;
+          localStorage.removeItem("apiKey");
+          applyAdminState(false);
+          setStatus("管理员模式已关闭。");
+          renderList(searchInput.value);
+          return;
+        }
+
+        const current = localStorage.getItem("apiKey") || "";
+        const key = window.prompt("请输入管理员密钥（仅保存在本机浏览器）", current);
+        if (key === null) return;
+        const trimmed = key.trim();
+        if (!trimmed) {
+          window.alert("密钥不能为空。");
+          return;
+        }
+
+        setStatus("正在验证密钥…");
+        const ok = await verifyAdminKey(trimmed);
+        if (!ok) {
+          setStatus("密钥错误，无法进入管理员模式。", "warn");
+          return;
+        }
+
+        localStorage.setItem("apiKey", trimmed);
+        applyAdminState(true);
+        setStatus("管理员模式已开启。");
+        renderList(searchInput.value);
+      }
+
+      async function verifyStoredKey() {
+        const key = localStorage.getItem("apiKey");
+        if (!key) {
+          applyAdminState(false);
+          return;
+        }
+        const ok = await verifyAdminKey(key);
+        if (!ok) {
+          localStorage.removeItem("apiKey");
+          applyAdminState(false);
+          return;
+        }
+        applyAdminState(true);
+      }
+
       async function fetchComplaints() {
         const res = await fetch(apiUrl("/api/complaints"), {
           headers: apiHeaders(),
@@ -726,6 +793,7 @@
       const bgTheme = document.getElementById("bgTheme");
       const contrastToggle = document.getElementById("contrastToggle");
       const ttsToggle = document.getElementById("ttsToggle");
+      const setKeyBtn = document.getElementById("setKeyBtn");
       const reportBtn = document.getElementById("reportBtn");
       const reportContent = document.getElementById("reportContent");
       const reportHint = document.getElementById("reportHint");
@@ -736,6 +804,8 @@
 
       let allData = []; // 存放合并后的数据
       let lastReportText = "";
+      let isAdmin = false;
+      applyAdminState(false);
 
       // === 2. 主题与显示逻辑 ===
       const themeMap = {
@@ -882,6 +952,10 @@
       }
 
       async function deleteItem(id) {
+        if (!isAdmin) {
+          setStatus("需要管理员密钥才能删除。", "warn");
+          return;
+        }
         if (!confirm("确定要删除这条吐槽吗？")) return;
         if (!id) {
           setStatus("缺少记录ID，无法删除。", "warn");
@@ -890,6 +964,12 @@
         setStatus("正在删除…");
         const result = await deleteComplaint(id);
         if (!result.ok) {
+          if (result.error === "Unauthorized") {
+            localStorage.removeItem("apiKey");
+            applyAdminState(false);
+            setStatus("管理员密钥无效，请重新进入管理员模式。", "warn");
+            return;
+          }
           setStatus(`删除失败：${result.error || "未知错误"}`, "warn");
           return;
         }
@@ -897,10 +977,20 @@
       }
 
       async function clearAll() {
+        if (!isAdmin) {
+          setStatus("需要管理员密钥才能清空。", "warn");
+          return;
+        }
         if (!confirm("高能预警：这将清空后端的所有吐槽记录！确定吗？")) return;
         setStatus("正在清空…");
         const result = await clearComplaints();
         if (!result.ok) {
+          if (result.error === "Unauthorized") {
+            localStorage.removeItem("apiKey");
+            applyAdminState(false);
+            setStatus("管理员密钥无效，请重新进入管理员模式。", "warn");
+            return;
+          }
           setStatus(`清空失败：${result.error || "未知错误"}`, "warn");
           return;
         }
@@ -998,6 +1088,8 @@
             const delBtn = document.createElement("button");
             delBtn.className = "ghost danger";
             delBtn.textContent = "删除";
+            delBtn.disabled = !isAdmin;
+            if (!isAdmin) delBtn.title = "需要管理员密钥";
             delBtn.onclick = () => deleteItem(item.id);
 
             actions.appendChild(copyBtn);
@@ -1025,6 +1117,7 @@
       searchInput.addEventListener("input", () => renderList(searchInput.value));
       refreshBtn.addEventListener("click", () => renderAndReload("列表已刷新。"));
       clearListBtn.addEventListener("click", clearAll);
+      if (setKeyBtn) setKeyBtn.addEventListener("click", enterAdminMode);
 
       reportBtn.addEventListener("click", () => {
         const scopeList = filterByKeyword(allData, searchInput.value);
@@ -1138,6 +1231,9 @@
           applyTheme(savedTheme);
         }
         
+        // 验证管理员密钥（如有）
+        verifyStoredKey();
+
         // 加载数据
         renderAndReload("数据已加载。");
       });
