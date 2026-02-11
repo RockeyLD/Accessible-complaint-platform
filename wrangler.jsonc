@@ -1,0 +1,12 @@
+{
+  "name": "complaints-api",
+  "main": "src/index.js",
+  "compatibility_date": "2025-02-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "complaints-db",
+      "database_id": "aa191b08-50d8-4765-80c3-290216c9193c"
+    }
+  ]
+}
