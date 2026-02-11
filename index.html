@@ -414,14 +414,11 @@
           填写内容后会在这里生成清晰可读的吐槽卡片。
         </div>
         <div class="preview-card" id="preview">
-          <p>填写后会生成一句话吐槽，方便直接复制或提交。</p>
+          <p>填写后会生成一句话吐槽，方便直接提交。</p>
         </div>
         <div class="missing-panel" id="missingPanel" hidden aria-live="polite"></div>
         <div class="actions">
           <button class="secondary" type="button" id="saveBtn" disabled>保存到列表</button>
-          <button class="secondary" type="button" id="copyBtn" disabled>复制吐槽文本</button>
-          <button class="secondary" type="button" id="downloadBtn" disabled>下载为 TXT</button>
-          <button class="ghost" type="button" id="sampleBtn">填入示例</button>
         </div>
         <ul class="access-list">
           <li>所有反馈均为文字提示，无语音依赖。</li>
@@ -634,10 +631,7 @@
         const statusBox = document.getElementById("statusBox");
         const missingPanel = document.getElementById("missingPanel");
         const saveBtn = document.getElementById("saveBtn");
-        const copyBtn = document.getElementById("copyBtn");
-        const downloadBtn = document.getElementById("downloadBtn");
         const buildBtn = document.getElementById("buildBtn");
-        const sampleBtn = document.getElementById("sampleBtn");
         const toggleButtons = document.querySelectorAll(".toggle-btn");
         const chips = document.querySelectorAll("#categoryChips .chip");
         const fontSize = document.getElementById("fontSize");
@@ -900,15 +894,11 @@
             if (requiredMissing.length > 0) {
                 setStatus("还缺少关键内容，请先补全再生成一句话吐槽。", "warn");
                 saveBtn.disabled = true;
-                copyBtn.disabled = true;
-                downloadBtn.disabled = true;
                 return;
             }
 
-            setStatus("一句话吐槽已生成，可提交、复制或下载。", "info");
+            setStatus("一句话吐槽已生成，可提交。", "info");
             saveBtn.disabled = false;
-            copyBtn.disabled = false;
-            downloadBtn.disabled = false;
         }
 
         chips.forEach((chip) => {
@@ -966,39 +956,6 @@
             saveBtn.disabled = false;
         });
 
-        copyBtn.addEventListener("click", () => {
-            const data = collectData();
-            navigator.clipboard.writeText(buildSentence(data)).then(
-                () => setStatus("已复制到剪贴板。", "info"),
-                () => setStatus("复制失败，请手动复制。", "warn")
-            );
-        });
-
-        downloadBtn.addEventListener("click", () => {
-             const data = collectData();
-             const blob = new Blob([buildSentence(data)], { type: "text/plain;charset=utf-8" });
-             const url = URL.createObjectURL(blob);
-             const link = document.createElement("a");
-             link.href = url;
-             link.download = "吐槽卡片.txt";
-             document.body.appendChild(link);
-             link.click();
-             link.remove();
-        });
-
-        sampleBtn.addEventListener("click", () => {
-            subject.value = "医院窗口";
-            scene.value = "挂号大厅";
-            problem.value = "只用语音叫号，没有屏幕字幕或短信提示。";
-            impact.value = "错过叫号，需要重新排队。";
-            wish.value = "提供大屏字幕、震动呼叫器或短信提醒。";
-            emotion.value = "4";
-            visibility.value = "匿名";
-            updateEmotionLabel();
-            updateProgress();
-            buildCard();
-        });
-        
         function resetForm() {
             state.categories.clear();
             chips.forEach((chip) => chip.setAttribute("aria-pressed", "false"));
@@ -1009,10 +966,8 @@
             autoFillCache.impact = "";
             autoFillCache.wish = "";
             lastProblemSeed = "";
-            preview.innerHTML = "<p>填写后会生成一句话吐槽，方便直接复制或提交。</p>";
+            preview.innerHTML = "<p>填写后会生成一句话吐槽，方便直接提交。</p>";
             saveBtn.disabled = true;
-            copyBtn.disabled = true;
-            downloadBtn.disabled = true;
             updateProgress();
             updateEmotionLabel();
             setStatus("内容已清空，可以重新填写。", "info");
