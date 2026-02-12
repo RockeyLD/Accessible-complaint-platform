@@ -30,14 +30,32 @@ const themeOptions = [
 
 const categoryNames = ["公共服务", "出行", "医疗", "教育", "线上平台", "工作场所"];
 
+const fontSizeOptions = [
+  { value: 90, label: "小号（90%）" },
+  { value: 100, label: "标准（100%）" },
+  { value: 110, label: "大号（110%）" },
+  { value: 120, label: "特大（120%）" }
+];
+
+const emotionOptions = [
+  { value: 1, label: "很平静" },
+  { value: 2, label: "轻微不满" },
+  { value: 3, label: "中等" },
+  { value: 4, label: "明显不满" },
+  { value: 5, label: "非常生气" }
+];
+
 Page({
   data: {
     themeOptions,
     theme: "warm",
     currentThemeLabel: "暖晨橙绿",
     contrast: false,
+    fontSizeOptions,
     fontSize: 100,
+    currentFontSizeLabel: "标准（100%）",
     categories: categoryNames.map((name) => ({ name, selected: false })),
+    emotionOptions,
     form: {
       subject: "",
       scene: "",
@@ -68,6 +86,10 @@ Page({
   onLoad() {
     this.updateEmotionLabel();
     this.updateProgress();
+    const fontOption = this.data.fontSizeOptions.find((item) => item.value === this.data.fontSize);
+    if (fontOption) {
+      this.setData({ currentFontSizeLabel: fontOption.label });
+    }
   },
 
   goList() {
@@ -84,7 +106,9 @@ Page({
   },
 
   onFontSizeChange(e) {
-    this.setData({ fontSize: Number(e.detail.value) });
+    const index = Number(e.detail.value);
+    const option = this.data.fontSizeOptions[index] || this.data.fontSizeOptions[1];
+    this.setData({ fontSize: option.value, currentFontSizeLabel: option.label });
   },
 
   onToggleContrast() {
@@ -139,9 +163,9 @@ Page({
   },
 
   onEmotionChange(e) {
-    const value = Number(e.detail.value);
-    this.setData({ "form.emotion": value });
-    this.updateEmotionLabel();
+    const index = Number(e.detail.value);
+    const option = this.data.emotionOptions[index] || this.data.emotionOptions[2];
+    this.setData({ "form.emotion": option.value, emotionLabel: option.label });
   },
 
   updateFormField(key, value, fromAuto) {
@@ -365,6 +389,7 @@ Page({
 
   resetForm() {
     const categories = this.data.categories.map((item) => ({ ...item, selected: false }));
+    const fontOption = this.data.fontSizeOptions.find((item) => item.value === this.data.fontSize);
     this.setData({
       categories,
       form: {
@@ -376,6 +401,7 @@ Page({
         emotion: 3
       },
       emotionLabel: emotionMap[3],
+      currentFontSizeLabel: fontOption ? fontOption.label : this.data.currentFontSizeLabel,
       progressText: "0 / 2",
       progressPercent: 0,
       previewSentence: "填写后会生成一句话吐槽，方便直接提交。",

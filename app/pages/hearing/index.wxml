@@ -15,7 +15,9 @@
       </view>
       <view class="tool">
         <text class="tool-label">文字大小</text>
-        <slider min="90" max="120" value="{{fontSize}}" bindchange="onFontSizeChange" />
+        <picker mode="selector" range="{{fontSizeOptions}}" range-key="label" bindchange="onFontSizeChange">
+          <view class="picker">{{currentFontSizeLabel}}</view>
+        </picker>
       </view>
       <view class="tool">
         <text class="tool-label">高对比</text>
@@ -93,10 +95,9 @@
 
     <view class="field">
       <text class="label">情绪强度</text>
-      <view class="range-wrap">
-        <slider min="1" max="5" value="{{form.emotion}}" bindchange="onEmotionChange" />
-        <text class="badge">{{emotionLabel}}</text>
-      </view>
+      <picker mode="selector" range="{{emotionOptions}}" range-key="label" bindchange="onEmotionChange">
+        <view class="picker">{{emotionLabel}}</view>
+      </picker>
     </view>
 
     <view class="progress-wrap">

@@ -92,10 +92,14 @@ textarea {
 }
 
 .actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 12rpx;
+  grid-template-columns: repeat(auto-fit, minmax(220rpx, 1fr));
   margin-top: 12rpx;
+}
+
+.actions button {
+  width: 100%;
 }
 
 .primary {

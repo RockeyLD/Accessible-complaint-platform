@@ -121,6 +121,7 @@ textarea {
   padding: 8rpx 12rpx;
   border-radius: 999rpx;
   font-weight: 600;
+  width: 100%;
 }
 
 .toggle-btn.active {
@@ -147,10 +148,14 @@ textarea {
 }
 
 .actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   gap: 12rpx;
+  grid-template-columns: repeat(auto-fit, minmax(200rpx, 1fr));
   margin-top: 12rpx;
+}
+
+.actions button {
+  width: 100%;
 }
 
 .primary {
@@ -204,8 +209,12 @@ textarea {
 }
 
 .list-actions input {
-  flex: 1 1 220rpx;
-  min-width: 180rpx;
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.list-actions button {
+  flex: 1 1 200rpx;
 }
 
 .empty {
@@ -282,4 +291,8 @@ textarea {
   flex-wrap: wrap;
   gap: 8rpx;
   justify-content: flex-end;
+}
+
+.card-actions button {
+  flex: 1 1 200rpx;
 }
