@@ -1,2 +1,5 @@
 node_modules/
 data/complaints.json
+
+# 部署文档含服务器/域名等隐私信息，仅本地保留
+docs/deploy-tencent-cloud.md

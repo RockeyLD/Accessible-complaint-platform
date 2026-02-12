@@ -52,6 +52,15 @@ app.get("/api/health", (req, res) => {
   res.json({ ok: true, time: new Date().toISOString() });
 });
 
+app.get("/api/admin/verify", (req, res) => {
+  const required = process.env.API_KEY;
+  const provided = (req.headers["x-api-key"] || req.query.key || "").trim();
+  if (required && (!provided || provided !== required)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  res.json({ ok: true });
+});
+
 app.get("/api/complaints", (req, res) => {
   const list = sortByCreatedAtDesc(readAll());
   res.json(list);
