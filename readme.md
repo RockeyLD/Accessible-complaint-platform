@@ -3,7 +3,7 @@
 适用文件：`index.html`（提交）与 `查看吐槽.html`（查看）
 
 ## 1. 在线预览（可选）
-在线页面地址（若已开启 GitHub Pages）：  
+在线页面地址：  
 https://complaints-api.ton-ton.fun 
 
 ## 2. 功能
