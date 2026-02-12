@@ -190,7 +190,8 @@ Page({
 
   onLoad() {
     this.restorePreferences();
-    this.verifyStoredKey();
+    // Default to admin mode off on every load.
+    this.applyAdminState(false);
     this.loadData("数据已加载。");
   },
 
