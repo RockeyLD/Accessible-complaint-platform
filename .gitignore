@@ -3,3 +3,6 @@ data/complaints.json
 
 # 部署文档含服务器/域名等隐私信息，仅本地保留
 docs/deploy-tencent-cloud.md
+
+# 本地部署脚本（含环境信息），不入库
+scripts/deploy-by-scp.ps1
