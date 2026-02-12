@@ -30,8 +30,6 @@ const themeOptions = [
 
 const categoryNames = ["公共服务", "出行", "医疗", "教育", "线上平台", "工作场所"];
 
-const visibilityOptions = ["匿名", "署名"];
-
 Page({
   data: {
     themeOptions,
@@ -40,15 +38,13 @@ Page({
     contrast: false,
     fontSize: 100,
     categories: categoryNames.map((name) => ({ name, selected: false })),
-    visibilityOptions,
     form: {
       subject: "",
       scene: "",
       problem: "",
       impact: "",
       wish: "",
-      emotion: 3,
-      visibility: "匿名"
+      emotion: 3
     },
     emotionLabel: emotionMap[3],
     progressText: "0 / 2",
@@ -148,12 +144,6 @@ Page({
     this.updateEmotionLabel();
   },
 
-  onVisibilityChange(e) {
-    const index = Number(e.detail.value);
-    const visibility = this.data.visibilityOptions[index] || this.data.visibilityOptions[0];
-    this.setData({ "form.visibility": visibility });
-  },
-
   updateFormField(key, value, fromAuto) {
     const form = { ...this.data.form, [key]: value };
     const manualOverride = { ...this.data.manualOverride };
@@ -202,7 +192,6 @@ Page({
     const meta = [];
     if (data.categories.length) meta.push(`类别：${data.categories.join("、")}`);
     meta.push(`情绪：${emotionMap[data.emotion]}`);
-    meta.push(`公开方式：${data.visibility}`);
     if (meta.length) parts.push(`（${meta.join("，")}）`);
 
     return `${parts.join("，").replace(/，（/g, "（")}。`;
@@ -384,8 +373,7 @@ Page({
         problem: "",
         impact: "",
         wish: "",
-        emotion: 3,
-        visibility: "匿名"
+        emotion: 3
       },
       emotionLabel: emotionMap[3],
       progressText: "0 / 2",

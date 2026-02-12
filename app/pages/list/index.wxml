@@ -1,48 +1,132 @@
-<view class="page list-page">
+<view class="page list-page theme-{{theme}} {{contrast ? 'contrast' : ''}}" style="font-size: {{fontSize}}%;">
   <view class="header">
-    <text class="title">历史记录</text>
-    <text class="subtitle">查看已提交的吐槽内容。</text>
+    <text class="title">吐槽列表 · 综合版</text>
+    <text class="subtitle">统一管理你的吐槽记录与分析报告。</text>
   </view>
 
-  <view class="toolbar">
+  <view class="panel toolbar-panel">
+    <view class="toolbar">
+      <view class="tool">
+        <text class="tool-label">主题风格</text>
+        <picker mode="selector" range="{{themeOptions}}" range-key="label" bindchange="onThemeChange">
+          <view class="picker">{{currentThemeLabel}}</view>
+        </picker>
+      </view>
+      <view class="tool">
+        <text class="tool-label">文字大小</text>
+        <slider min="90" max="130" value="{{fontSize}}" bindchange="onFontSizeChange" />
+      </view>
+      <view class="tool">
+        <text class="tool-label">高对比度</text>
+        <button class="toggle-btn {{contrast ? 'active' : ''}}" bindtap="onToggleContrast">
+          {{contrast ? "关闭高对比" : "开启高对比"}}
+        </button>
+      </view>
+      <view class="tool">
+        <text class="tool-label">管理员模式</text>
+        <button class="toggle-btn {{isAdmin ? 'active' : ''}}" bindtap="onAdminToggle">
+          {{isAdmin ? "管理员模式已开启" : "进入管理员模式"}}
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <view class="status {{statusType}}">{{statusText}}</view>
+
+  <view wx:if="{{showAdminInput}}" class="panel admin-panel">
+    <text class="panel-title">管理员密钥</text>
     <input
-      placeholder="搜索关键词..."
-      value="{{keyword}}"
-      bindinput="onSearchInput"
+      placeholder="请输入管理员密钥"
+      value="{{adminKeyInput}}"
+      bindinput="onAdminKeyInput"
     />
-    <button class="ghost" bindtap="onRefresh">刷新</button>
-    <button class="ghost danger" bindtap="onClearAll">清空所有</button>
+    <view class="actions">
+      <button class="primary" bindtap="onAdminVerify">验证密钥</button>
+      <button class="ghost" bindtap="onAdminCancel">取消</button>
+    </view>
   </view>
 
-  <text class="status">{{statusText}}</text>
-
-  <view wx:if="{{filteredItems.length === 0}}" class="empty">
-    还没有保存的吐槽记录。
+  <view class="panel report-panel">
+    <text class="panel-title">生成报告</text>
+    <text class="report-hint">{{reportHint}}</text>
+    <input
+      placeholder="输入要查看的方面（如：场景、问题类型、影响、需求）"
+      value="{{reportAspect}}"
+      bindinput="onReportAspectInput"
+    />
+    <view class="actions">
+      <button class="primary" bindtap="onGenerateReport" disabled="{{!canGenerateReport}}">生成报告</button>
+      <button class="ghost" bindtap="onCopyReport" disabled="{{!reportText}}">复制报告</button>
+      <button class="ghost" bindtap="onClearReport" disabled="{{!reportText}}">清空报告</button>
+    </view>
+    <textarea
+      class="report-content"
+      value="{{reportText ? reportText : '暂无报告。'}}"
+      disabled
+    ></textarea>
   </view>
 
-  <view wx:for="{{filteredItems}}" wx:key="id" class="complaint-card">
-    <view class="card-header">
-      <text class="card-title">{{item.title}}</text>
-      <text class="card-meta">{{item.displayTime}} · {{item.modeLabel}}</text>
+  <view class="panel list-panel">
+    <view class="list-header">
+      <text class="panel-title">历史记录</text>
+      <view class="list-actions">
+        <input
+          placeholder="搜索关键词..."
+          value="{{keyword}}"
+          bindinput="onSearchInput"
+        />
+        <button class="ghost" bindtap="goBack">返回</button>
+        <button class="ghost" bindtap="onRefresh">刷新</button>
+        <button class="ghost danger" bindtap="onClearAll" disabled="{{!isAdmin}}">清空所有</button>
+      </view>
     </view>
-    <view class="card-body">
-      <text wx:if="{{item.sentence}}">摘要：{{item.sentence}}</text>
-      <text wx:if="{{item.problem}}">问题：{{item.problem}}</text>
-      <text wx:if="{{item.impact}}">影响：{{item.impact}}</text>
-      <text wx:if="{{item.wish}}">期望：{{item.wish}}</text>
-      <text wx:if="{{item.summary}}">一句话：{{item.summary}}</text>
-      <text wx:if="{{item.detail}}">详细：{{item.detail}}</text>
-      <text wx:if="{{item.scene}}">场景：{{item.scene}}</text>
-      <text wx:if="{{item.severity}}">影响程度：{{item.severity}}</text>
-      <text wx:if="{{item.contact}}">联系方式：{{item.contact}}</text>
+
+    <view wx:if="{{filteredItems.length === 0}}" class="empty">
+      {{emptyText}}
     </view>
-    <view class="card-tags">
-      <text wx:if="{{item.categoriesText}}">类别：{{item.categoriesText}}</text>
-      <text wx:if="{{item.emotion}}">情绪：{{item.emotion}}</text>
-      <text wx:if="{{item.visibility}}">公开方式：{{item.visibility}}</text>
-    </view>
-    <view class="card-actions">
-      <button class="ghost danger" data-id="{{item.id}}" bindtap="onDeleteItem">删除</button>
+
+    <view wx:for="{{filteredItems}}" wx:key="id" class="complaint-card">
+      <view class="card-header">
+        <text class="card-title">{{item.title}}</text>
+        <text class="card-meta">{{item.metaLine}}</text>
+      </view>
+      <view class="card-body">
+        <text>{{item.detail}}</text>
+      </view>
+
+      <view wx:if="{{item.attachment}}" class="attachment-block">
+        <text class="attachment-title">附件：{{item.attachment.name}}</text>
+        <image
+          wx:if="{{item.isImage}}"
+          class="attachment-preview"
+          src="{{item.attachment.data}}"
+          mode="widthFix"
+          data-id="{{item.id}}"
+          bindtap="onPreviewAttachment"
+        />
+        <video
+          wx:if="{{item.isVideo}}"
+          class="attachment-preview"
+          src="{{item.attachment.data}}"
+          controls
+        />
+        <audio
+          wx:if="{{item.isAudio}}"
+          class="attachment-preview"
+          src="{{item.attachment.data}}"
+          controls
+        />
+        <text wx:if="{{item.isFile}}" class="attachment-note">暂不支持预览该类型附件。</text>
+      </view>
+
+      <view wx:if="{{item.meta}}" class="card-tags">
+        <text>{{item.meta}}</text>
+      </view>
+
+      <view class="card-actions">
+        <button class="ghost" data-id="{{item.id}}" bindtap="onCopyItem">复制内容</button>
+        <button class="ghost danger" data-id="{{item.id}}" bindtap="onDeleteItem" disabled="{{!isAdmin}}">删除</button>
+      </view>
     </view>
   </view>
 </view>

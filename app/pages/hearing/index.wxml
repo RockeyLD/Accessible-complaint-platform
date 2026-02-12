@@ -99,13 +99,6 @@
       </view>
     </view>
 
-    <view class="field">
-      <text class="label">公开方式</text>
-      <picker mode="selector" range="{{visibilityOptions}}" bindchange="onVisibilityChange">
-        <view class="picker">{{form.visibility}}</view>
-      </picker>
-    </view>
-
     <view class="progress-wrap">
       <view class="progress-label">
         <text>填写进度</text>
