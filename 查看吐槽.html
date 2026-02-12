@@ -658,8 +658,9 @@
     </main>
 
     <script>
-      const DEFAULT_API_BASE = "https://complaints-api.ton-ton.fun";
-      const API_BASE = localStorage.getItem("apiBase") || DEFAULT_API_BASE;
+      // 网页端：默认使用当前页面所在域名作为 API 根地址，避免和历史测试地址（如 Workers）混淆
+      const DEFAULT_API_BASE = window.location.origin || "";
+      const API_BASE = DEFAULT_API_BASE;
 
       function apiUrl(path) {
         if (!API_BASE) return path;

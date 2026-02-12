@@ -6,3 +6,7 @@ docs/deploy-tencent-cloud.md
 
 # 本地部署脚本（含环境信息），不入库
 scripts/deploy-by-scp.ps1
+
+# 本地/小程序私有配置（含密钥、appid 等），仅本地保留
+project.private.config.json
+app/project.private.config.json
