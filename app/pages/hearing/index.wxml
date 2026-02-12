@@ -166,7 +166,7 @@
     </view>
 
     <view class="actions">
-      <button class="secondary" bindtap="onSave" disabled="{{!canSubmit}}">保存到列表</button>
+      <button class="secondary" bindtap="onSave" disabled="{{!canSubmit}}">上传到服务器</button>
       <button class="ghost" bindtap="goList">吐槽广场</button>
     </view>
   </view>
