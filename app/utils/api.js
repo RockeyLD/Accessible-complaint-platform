@@ -101,6 +101,18 @@ async function clearComplaints() {
   return { ok: false, error: (res.data && res.data.error) || "清空失败" };
 }
 
+async function verifyAdminKey(key) {
+  if (!key) return { ok: false, error: "缺少密钥" };
+  const res = await request({
+    url: "/api/admin/verify",
+    headers: { "X-API-Key": key }
+  });
+  if (res.statusCode >= 200 && res.statusCode < 300) {
+    return { ok: true };
+  }
+  return { ok: false, error: (res.data && res.data.error) || "管理员密钥无效" };
+}
+
 module.exports = {
   getApiBase,
   setApiBase,
@@ -110,5 +122,6 @@ module.exports = {
   postComplaint,
   fetchComplaints,
   deleteComplaint,
-  clearComplaints
+  clearComplaints,
+  verifyAdminKey
 };
