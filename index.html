@@ -1,94 +1,117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>无障碍吐槽平台 - 综合版</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>无障碍吐槽平台 - 综合版</title>
 
-  <style id="style-landing">
-    :root {
-      --lp-bg: #f0f4f8;
-      --lp-text: #102a43;
-      --lp-accent: #0b6e4f;
-      --lp-focus: #1c7ed6;
-    }
-    body { margin: 0; font-family: "Noto Sans SC", sans-serif; background: var(--lp-bg); }
-    
-    #view-landing {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
-    }
+    <style id="style-landing">
+      :root {
+        --lp-bg: #f0f4f8;
+        --lp-text: #102a43;
+        --lp-accent: #0b6e4f;
+        --lp-focus: #1c7ed6;
+      }
+      body {
+        margin: 0;
+        font-family: "Noto Sans SC", sans-serif;
+        background: var(--lp-bg);
+      }
 
-    .landing-title {
-      font-size: clamp(2rem, 5vw, 3rem);
-      margin-bottom: 40px;
-      color: var(--lp-text);
-    }
+      #view-landing {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+      }
 
-    .card-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      justify-content: center;
-      max-width: 900px;
-    }
+      .landing-title {
+        font-size: clamp(2rem, 5vw, 3rem);
+        margin-bottom: 40px;
+        color: var(--lp-text);
+      }
 
-    .role-card {
-      background: white;
-      border: 3px solid transparent;
-      border-radius: 20px;
-      padding: 40px;
-      width: 300px;
-      cursor: pointer;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-    }
+      .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+        max-width: 900px;
+      }
 
-    .role-card:hover, .role-card:focus {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-      border-color: var(--lp-accent);
-      outline: 4px solid var(--lp-focus);
-      outline-offset: 4px;
-    }
+      .role-card {
+        background: white;
+        border: 3px solid transparent;
+        border-radius: 20px;
+        padding: 40px;
+        width: 300px;
+        cursor: pointer;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
 
-    .role-icon { font-size: 4rem; margin-bottom: 20px; display: block; }
-    .role-name { font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; color: var(--lp-text); }
-    .role-desc { color: #555; font-size: 1rem; line-height: 1.5; }
+      .role-card:hover,
+      .role-card:focus {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        border-color: var(--lp-accent);
+        outline: 4px solid var(--lp-focus);
+        outline-offset: 4px;
+      }
 
-    .back-home-btn {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 9999;
-      background: #333;
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-    .back-home-btn:hover, .back-home-btn:focus { 
-        background: #000; 
+      .role-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        display: block;
+      }
+      .role-name {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--lp-text);
+      }
+      .role-desc {
+        color: #555;
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      .back-home-btn {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 9999;
+        background: #333;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+      .back-home-btn:hover,
+      .back-home-btn:focus {
+        background: #000;
         outline: 3px solid var(--lp-focus);
-    }
+      }
 
-    .hidden-view { display: none !important; }
-  </style>
+      .hidden-view {
+        display: none !important;
+      }
+    </style>
 
-  <style id="style-hearing" disabled>
-    :root {
+    <style id="style-hearing" disabled>
+      :root {
         --bg-1: #fef6e4;
         --bg-2: #dff4ef;
         --ink: #102a43;
@@ -103,21 +126,27 @@
         --shadow: 0 24px 60px rgba(16, 42, 67, 0.16);
         --radius: 18px;
         --radius-sm: 12px;
-        --font-title: "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", serif;
-        --font-body: "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", "Heiti SC", sans-serif;
+        --font-title:
+          "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", serif;
+        --font-body:
+          "Noto Sans SC", "Source Han Sans SC", "PingFang SC",
+          "Microsoft YaHei", "Heiti SC", sans-serif;
       }
 
-      #view-hearing * { box-sizing: border-box; }
-      
+      #view-hearing * {
+        box-sizing: border-box;
+      }
+
       #view-hearing {
         font-family: var(--font-body);
         color: var(--ink);
-        background: radial-gradient(circle at top left, var(--glow-1), transparent 55%),
+        background:
+          radial-gradient(circle at top left, var(--glow-1), transparent 55%),
           radial-gradient(circle at 80% 20%, var(--glow-2), transparent 50%),
           linear-gradient(130deg, var(--bg-1), var(--bg-2));
         min-height: 100vh;
         line-height: 1.6;
-        padding-top: 50px; 
+        padding-top: 50px;
       }
 
       body.contrast #view-hearing {
@@ -132,93 +161,325 @@
         --glow-2: rgba(0, 0, 0, 0);
       }
 
-      #view-hearing header { padding: 40px 24px 12px; text-align: center; }
-      #view-hearing header h1 { font-family: var(--font-title); font-size: clamp(2rem, 4vw, 3.4rem); margin: 0 0 12px; letter-spacing: 0.04em; }
-      #view-hearing header p { margin: 0 auto; max-width: 760px; color: var(--muted); font-size: 1.05rem; }
-      #view-hearing main { max-width: 1200px; margin: 0 auto; padding: 24px 24px 60px; display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
-      
-      .panel { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
-      .panel::before { content: ""; position: absolute; width: 160px; height: 160px; background: rgba(11, 110, 79, 0.08); border-radius: 50%; top: -60px; right: -40px; }
-      .panel h2 { margin: 0 0 12px; font-size: 1.4rem; }
-      
-      .toolbar { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 18px; }
-      .tool { background: rgba(11, 110, 79, 0.08); border-radius: var(--radius-sm); padding: 12px; }
-      .tool label { display: block; font-weight: 600; margin-bottom: 6px; }
-      
-      .toggle-btn { border: 2px solid var(--accent); background: transparent; color: var(--accent); padding: 8px 12px; border-radius: 999px; font-weight: 600; cursor: pointer; width: 100%; transition: transform 0.2s ease, background 0.2s ease; }
-      .toggle-btn[aria-pressed="true"] { background: var(--accent); color: #fff; }
-      
-      .toggle-btn:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-      
-      .field { margin-bottom: 16px; }
-      .field label { display: block; font-weight: 600; margin-bottom: 6px; }
-      
-      #view-hearing input[type="text"], #view-hearing textarea, #view-hearing select { width: 100%; border-radius: var(--radius-sm); border: 2px solid rgba(16, 42, 67, 0.15); padding: 10px 12px; font-size: 1rem; font-family: inherit; transition: border 0.2s ease, box-shadow 0.2s ease; background: #fff; }
-      #view-hearing textarea { min-height: 96px; resize: vertical; }
-      
-      .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-      .chip { border: 2px solid rgba(16, 42, 67, 0.2); padding: 6px 12px; border-radius: 999px; background: #fff; cursor: pointer; font-weight: 600; transition: all 0.2s ease; }
-      .chip[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: rgba(11, 110, 79, 0.08); }
-      
-      .grid-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-      .range-wrap { display: flex; gap: 12px; align-items: center; }
-      .range-wrap input[type="range"] { flex: 1; }
-      .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: rgba(240, 138, 36, 0.18); font-size: 0.85rem; font-weight: 600; }
-      
-      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
-      button.primary { background: var(--accent); color: #fff; border: none; padding: 12px 18px; border-radius: 999px; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-      button.secondary { background: transparent; color: var(--accent); border: 2px solid var(--accent); padding: 10px 18px; border-radius: 999px; font-weight: 600; cursor: pointer; }
-      button.ghost { background: rgba(16, 42, 67, 0.06); color: var(--ink); border: none; padding: 8px 12px; border-radius: 999px; font-weight: 600; cursor: pointer; }
-      button:disabled { opacity: 0.6; cursor: not-allowed; }
-      
-      .status { padding: 12px; border-radius: var(--radius-sm); background: rgba(11, 110, 79, 0.08); color: var(--ink); font-weight: 600; margin-bottom: 12px; }
-      .status.warn { background: rgba(214, 69, 80, 0.12); color: var(--danger); }
-      .status.info { background: rgba(240, 138, 36, 0.16); }
-      
-      .preview-card { border: 2px dashed rgba(16, 42, 67, 0.2); border-radius: var(--radius-sm); padding: 16px; background: rgba(255, 255, 255, 0.7); min-height: 180px; }
-      .preview-card h3 { margin: 0 0 8px; }
-      .missing-panel { margin-top: 16px; padding: 16px; border-radius: var(--radius-sm); background: rgba(214, 69, 80, 0.08); }
-      
-      .question { margin-bottom: 12px; }
-      .question input { margin-top: 6px; }
-      .progress-wrap { margin: 16px 0 10px; }
-      .progress-label { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--muted); margin-bottom: 6px; }
-      .progress-bar { height: 10px; background: rgba(16, 42, 67, 0.1); border-radius: 999px; overflow: hidden; }
-      .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.3s ease; }
-      
-      .access-list { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; color: var(--muted); }
-      .access-list li::before { content: "●"; color: var(--accent-2); margin-right: 8px; }
-  </style>
+      #view-hearing header {
+        padding: 40px 24px 12px;
+        text-align: center;
+      }
+      #view-hearing header h1 {
+        font-family: var(--font-title);
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        margin: 0 0 12px;
+        letter-spacing: 0.04em;
+      }
+      #view-hearing header p {
+        margin: 0 auto;
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+      #view-hearing main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px 24px 60px;
+        display: grid;
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      }
 
-  <style id="style-vision" disabled>
-    :root {
+      .panel {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 24px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+      .panel::before {
+        content: "";
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        background: rgba(11, 110, 79, 0.08);
+        border-radius: 50%;
+        top: -60px;
+        right: -40px;
+      }
+      .panel h2 {
+        margin: 0 0 12px;
+        font-size: 1.4rem;
+      }
+
+      .toolbar {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        margin-bottom: 18px;
+      }
+      .tool {
+        background: rgba(11, 110, 79, 0.08);
+        border-radius: var(--radius-sm);
+        padding: 12px;
+      }
+      .tool label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      .toggle-btn {
+        border: 2px solid var(--accent);
+        background: transparent;
+        color: var(--accent);
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease;
+      }
+      .toggle-btn[aria-pressed="true"] {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .toggle-btn:focus-visible,
+      button:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible,
+      select:focus-visible {
+        outline: 3px solid var(--focus);
+        outline-offset: 2px;
+      }
+
+      .field {
+        margin-bottom: 16px;
+      }
+      .field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      #view-hearing input[type="text"],
+      #view-hearing textarea,
+      #view-hearing select {
+        width: 100%;
+        border-radius: var(--radius-sm);
+        border: 2px solid rgba(16, 42, 67, 0.15);
+        padding: 10px 12px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition:
+          border 0.2s ease,
+          box-shadow 0.2s ease;
+        background: #fff;
+      }
+      #view-hearing textarea {
+        min-height: 96px;
+        resize: vertical;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chip {
+        border: 2px solid rgba(16, 42, 67, 0.2);
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: #fff;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+      .chip[aria-pressed="true"] {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(11, 110, 79, 0.08);
+      }
+
+      .grid-2 {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+      .range-wrap {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .range-wrap input[type="range"] {
+        flex: 1;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(240, 138, 36, 0.18);
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 16px;
+      }
+      button.primary {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 999px;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      button.secondary {
+        background: transparent;
+        color: var(--accent);
+        border: 2px solid var(--accent);
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button.ghost {
+        background: rgba(16, 42, 67, 0.06);
+        color: var(--ink);
+        border: none;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .status {
+        padding: 12px;
+        border-radius: var(--radius-sm);
+        background: rgba(11, 110, 79, 0.08);
+        color: var(--ink);
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .status.warn {
+        background: rgba(214, 69, 80, 0.12);
+        color: var(--danger);
+      }
+      .status.info {
+        background: rgba(240, 138, 36, 0.16);
+      }
+
+      .preview-card {
+        border: 2px dashed rgba(16, 42, 67, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.7);
+        min-height: 180px;
+      }
+      .preview-card h3 {
+        margin: 0 0 8px;
+      }
+      .missing-panel {
+        margin-top: 16px;
+        padding: 16px;
+        border-radius: var(--radius-sm);
+        background: rgba(214, 69, 80, 0.08);
+      }
+
+      .question {
+        margin-bottom: 12px;
+      }
+      .question input {
+        margin-top: 6px;
+      }
+      .progress-wrap {
+        margin: 16px 0 10px;
+      }
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      .progress-bar {
+        height: 10px;
+        background: rgba(16, 42, 67, 0.1);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        transition: width 0.3s ease;
+      }
+
+      .access-list {
+        display: grid;
+        gap: 8px;
+        margin: 12px 0 0;
+        padding: 0;
+        list-style: none;
+        color: var(--muted);
+      }
+      .access-list li::before {
+        content: "●";
+        color: var(--accent-2);
+        margin-right: 8px;
+      }
+    </style>
+
+    <style id="style-vision" disabled>
+      :root {
         /* 使用视障吐槽.html 的配色变量 */
         --v-bg: #f5f3ef;
         --v-bg-2: #efe7dd;
         --v-ink: #141414;
         --v-muted: #3d3d3d;
-        --v-accent: #0f5c5c;  /* 深青色 */
+        --v-accent: #0f5c5c; /* 深青色 */
         --v-danger: #a02920;
         --v-card: #ffffff;
-        --v-focus: #ffb100;   /* 高对比黄 */
+        --v-focus: #ffb100; /* 高对比黄 */
         --v-shadow: 0 14px 35px rgba(0, 0, 0, 0.12);
       }
-      #view-vision * { box-sizing: border-box; }
+      #view-vision * {
+        box-sizing: border-box;
+      }
       #view-vision {
         font-family: "Source Serif 4", "Noto Serif SC", "Songti SC", serif;
         color: var(--v-ink);
         /* 背景渐变保持原设计 */
         background:
-          radial-gradient(1200px 600px at 20% -20%, #f0d9c7 0%, transparent 60%),
+          radial-gradient(
+            1200px 600px at 20% -20%,
+            #f0d9c7 0%,
+            transparent 60%
+          ),
           radial-gradient(1000px 500px at 90% 10%, #d9f0ea 0%, transparent 55%),
           linear-gradient(180deg, var(--v-bg), var(--v-bg-2));
         min-height: 100vh;
         padding-top: 50px;
       }
-      
+
       /* 统一链接颜色 */
-      #view-vision a { color: var(--v-accent); }
-      
+      #view-vision a {
+        color: var(--v-accent);
+      }
+
       /* 统一聚焦样式 - 黄色高亮 */
       #view-vision a:focus,
       #view-vision button:focus,
@@ -228,7 +489,7 @@
         outline: 3px solid var(--v-focus);
         outline-offset: 2px;
       }
-      
+
       .skip-link {
         position: absolute;
         left: -999px;
@@ -240,324 +501,569 @@
         box-shadow: var(--v-shadow);
         z-index: 10;
       }
-      .skip-link:focus { left: 12px; }
-      #view-vision header { padding: 28px 20px 16px; }
-      .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; }
-      .brand { font-family: "Noto Serif SC", "Source Serif 4", serif; letter-spacing: 1px; text-transform: uppercase; font-size: 12px; }
-      #view-vision h1 { font-size: clamp(28px, 4vw, 48px); margin: 10px 0 14px; }
-      .lead { font-size: 18px; line-height: 1.6; color: var(--v-muted); }
-      
-      .v-card { background: var(--v-card); border-radius: 16px; padding: 18px; box-shadow: var(--v-shadow); }
-      
-      #view-vision form { display: grid; gap: 14px; }
-      #view-vision label { font-weight: 600; }
-      
+      .skip-link:focus {
+        left: 12px;
+      }
+      #view-vision header {
+        padding: 28px 20px 16px;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px 60px;
+      }
+      .brand {
+        font-family: "Noto Serif SC", "Source Serif 4", serif;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        font-size: 12px;
+      }
+      #view-vision h1 {
+        font-size: clamp(28px, 4vw, 48px);
+        margin: 10px 0 14px;
+      }
+      .lead {
+        font-size: 18px;
+        line-height: 1.6;
+        color: var(--v-muted);
+      }
+
+      .v-card {
+        background: var(--v-card);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: var(--v-shadow);
+      }
+
+      #view-vision form {
+        display: grid;
+        gap: 14px;
+      }
+      #view-vision label {
+        font-weight: 600;
+      }
+
       /* 输入框样式统一 */
-      #view-vision input, #view-vision textarea, #view-vision select { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #cfcfcf; font-size: 16px; }
-      .input-with-mic { position: relative; }
-      .input-with-mic input, .input-with-mic textarea { padding-right: 50px; }
-      
+      #view-vision input,
+      #view-vision textarea,
+      #view-vision select {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid #cfcfcf;
+        font-size: 16px;
+      }
+      .input-with-mic {
+        position: relative;
+      }
+      .input-with-mic input,
+      .input-with-mic textarea {
+        padding-right: 50px;
+      }
+
       /* 麦克风按钮样式 */
-      .mic-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: #f0f0f0; color: var(--v-ink); border: 0; padding: 8px 10px; border-radius: 999px; cursor: pointer; }
-      .mic-btn svg { display: block; }
-      #view-vision textarea { min-height: 120px; resize: vertical; }
-      .row { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-      #view-vision fieldset { border: 0; padding: 0; margin: 0; }
-      #view-vision legend { font-weight: 600; margin-bottom: 6px; }
-      #view-vision .help-panel { margin: 12px 0; padding: 12px; border-radius: 12px; border: 1px dashed #cfcfcf; background: #fff; }
-      #view-vision .help-panel strong { display: block; margin-bottom: 8px; }
-      #view-vision .help-actions { display: flex; justify-content: center; margin-top: 8px; }
-      #view-vision .help-mic { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 999px; border: 0; background: var(--v-accent); color: #fff; cursor: pointer; }
-      #view-vision .help-mic:focus-visible { outline: 3px solid var(--v-focus); outline-offset: 2px; }
-      #view-vision .prompt-box { width: 100%; min-height: 110px; padding: 12px 14px; border-radius: 12px; border: 1px solid #cfcfcf; background: #f9f7f3; color: var(--v-ink); resize: none; }
-      
-      
-      #view-vision .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-      
+      .mic-btn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #f0f0f0;
+        color: var(--v-ink);
+        border: 0;
+        padding: 8px 10px;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+      .mic-btn svg {
+        display: block;
+      }
+      #view-vision textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      .row {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+      #view-vision fieldset {
+        border: 0;
+        padding: 0;
+        margin: 0;
+      }
+      #view-vision legend {
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      #view-vision .help-panel {
+        margin: 12px 0;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px dashed #cfcfcf;
+        background: #fff;
+      }
+      #view-vision .help-panel strong {
+        display: block;
+        margin-bottom: 8px;
+      }
+      #view-vision .help-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 8px;
+      }
+      #view-vision .help-mic {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 999px;
+        border: 0;
+        background: var(--v-accent);
+        color: #fff;
+        cursor: pointer;
+      }
+      #view-vision .help-mic:focus-visible {
+        outline: 3px solid var(--v-focus);
+        outline-offset: 2px;
+      }
+      #view-vision .prompt-box {
+        width: 100%;
+        min-height: 110px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid #cfcfcf;
+        background: #f9f7f3;
+        color: var(--v-ink);
+        resize: none;
+      }
+
+      #view-vision .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
       /* 提交按钮使用 Accent 色 */
-      #view-vision .primary-btn { background: var(--v-accent); color: white; border: 0; padding: 12px 18px; border-radius: 999px; font-size: 16px; cursor: pointer; }
+      #view-vision .primary-btn {
+        background: var(--v-accent);
+        color: white;
+        border: 0;
+        padding: 12px 18px;
+        border-radius: 999px;
+        font-size: 16px;
+        cursor: pointer;
+      }
       /* 次要按钮 */
-      #view-vision .button-link { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 12px 18px; border-radius: 999px; font-size: 16px; background: #f0f0f0; color: var(--v-ink); }
-      
-      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
-      .note { font-size: 14px; color: var(--v-muted); }
-      #view-vision footer { margin-top: 50px; font-size: 12px; color: var(--v-muted); }
-  </style>
-</head>
+      #view-vision .button-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        padding: 12px 18px;
+        border-radius: 999px;
+        font-size: 16px;
+        background: #f0f0f0;
+        color: var(--v-ink);
+      }
 
-<body>
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+      .note {
+        font-size: 14px;
+        color: var(--v-muted);
+      }
+      #view-vision footer {
+        margin-top: 50px;
+        font-size: 12px;
+        color: var(--v-muted);
+      }
+    </style>
+  </head>
 
-  <div id="view-landing">
-    <h1 class="landing-title">欢迎使用无障碍吐槽平台</h1>
-    <p class="note" style="margin-bottom: 20px;">提示：支持鼠标点击、Tab 键切换焦点。单击或回车进入。</p>
-    <div class="card-container">
-      
-      <button class="role-card" onclick="switchMode('hearing')" aria-label="我是听障用户，进入文字辅助模式。单击进入。">
-        <span class="role-icon" aria-hidden="true">🧏</span>
-        <span class="role-name">我是听障用户</span>
-        <span class="role-desc">提供清晰的文字提示、高对比度界面，不依赖声音反馈。</span>
-      </button>
+  <body>
+    <div id="view-landing">
+      <h1 class="landing-title">欢迎使用无障碍吐槽平台</h1>
+      <p class="note" style="margin-bottom: 20px">
+        提示：支持鼠标点击、Tab 键切换焦点。单击或回车进入。
+      </p>
+      <div class="card-container">
+        <button
+          class="role-card"
+          onclick="switchMode('hearing')"
+          aria-label="我是听障用户，进入文字辅助模式。单击进入。"
+        >
+          <span class="role-icon" aria-hidden="true">🧏</span>
+          <span class="role-name">我是听障用户</span>
+          <span class="role-desc"
+            >提供清晰的文字提示、高对比度界面，不依赖声音反馈。</span
+          >
+        </button>
 
-      <button class="role-card" onclick="switchMode('vision')" aria-label="我是视障用户，进入视障辅助模式。单击进入。">
-        <span class="role-icon" aria-hidden="true">👨‍🦯</span>
-        <span class="role-name">我是视障用户</span>
-        <span class="role-desc">提供大号字体、清晰层级与键盘操作支持。</span>
-      </button>
-
+        <button
+          class="role-card"
+          onclick="switchMode('vision')"
+          aria-label="我是视障用户，进入视障辅助模式。单击进入。"
+        >
+          <span class="role-icon" aria-hidden="true">👨‍🦯</span>
+          <span class="role-name">我是视障用户</span>
+          <span class="role-desc">提供大号字体、清晰层级与键盘操作支持。</span>
+        </button>
+      </div>
     </div>
-  </div>
 
-  <div id="view-hearing" class="hidden-view">
-    <button class="back-home-btn" onclick="switchMode('landing')">← 返回首页</button>
-    <header>
-      <h1>听障友好 · 吐槽平台</h1>
-      <p>用清晰的文字说清楚你的吐槽。平台不依赖声音提示，全部反馈都有明确的视觉提醒与可读文本。</p>
-    </header>
-    <main>
-      <section class="panel" aria-labelledby="form-title">
-        <h2 id="form-title">写下你的吐槽</h2>
-        <div class="toolbar" role="group" aria-label="无障碍工具">
-          <div class="tool">
-            <label for="bgTheme">背景主题</label>
-            <select id="bgTheme">
-              <option value="warm">暖晨橙绿</option>
-              <option value="sea">海风蓝绿</option>
-              <option value="sun">日光米黄</option>
-              <option value="stone">清爽灰白</option>
-            </select>
-          </div>
-          <div class="tool">
-            <label for="fontSize">文字大小</label>
-            <input id="fontSize" type="range" min="90" max="120" value="100" />
-          </div>
-          <div class="tool">
-            <label>高对比</label>
-            <button class="toggle-btn" type="button" data-toggle="contrast" aria-pressed="false">开启高对比</button>
-          </div>
-        </div>
-
-        <form id="complaintForm" novalidate>
-          <div class="field">
-            <label>类别（可多选）</label>
-            <div class="chips" id="categoryChips">
-              <button class="chip" type="button" aria-pressed="false">公共服务</button>
-              <button class="chip" type="button" aria-pressed="false">出行</button>
-              <button class="chip" type="button" aria-pressed="false">医疗</button>
-              <button class="chip" type="button" aria-pressed="false">教育</button>
-              <button class="chip" type="button" aria-pressed="false">线上平台</button>
-              <button class="chip" type="button" aria-pressed="false">工作场所</button>
+    <div id="view-hearing" class="hidden-view">
+      <button class="back-home-btn" onclick="switchMode('landing')">
+        ← 返回首页
+      </button>
+      <header>
+        <h1>听障友好 · 吐槽平台</h1>
+        <p>
+          用清晰的文字说清楚你的吐槽。平台不依赖声音提示，全部反馈都有明确的视觉提醒与可读文本。
+        </p>
+      </header>
+      <main>
+        <section class="panel" aria-labelledby="form-title">
+          <h2 id="form-title">写下你的吐槽</h2>
+          <div class="toolbar" role="group" aria-label="无障碍工具">
+            <div class="tool">
+              <label for="bgTheme">背景主题</label>
+              <select id="bgTheme">
+                <option value="warm">暖晨橙绿</option>
+                <option value="sea">海风蓝绿</option>
+                <option value="sun">日光米黄</option>
+                <option value="stone">清爽灰白</option>
+              </select>
+            </div>
+            <div class="tool">
+              <label for="fontSize">文字大小</label>
+              <input
+                id="fontSize"
+                type="range"
+                min="90"
+                max="120"
+                value="100"
+              />
+            </div>
+            <div class="tool">
+              <label>高对比</label>
+              <button
+                class="toggle-btn"
+                type="button"
+                data-toggle="contrast"
+                aria-pressed="false"
+              >
+                开启高对比
+              </button>
             </div>
           </div>
 
-          <div class="grid-2">
+          <form id="complaintForm" novalidate>
             <div class="field">
-              <label for="subject">吐槽对象（必填）</label>
-              <input id="subject" type="text" placeholder="如：地铁站服务台 / 某应用客服" />
-            </div>
-            <div class="field">
-              <label for="scene">发生场景（推荐）</label>
-              <input id="scene" type="text" placeholder="如：早高峰 / 线上咨询 / 医院窗口" />
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="problem">具体问题（必填）</label>
-            <textarea id="problem" placeholder="问题发生了什么？有哪些信息没有被文字化？"></textarea>
-          </div>
-
-          <div class="field">
-            <label for="impact">影响了什么（推荐）</label>
-            <textarea id="impact" placeholder="例：错过排队号，无法及时办理业务。"></textarea>
-          </div>
-
-          <div class="field">
-            <label for="wish">期望的改进（推荐）</label>
-            <textarea id="wish" placeholder="例：提供屏幕实时字幕、写字板或短信提醒。"></textarea>
-          </div>
-
-          <div class="field">
-            <label>情绪强度</label>
-            <div class="range-wrap">
-              <input id="emotion" type="range" min="1" max="5" value="3" />
-              <span class="badge" id="emotionLabel">中等</span>
-            </div>
-          </div>
-
-          <div class="progress-wrap">
-            <div class="progress-label">
-              <span>填写进度</span>
-              <span id="progressText">0 / 2</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-          </div>
-
-          <div class="actions">
-            <button class="primary" type="button" id="buildBtn">生成吐槽卡片</button>
-            <button class="secondary" type="reset">清空内容</button>
-          </div>
-        </form>
-      </section>
-
-      <section class="panel" aria-labelledby="preview-title">
-        <h2 id="preview-title">吐槽卡片预览</h2>
-        <div class="status info" id="statusBox" role="status" aria-live="polite">
-          填写内容后会在这里生成清晰可读的吐槽卡片。
-        </div>
-        <div class="preview-card" id="preview">
-          <p>填写后会生成一句话吐槽，方便直接提交。</p>
-        </div>
-        <div class="missing-panel" id="missingPanel" hidden aria-live="polite"></div>
-        <div class="actions">
-          <button class="secondary" type="button" id="saveBtn" disabled>上传到服务器</button>
-        </div>
-        <ul class="access-list">
-          <li>所有反馈均为文字提示，无语音依赖。</li>
-          <li>高对比、字号调节与减少动画适配听障用户与多样视觉需求。</li>
-          <li>缺失信息会自动询问并提示补全。</li>
-        </ul>
-      </section>
-    </main>
-  </div>
-
-  <div id="view-vision" class="hidden-view">
-    <button class="back-home-btn" onclick="switchMode('landing')" aria-label="返回首页">← 返回首页</button>
-    <header class="wrap">
-      <div class="brand">Vision-First</div>
-      <h1>直接吐槽</h1>
-      <p class="lead">把问题说清楚就行，表单尽量短。</p>
-      <p class="note">单击或按 Tab 切换焦点即可操作。</p>
-    </header>
-
-    <main id="main-vision" class="wrap">
-      <section id="submit">
-        <div class="v-card">
-          <form aria-describedby="form-note">
-            <p class="note">点击下方麦克风，按提示补充信息。</p>
-            <div class="help-panel" id="visionHelp" hidden>
-              <strong>补全提示</strong>
-              <textarea id="visionPromptBox" class="prompt-box" readonly aria-live="polite"></textarea>
-              <div class="help-actions">
-                <button class="help-mic" type="button" id="visionHelpMic" aria-label="语音输入到补充框">
-                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z" fill="currentColor"/>
-                  </svg>
+              <label>类别（可多选）</label>
+              <div class="chips" id="categoryChips">
+                <button class="chip" type="button" aria-pressed="false">
+                  公共服务
+                </button>
+                <button class="chip" type="button" aria-pressed="false">
+                  出行
+                </button>
+                <button class="chip" type="button" aria-pressed="false">
+                  医疗
+                </button>
+                <button class="chip" type="button" aria-pressed="false">
+                  教育
+                </button>
+                <button class="chip" type="button" aria-pressed="false">
+                  线上平台
+                </button>
+                <button class="chip" type="button" aria-pressed="false">
+                  工作场所
                 </button>
               </div>
             </div>
-            <p class="note">提示：语音输入需要浏览器支持（建议 https 或 localhost）。</p>
 
+            <div class="grid-2">
+              <div class="field">
+                <label for="subject">吐槽对象（必填）</label>
+                <input
+                  id="subject"
+                  type="text"
+                  placeholder="如：地铁站服务台 / 某应用客服"
+                />
+              </div>
+              <div class="field">
+                <label for="scene">发生场景（推荐）</label>
+                <input
+                  id="scene"
+                  type="text"
+                  placeholder="如：早高峰 / 线上咨询 / 医院窗口"
+                />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="problem">具体问题（必填）</label>
+              <textarea
+                id="problem"
+                placeholder="问题发生了什么？有哪些信息没有被文字化？"
+              ></textarea>
+            </div>
+
+            <div class="field">
+              <label for="impact">影响了什么（推荐）</label>
+              <textarea
+                id="impact"
+                placeholder="例：错过排队号，无法及时办理业务。"
+              ></textarea>
+            </div>
+
+            <div class="field">
+              <label for="wish">期望的改进（推荐）</label>
+              <textarea
+                id="wish"
+                placeholder="例：提供屏幕实时字幕、写字板或短信提醒。"
+              ></textarea>
+            </div>
+
+            <div class="field">
+              <label>情绪强度</label>
+              <div class="range-wrap">
+                <input id="emotion" type="range" min="1" max="5" value="3" />
+                <span class="badge" id="emotionLabel">中等</span>
+              </div>
+            </div>
+
+            <div class="progress-wrap">
+              <div class="progress-label">
+                <span>填写进度</span>
+                <span id="progressText">0 / 2</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+            </div>
 
             <div class="actions">
-              <button id="v-submitBtn" class="primary-btn" type="button">提交吐槽</button>
-              <a class="button-link" href="查看吐槽.html">吐槽广场</a>
-              <span id="form-note" class="note">提交后会自动生成结构化报告，方便查看。</span>
+              <button class="primary" type="button" id="buildBtn">
+                生成吐槽卡片
+              </button>
+              <button class="secondary" type="reset">清空内容</button>
             </div>
-            <p class="sr-only" aria-live="polite">提示：所有输入项均支持键盘访问。</p>
-            <p id="v-status" class="note" role="status" aria-live="polite"></p>
           </form>
-        </div>
-      </section>
-    </main>
+        </section>
 
-    <footer class="wrap">
-      <p>提示：页面为视障优先原型，所有交互元素支持键盘访问。</p>
-    </footer>
-  </div>
+        <section class="panel" aria-labelledby="preview-title">
+          <h2 id="preview-title">吐槽卡片预览</h2>
+          <div
+            class="status info"
+            id="statusBox"
+            role="status"
+            aria-live="polite"
+          >
+            填写内容后会在这里生成清晰可读的吐槽卡片。
+          </div>
+          <div class="preview-card" id="preview">
+            <p>填写后会生成一句话吐槽，方便直接提交。</p>
+          </div>
+          <div
+            class="missing-panel"
+            id="missingPanel"
+            hidden
+            aria-live="polite"
+          ></div>
+          <div class="actions">
+            <button class="secondary" type="button" id="saveBtn" disabled>
+              上传到服务器
+            </button>
+          </div>
+          <ul class="access-list">
+            <li>所有反馈均为文字提示，无语音依赖。</li>
+            <li>高对比、字号调节与减少动画适配听障用户与多样视觉需求。</li>
+            <li>缺失信息会自动询问并提示补全。</li>
+          </ul>
+        </section>
+      </main>
+    </div>
 
-  <script>
-    // --- 0. 全局的状态与路由控制 ---
-    let currentMode = 'landing';
+    <div id="view-vision" class="hidden-view">
+      <button
+        class="back-home-btn"
+        onclick="switchMode('landing')"
+        aria-label="返回首页"
+      >
+        ← 返回首页
+      </button>
+      <header class="wrap">
+        <div class="brand">Vision-First</div>
+        <h1>直接吐槽</h1>
+        <p class="lead">把问题说清楚就行，表单尽量短。</p>
+        <p class="note">单击或按 Tab 切换焦点即可操作。</p>
+      </header>
 
-    function switchMode(mode) {
-        const landing = document.getElementById('view-landing');
-        const hearing = document.getElementById('view-hearing');
-        const vision = document.getElementById('view-vision');
-        const styleHearing = document.getElementById('style-hearing');
-        const styleVision = document.getElementById('style-vision');
+      <main id="main-vision" class="wrap">
+        <section id="submit">
+          <div class="v-card">
+            <form aria-describedby="form-note">
+              <p class="note">点击下方麦克风，按提示补充信息。</p>
+              <div class="help-panel" id="visionHelp" hidden>
+                <strong>补全提示</strong>
+                <textarea
+                  id="visionPromptBox"
+                  class="prompt-box"
+                  readonly
+                  aria-live="polite"
+                ></textarea>
+                <div class="help-actions">
+                  <button
+                    class="help-mic"
+                    type="button"
+                    id="visionHelpMic"
+                    aria-label="语音输入到补充框"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p class="note">
+                提示：语音输入需要浏览器支持（建议 https 或 localhost）。
+              </p>
+
+              <div class="actions">
+                <button id="v-submitBtn" class="primary-btn" type="button">
+                  提交吐槽
+                </button>
+                <a class="button-link" href="查看吐槽.html">吐槽广场</a>
+                <span id="form-note" class="note"
+                  >提交后会自动生成结构化报告，方便查看。</span
+                >
+              </div>
+              <p class="sr-only" aria-live="polite">
+                提示：所有输入项均支持键盘访问。
+              </p>
+              <p
+                id="v-status"
+                class="note"
+                role="status"
+                aria-live="polite"
+              ></p>
+            </form>
+          </div>
+        </section>
+      </main>
+
+      <footer class="wrap">
+        <p>提示：页面为视障优先原型，所有交互元素支持键盘访问。</p>
+      </footer>
+    </div>
+
+    <script>
+      // --- 0. 全局的状态与路由控制 ---
+      let currentMode = "landing";
+
+      function switchMode(mode) {
+        const landing = document.getElementById("view-landing");
+        const hearing = document.getElementById("view-hearing");
+        const vision = document.getElementById("view-vision");
+        const styleHearing = document.getElementById("style-hearing");
+        const styleVision = document.getElementById("style-vision");
 
         currentMode = mode;
 
-        if (mode === 'landing') {
-            landing.classList.remove('hidden-view');
-            hearing.classList.add('hidden-view');
-            vision.classList.add('hidden-view');
-            styleHearing.disabled = true;
-            styleVision.disabled = true;
-            document.title = "无障碍吐槽平台 - 首页";
-        } else if (mode === 'hearing') {
-            landing.classList.add('hidden-view');
-            hearing.classList.remove('hidden-view');
-            vision.classList.add('hidden-view');
-            styleHearing.disabled = false;
-            styleVision.disabled = true;
-            document.title = "听障友好吐槽平台";
-            initHearingMode();
-        } else if (mode === 'vision') {
-            landing.classList.add('hidden-view');
-            hearing.classList.add('hidden-view');
-            vision.classList.remove('hidden-view');
-            styleHearing.disabled = true;
-            styleVision.disabled = false;
-            document.title = "吐槽广场 - 视障模式";
-            initVisionMode();
+        if (mode === "landing") {
+          landing.classList.remove("hidden-view");
+          hearing.classList.add("hidden-view");
+          vision.classList.add("hidden-view");
+          styleHearing.disabled = true;
+          styleVision.disabled = true;
+          document.title = "无障碍吐槽平台 - 首页";
+        } else if (mode === "hearing") {
+          landing.classList.add("hidden-view");
+          hearing.classList.remove("hidden-view");
+          vision.classList.add("hidden-view");
+          styleHearing.disabled = false;
+          styleVision.disabled = true;
+          document.title = "听障友好吐槽平台";
+          initHearingMode();
+        } else if (mode === "vision") {
+          landing.classList.add("hidden-view");
+          hearing.classList.add("hidden-view");
+          vision.classList.remove("hidden-view");
+          styleHearing.disabled = true;
+          styleVision.disabled = false;
+          document.title = "吐槽广场 - 视障模式";
+          initVisionMode();
         }
-    }
-  </script>
-
-  <script>
-    const DEFAULT_API_BASE = ["localhost", "127.0.0.1"].includes(
-      window.location.hostname
-    )
-      ? ""
-      : "https://complaints-api.ton-ton.fun";
-    const API_BASE = localStorage.getItem("apiBase") || DEFAULT_API_BASE;
-
-    function apiUrl(path) {
-      if (!API_BASE) return path;
-      return `${API_BASE.replace(/\/+$/, "")}${path}`;
-    }
-
-    async function postComplaint(payload) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 8000);
-      try {
-        const headers = { "Content-Type": "application/json" };
-        const apiKey = localStorage.getItem("apiKey");
-        if (apiKey) headers["X-API-Key"] = apiKey;
-        const res = await fetch(apiUrl("/api/complaints"), {
-          method: "POST",
-          headers,
-          body: JSON.stringify(payload),
-          signal: controller.signal,
-        });
-        if (!res.ok) {
-          let message = "提交失败";
-          try {
-            const err = await res.json();
-            if (err && err.error) message = err.error;
-          } catch (e) {}
-          return { ok: false, error: message };
-        }
-        const data = await res.json().catch(() => ({}));
-        return { ok: true, data };
-      } catch (err) {
-        const message = err && err.name === "AbortError" ? "请求超时" : "无法连接后端";
-        return { ok: false, error: message };
-      } finally {
-        clearTimeout(timer);
       }
-    }
+    </script>
 
-  </script>
+    <script>
+      const DEFAULT_API_BASE = "https://complaints-api.ton-ton.fun";
+      const API_BASE = localStorage.getItem("apiBase") || DEFAULT_API_BASE;
 
-  <script>
-    // --- 1. 听障模式逻辑 ---
-    function initHearingMode() {
-        if(window.hearingInitialized) return;
+      function apiUrl(path) {
+        if (!API_BASE) return path;
+        return `${API_BASE.replace(/\/+$/, "")}${path}`;
+      }
+
+      async function postComplaint(payload) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 8000);
+        try {
+          const headers = { "Content-Type": "application/json" };
+          const apiKey = localStorage.getItem("apiKey");
+          if (apiKey) headers["X-API-Key"] = apiKey;
+          const res = await fetch(apiUrl("/api/complaints"), {
+            method: "POST",
+            headers,
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+          if (!res.ok) {
+            let message = "提交失败";
+            try {
+              const err = await res.json();
+              if (err && err.error) message = err.error;
+            } catch (e) {}
+            return { ok: false, error: message };
+          }
+          const data = await res.json().catch(() => ({}));
+          return { ok: true, data };
+        } catch (err) {
+          const message =
+            err && err.name === "AbortError" ? "请求超时" : "无法连接后端";
+          return { ok: false, error: message };
+        } finally {
+          clearTimeout(timer);
+        }
+      }
+    </script>
+
+    <script>
+      // --- 1. 听障模式逻辑 ---
+      function initHearingMode() {
+        if (window.hearingInitialized) return;
         window.hearingInitialized = true;
-        
+
         const form = document.getElementById("complaintForm");
         const subject = document.getElementById("subject");
         const scene = document.getElementById("scene");
@@ -583,335 +1089,384 @@
         const themeKey = "hearing-theme";
 
         const questionMap = {
-            subject: "你在吐槽哪个对象/服务/平台？",
-            scene: "发生场景（地点/时间，如：医院窗口/早高峰）？",
-            problem: "具体问题是什么？缺少了哪些文字或视觉提示？",
-            impact: "造成了什么影响或不便？",
-            wish: "你希望对方如何改进？",
+          subject: "你在吐槽哪个对象/服务/平台？",
+          scene: "发生场景（地点/时间，如：医院窗口/早高峰）？",
+          problem: "具体问题是什么？缺少了哪些文字或视觉提示？",
+          impact: "造成了什么影响或不便？",
+          wish: "你希望对方如何改进？",
         };
         const detailLabelMap = {
-            impact: "影响了什么",
-            wish: "期望的改进",
+          impact: "影响了什么",
+          wish: "期望的改进",
         };
         const detailAnswers = { impact: [], wish: [] };
         const autoFillCache = { impact: "", wish: "" };
         let lastProblemSeed = "";
 
-        const emotionMap = { 1: "很平静", 2: "轻微不满", 3: "中等", 4: "明显不满", 5: "非常生气" };
+        const emotionMap = {
+          1: "很平静",
+          2: "轻微不满",
+          3: "中等",
+          4: "明显不满",
+          5: "非常生气",
+        };
 
         const themeMap = {
-            warm: { bg1: "#fef6e4", bg2: "#dff4ef", glow1: "rgba(240, 138, 36, 0.18)", glow2: "rgba(11, 110, 79, 0.18)" },
-            sea: { bg1: "#e8f3ff", bg2: "#d9f7f3", glow1: "rgba(59, 130, 246, 0.16)", glow2: "rgba(20, 184, 166, 0.18)" },
-            sun: { bg1: "#fff3d6", bg2: "#fceee1", glow1: "rgba(245, 158, 11, 0.18)", glow2: "rgba(251, 191, 36, 0.16)" },
-            stone: { bg1: "#f2f4f8", bg2: "#ffffff", glow1: "rgba(148, 163, 184, 0.16)", glow2: "rgba(100, 116, 139, 0.12)" }
+          warm: {
+            bg1: "#fef6e4",
+            bg2: "#dff4ef",
+            glow1: "rgba(240, 138, 36, 0.18)",
+            glow2: "rgba(11, 110, 79, 0.18)",
+          },
+          sea: {
+            bg1: "#e8f3ff",
+            bg2: "#d9f7f3",
+            glow1: "rgba(59, 130, 246, 0.16)",
+            glow2: "rgba(20, 184, 166, 0.18)",
+          },
+          sun: {
+            bg1: "#fff3d6",
+            bg2: "#fceee1",
+            glow1: "rgba(245, 158, 11, 0.18)",
+            glow2: "rgba(251, 191, 36, 0.16)",
+          },
+          stone: {
+            bg1: "#f2f4f8",
+            bg2: "#ffffff",
+            glow1: "rgba(148, 163, 184, 0.16)",
+            glow2: "rgba(100, 116, 139, 0.12)",
+          },
         };
 
         function setStatus(message, type = "info") {
-            statusBox.textContent = message;
-            statusBox.className = `status ${type}`;
+          statusBox.textContent = message;
+          statusBox.className = `status ${type}`;
         }
 
         function applyTheme(key) {
-            const theme = themeMap[key] || themeMap.warm;
-            const root = document.documentElement.style;
-            root.setProperty("--bg-1", theme.bg1);
-            root.setProperty("--bg-2", theme.bg2);
-            root.setProperty("--glow-1", theme.glow1);
-            root.setProperty("--glow-2", theme.glow2);
+          const theme = themeMap[key] || themeMap.warm;
+          const root = document.documentElement.style;
+          root.setProperty("--bg-1", theme.bg1);
+          root.setProperty("--bg-2", theme.bg2);
+          root.setProperty("--glow-1", theme.glow1);
+          root.setProperty("--glow-2", theme.glow2);
         }
 
-        function updateEmotionLabel() { emotionLabel.textContent = emotionMap[emotion.value]; }
+        function updateEmotionLabel() {
+          emotionLabel.textContent = emotionMap[emotion.value];
+        }
 
         function updateProgress() {
-            const filled = [subject.value.trim(), problem.value.trim()].filter(Boolean).length;
-            progressText.textContent = `${filled} / 2`;
-            progressFill.style.width = `${(filled / 2) * 100}%`;
+          const filled = [subject.value.trim(), problem.value.trim()].filter(
+            Boolean,
+          ).length;
+          progressText.textContent = `${filled} / 2`;
+          progressFill.style.width = `${(filled / 2) * 100}%`;
         }
 
         function collectData() {
-            return {
-                subject: subject.value.trim(),
-                scene: scene.value.trim(),
-                problem: problem.value.trim(),
-                impact: impact.value.trim(),
-                wish: wish.value.trim(),
-                emotion: emotionMap[emotion.value],
-                emotionValue: emotion.value,
-                categories: Array.from(state.categories),
-            };
+          return {
+            subject: subject.value.trim(),
+            scene: scene.value.trim(),
+            problem: problem.value.trim(),
+            impact: impact.value.trim(),
+            wish: wish.value.trim(),
+            emotion: emotionMap[emotion.value],
+            emotionValue: emotion.value,
+            categories: Array.from(state.categories),
+          };
         }
 
         function buildSentence(data) {
-            const parts = [];
-            const subjectText = data.subject || "【待补充】";
-            const problemText = data.problem || "【待补充】";
-            const sceneText = data.scene ? data.scene.trim() : "";
+          const parts = [];
+          const subjectText = data.subject || "【待补充】";
+          const problemText = data.problem || "【待补充】";
+          const sceneText = data.scene ? data.scene.trim() : "";
 
-            let intro = `我想吐槽${subjectText}`;
-            if (sceneText) {
-                if (!subjectText.includes(sceneText)) intro = `在${sceneText}，我想吐槽${subjectText}`;
-            }
+          let intro = `我想吐槽${subjectText}`;
+          if (sceneText) {
+            if (!subjectText.includes(sceneText))
+              intro = `在${sceneText}，我想吐槽${subjectText}`;
+          }
 
-            parts.push(intro.trim());
-            parts.push(`主要问题是${problemText}`);
-            if (data.impact) parts.push(`导致${data.impact}`);
-            if (data.wish) parts.push(`希望${data.wish}`);
+          parts.push(intro.trim());
+          parts.push(`主要问题是${problemText}`);
+          if (data.impact) parts.push(`导致${data.impact}`);
+          if (data.wish) parts.push(`希望${data.wish}`);
 
-            const meta = [];
-            if (data.categories.length) meta.push(`类别：${data.categories.join("、")}`);
-            meta.push(`情绪：${data.emotion}`);
-            if (meta.length) parts.push(`（${meta.join("，")}）`);
+          const meta = [];
+          if (data.categories.length)
+            meta.push(`类别：${data.categories.join("、")}`);
+          meta.push(`情绪：${data.emotion}`);
+          if (meta.length) parts.push(`（${meta.join("，")}）`);
 
-            return `${parts.join("，").replace(/，（/g, "（")}。`;
+          return `${parts.join("，").replace(/，（/g, "（")}。`;
         }
 
         function renderPreview(data) {
-            preview.innerHTML = "";
-            const title = document.createElement("h3");
-            title.textContent = "一句话吐槽";
-            const sentence = document.createElement("p");
-            sentence.textContent = buildSentence(data);
-            preview.appendChild(title);
-            preview.appendChild(sentence);
+          preview.innerHTML = "";
+          const title = document.createElement("h3");
+          title.textContent = "一句话吐槽";
+          const sentence = document.createElement("p");
+          sentence.textContent = buildSentence(data);
+          preview.appendChild(title);
+          preview.appendChild(sentence);
         }
 
         function getDetailPrompts(problemText) {
-            const text = (problemText || "").trim();
-            const impactPrompts = [
-                "这个问题让你错过或延误了什么？",
-                "它导致你无法完成哪些具体操作？",
-            ];
-            const wishPrompts = [
-                "你希望增加哪些文字或视觉提示？",
-                "希望提供哪些替代沟通方式？",
-            ];
-            if (/语音|叫号|播报|广播|喊/.test(text)) {
-                wishPrompts.unshift("希望语音信息如何同步（字幕/短信/震动等）？");
-            }
-            if (/排队|窗口|柜台|现场|大厅|服务台/.test(text)) {
-                impactPrompts.unshift("是否影响排队/办理时机？");
-            }
-            if (/没有提示|未提示|缺少提示|提示不足|看不见/.test(text)) {
-                wishPrompts.unshift("希望哪些关键信息被文字化/可视化？");
-            }
-            return {
-                impact: impactPrompts.slice(0, 3),
-                wish: wishPrompts.slice(0, 3),
-            };
+          const text = (problemText || "").trim();
+          const impactPrompts = [
+            "这个问题让你错过或延误了什么？",
+            "它导致你无法完成哪些具体操作？",
+          ];
+          const wishPrompts = [
+            "你希望增加哪些文字或视觉提示？",
+            "希望提供哪些替代沟通方式？",
+          ];
+          if (/语音|叫号|播报|广播|喊/.test(text)) {
+            wishPrompts.unshift("希望语音信息如何同步（字幕/短信/震动等）？");
+          }
+          if (/排队|窗口|柜台|现场|大厅|服务台/.test(text)) {
+            impactPrompts.unshift("是否影响排队/办理时机？");
+          }
+          if (/没有提示|未提示|缺少提示|提示不足|看不见/.test(text)) {
+            wishPrompts.unshift("希望哪些关键信息被文字化/可视化？");
+          }
+          return {
+            impact: impactPrompts.slice(0, 3),
+            wish: wishPrompts.slice(0, 3),
+          };
         }
 
         function buildAutoText(key) {
-            return detailAnswers[key].map((value) => value.trim()).filter(Boolean).join("；");
+          return detailAnswers[key]
+            .map((value) => value.trim())
+            .filter(Boolean)
+            .join("；");
         }
 
         function applyAutoFill(key) {
-            const field = key === "impact" ? impact : wish;
-            const nextValue = buildAutoText(key);
-            const current = field.value.trim();
-            const last = autoFillCache[key];
-            if (!nextValue) {
-                if (!current || current === last) {
-                    field.value = "";
-                    autoFillCache[key] = "";
-                }
-                return;
+          const field = key === "impact" ? impact : wish;
+          const nextValue = buildAutoText(key);
+          const current = field.value.trim();
+          const last = autoFillCache[key];
+          if (!nextValue) {
+            if (!current || current === last) {
+              field.value = "";
+              autoFillCache[key] = "";
             }
-            if (current && current !== last) return;
-            field.value = nextValue;
-            autoFillCache[key] = nextValue;
+            return;
+          }
+          if (current && current !== last) return;
+          field.value = nextValue;
+          autoFillCache[key] = nextValue;
         }
 
         function renderMissing(requiredMissing, optionalMissing) {
-            if (requiredMissing.length === 0 && optionalMissing.length === 0) {
-                missingPanel.hidden = true;
-                missingPanel.innerHTML = "";
-                return;
-            }
-            missingPanel.hidden = false;
-            missingPanel.innerHTML = "";
-
-            const heading = document.createElement("strong");
-            heading.textContent = requiredMissing.length > 0 ? "缺少关键信息，请回答以下问题：" : "可选补充，让吐槽更完整：";
-            missingPanel.appendChild(heading);
-
-            const problemText = problem.value.trim();
-            const needDetail = problemText && (optionalMissing.includes("impact") || optionalMissing.includes("wish"));
-            if (problemText && problemText !== lastProblemSeed) {
-                lastProblemSeed = problemText;
-                detailAnswers.impact = [];
-                detailAnswers.wish = [];
-                autoFillCache.impact = "";
-                autoFillCache.wish = "";
-            }
-
-            const appendQuestion = (key, isOptional = false) => {
-                const wrap = document.createElement("div");
-                wrap.className = "question";
-                const label = document.createElement("label");
-                label.textContent = `${questionMap[key]}${isOptional ? "（可选）" : ""}`;
-                const input = document.createElement("input");
-                input.type = "text";
-                input.placeholder = "输入后会自动补全";
-                input.addEventListener("input", () => {
-                    const value = input.value.trim();
-                    if (!value) return;
-                    if (key === "subject") subject.value = value;
-                    if (key === "scene") scene.value = value;
-                    if (key === "problem") problem.value = value;
-                    if (key === "impact") impact.value = value;
-                    if (key === "wish") wish.value = value;
-                    updateProgress();
-                    const data = collectData();
-                    renderPreview(data);
-                });
-                wrap.appendChild(label);
-                wrap.appendChild(input);
-                missingPanel.appendChild(wrap);
-            };
-
-            const appendDetailQuestions = (key, prompts) => {
-                const title = document.createElement("div");
-                title.className = "question";
-                const strong = document.createElement("strong");
-                strong.textContent = `为补全「${detailLabelMap[key]}」请回答：`;
-                title.appendChild(strong);
-                missingPanel.appendChild(title);
-
-                const nextPrompts = prompts || [];
-                detailAnswers[key] = detailAnswers[key].slice(0, nextPrompts.length);
-
-                nextPrompts.forEach((prompt, index) => {
-                    const wrap = document.createElement("div");
-                    wrap.className = "question";
-                    const label = document.createElement("label");
-                    label.textContent = prompt;
-                    const input = document.createElement("input");
-                    input.type = "text";
-                    input.placeholder = `回答后会自动补全到「${detailLabelMap[key]}」`;
-                    input.value = detailAnswers[key][index] || "";
-                    input.addEventListener("input", () => {
-                        detailAnswers[key][index] = input.value || "";
-                        applyAutoFill(key);
-                        const data = collectData();
-                        renderPreview(data);
-                    });
-                    wrap.appendChild(label);
-                    wrap.appendChild(input);
-                    missingPanel.appendChild(wrap);
-                });
-
-                applyAutoFill(key);
-            };
-
-            requiredMissing.forEach((key) => appendQuestion(key, false));
-            if (needDetail) {
-                const prompts = getDetailPrompts(problemText);
-                if (optionalMissing.includes("impact")) appendDetailQuestions("impact", prompts.impact);
-                if (optionalMissing.includes("wish")) appendDetailQuestions("wish", prompts.wish);
-                optionalMissing
-                    .filter((key) => key !== "impact" && key !== "wish")
-                    .forEach((key) => appendQuestion(key, true));
-            } else {
-                optionalMissing.forEach((key) => appendQuestion(key, true));
-            }
-        }
-
-        function buildCard() {
-            const data = collectData();
-            const requiredMissing = [];
-            const optionalMissing = [];
-            if (!data.subject) requiredMissing.push("subject");
-            if (!data.problem) requiredMissing.push("problem");
-            if (!data.scene) optionalMissing.push("scene");
-            if (!data.impact) optionalMissing.push("impact");
-            if (!data.wish) optionalMissing.push("wish");
-
-            renderPreview(data);
-            renderMissing(requiredMissing, optionalMissing);
-            updateProgress();
-
-            if (requiredMissing.length > 0) {
-                setStatus("还缺少关键内容，请先补全再生成一句话吐槽。", "warn");
-                saveBtn.disabled = true;
-                return;
-            }
-
-            setStatus("一句话吐槽已生成，可提交。", "info");
-            saveBtn.disabled = false;
-        }
-
-        chips.forEach((chip) => {
-            chip.addEventListener("click", () => {
-                const name = chip.textContent.trim();
-                const selected = chip.getAttribute("aria-pressed") === "true";
-                chip.setAttribute("aria-pressed", String(!selected));
-                if (selected) state.categories.delete(name);
-                else state.categories.add(name);
-            });
-        });
-
-        toggleButtons.forEach((btn) => {
-            btn.addEventListener("click", () => {
-                const type = btn.dataset.toggle;
-                const pressed = btn.getAttribute("aria-pressed") === "true";
-                btn.setAttribute("aria-pressed", String(!pressed));
-                if (type === "contrast") document.body.classList.toggle("contrast", !pressed);
-            });
-        });
-
-        fontSize.addEventListener("input", () => {
-            document.documentElement.style.fontSize = `${fontSize.value}%`;
-        });
-
-        bgTheme.addEventListener("change", () => {
-            applyTheme(bgTheme.value);
-            localStorage.setItem(themeKey, bgTheme.value);
-        });
-
-        [subject, scene, problem, impact, wish].forEach((input) => input.addEventListener("input", updateProgress));
-        emotion.addEventListener("input", updateEmotionLabel);
-
-        buildBtn.addEventListener("click", buildCard);
-        
-        saveBtn.addEventListener("click", async () => {
-            buildCard();
-            const data = collectData();
-            if (!data.subject || !data.problem) return;
-            saveBtn.disabled = true;
-            setStatus("正在提交到服务器…", "info");
-            const payload = {
-                ...data,
-                sentence: buildSentence(data),
-                created_at: new Date().toISOString(),
-                mode: "hearing",
-            };
-            const result = await postComplaint(payload);
-            if (result.ok) {
-                setStatus("提交成功，已保存到服务器。", "info");
-                resetForm();
-                return;
-            }
-            setStatus(`提交失败：${result.error || "未知错误"}`, "warn");
-            saveBtn.disabled = false;
-        });
-
-        function resetForm() {
-            state.categories.clear();
-            chips.forEach((chip) => chip.setAttribute("aria-pressed", "false"));
+          if (requiredMissing.length === 0 && optionalMissing.length === 0) {
             missingPanel.hidden = true;
             missingPanel.innerHTML = "";
+            return;
+          }
+          missingPanel.hidden = false;
+          missingPanel.innerHTML = "";
+
+          const heading = document.createElement("strong");
+          heading.textContent =
+            requiredMissing.length > 0
+              ? "缺少关键信息，请回答以下问题："
+              : "可选补充，让吐槽更完整：";
+          missingPanel.appendChild(heading);
+
+          const problemText = problem.value.trim();
+          const needDetail =
+            problemText &&
+            (optionalMissing.includes("impact") ||
+              optionalMissing.includes("wish"));
+          if (problemText && problemText !== lastProblemSeed) {
+            lastProblemSeed = problemText;
             detailAnswers.impact = [];
             detailAnswers.wish = [];
             autoFillCache.impact = "";
             autoFillCache.wish = "";
-            lastProblemSeed = "";
-            preview.innerHTML = "<p>填写后会生成一句话吐槽，方便直接提交。</p>";
-            saveBtn.disabled = true;
-            updateProgress();
-            updateEmotionLabel();
-            setStatus("内容已清空，可以重新填写。", "info");
+          }
+
+          const appendQuestion = (key, isOptional = false) => {
+            const wrap = document.createElement("div");
+            wrap.className = "question";
+            const label = document.createElement("label");
+            label.textContent = `${questionMap[key]}${isOptional ? "（可选）" : ""}`;
+            const input = document.createElement("input");
+            input.type = "text";
+            input.placeholder = "输入后会自动补全";
+            input.addEventListener("input", () => {
+              const value = input.value.trim();
+              if (!value) return;
+              if (key === "subject") subject.value = value;
+              if (key === "scene") scene.value = value;
+              if (key === "problem") problem.value = value;
+              if (key === "impact") impact.value = value;
+              if (key === "wish") wish.value = value;
+              updateProgress();
+              const data = collectData();
+              renderPreview(data);
+            });
+            wrap.appendChild(label);
+            wrap.appendChild(input);
+            missingPanel.appendChild(wrap);
+          };
+
+          const appendDetailQuestions = (key, prompts) => {
+            const title = document.createElement("div");
+            title.className = "question";
+            const strong = document.createElement("strong");
+            strong.textContent = `为补全「${detailLabelMap[key]}」请回答：`;
+            title.appendChild(strong);
+            missingPanel.appendChild(title);
+
+            const nextPrompts = prompts || [];
+            detailAnswers[key] = detailAnswers[key].slice(
+              0,
+              nextPrompts.length,
+            );
+
+            nextPrompts.forEach((prompt, index) => {
+              const wrap = document.createElement("div");
+              wrap.className = "question";
+              const label = document.createElement("label");
+              label.textContent = prompt;
+              const input = document.createElement("input");
+              input.type = "text";
+              input.placeholder = `回答后会自动补全到「${detailLabelMap[key]}」`;
+              input.value = detailAnswers[key][index] || "";
+              input.addEventListener("input", () => {
+                detailAnswers[key][index] = input.value || "";
+                applyAutoFill(key);
+                const data = collectData();
+                renderPreview(data);
+              });
+              wrap.appendChild(label);
+              wrap.appendChild(input);
+              missingPanel.appendChild(wrap);
+            });
+
+            applyAutoFill(key);
+          };
+
+          requiredMissing.forEach((key) => appendQuestion(key, false));
+          if (needDetail) {
+            const prompts = getDetailPrompts(problemText);
+            if (optionalMissing.includes("impact"))
+              appendDetailQuestions("impact", prompts.impact);
+            if (optionalMissing.includes("wish"))
+              appendDetailQuestions("wish", prompts.wish);
+            optionalMissing
+              .filter((key) => key !== "impact" && key !== "wish")
+              .forEach((key) => appendQuestion(key, true));
+          } else {
+            optionalMissing.forEach((key) => appendQuestion(key, true));
+          }
         }
-        
+
+        function buildCard() {
+          const data = collectData();
+          const requiredMissing = [];
+          const optionalMissing = [];
+          if (!data.subject) requiredMissing.push("subject");
+          if (!data.problem) requiredMissing.push("problem");
+          if (!data.scene) optionalMissing.push("scene");
+          if (!data.impact) optionalMissing.push("impact");
+          if (!data.wish) optionalMissing.push("wish");
+
+          renderPreview(data);
+          renderMissing(requiredMissing, optionalMissing);
+          updateProgress();
+
+          if (requiredMissing.length > 0) {
+            setStatus("还缺少关键内容，请先补全再生成一句话吐槽。", "warn");
+            saveBtn.disabled = true;
+            return;
+          }
+
+          setStatus("一句话吐槽已生成，可提交。", "info");
+          saveBtn.disabled = false;
+        }
+
+        chips.forEach((chip) => {
+          chip.addEventListener("click", () => {
+            const name = chip.textContent.trim();
+            const selected = chip.getAttribute("aria-pressed") === "true";
+            chip.setAttribute("aria-pressed", String(!selected));
+            if (selected) state.categories.delete(name);
+            else state.categories.add(name);
+          });
+        });
+
+        toggleButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const type = btn.dataset.toggle;
+            const pressed = btn.getAttribute("aria-pressed") === "true";
+            btn.setAttribute("aria-pressed", String(!pressed));
+            if (type === "contrast")
+              document.body.classList.toggle("contrast", !pressed);
+          });
+        });
+
+        fontSize.addEventListener("input", () => {
+          document.documentElement.style.fontSize = `${fontSize.value}%`;
+        });
+
+        bgTheme.addEventListener("change", () => {
+          applyTheme(bgTheme.value);
+          localStorage.setItem(themeKey, bgTheme.value);
+        });
+
+        [subject, scene, problem, impact, wish].forEach((input) =>
+          input.addEventListener("input", updateProgress),
+        );
+        emotion.addEventListener("input", updateEmotionLabel);
+
+        buildBtn.addEventListener("click", buildCard);
+
+        saveBtn.addEventListener("click", async () => {
+          buildCard();
+          const data = collectData();
+          if (!data.subject || !data.problem) return;
+          saveBtn.disabled = true;
+          setStatus("正在提交到服务器…", "info");
+          const payload = {
+            ...data,
+            sentence: buildSentence(data),
+            created_at: new Date().toISOString(),
+            mode: "hearing",
+          };
+          const result = await postComplaint(payload);
+          if (result.ok) {
+            setStatus("提交成功，已保存到服务器。", "info");
+            resetForm();
+            return;
+          }
+          setStatus(`提交失败：${result.error || "未知错误"}`, "warn");
+          saveBtn.disabled = false;
+        });
+
+        function resetForm() {
+          state.categories.clear();
+          chips.forEach((chip) => chip.setAttribute("aria-pressed", "false"));
+          missingPanel.hidden = true;
+          missingPanel.innerHTML = "";
+          detailAnswers.impact = [];
+          detailAnswers.wish = [];
+          autoFillCache.impact = "";
+          autoFillCache.wish = "";
+          lastProblemSeed = "";
+          preview.innerHTML = "<p>填写后会生成一句话吐槽，方便直接提交。</p>";
+          saveBtn.disabled = true;
+          updateProgress();
+          updateEmotionLabel();
+          setStatus("内容已清空，可以重新填写。", "info");
+        }
+
         form.addEventListener("reset", resetForm);
 
         // 初始化
@@ -919,76 +1474,84 @@
         updateProgress();
         const savedTheme = localStorage.getItem(themeKey);
         if (savedTheme && themeMap[savedTheme]) {
-            bgTheme.value = savedTheme;
-            applyTheme(savedTheme);
+          bgTheme.value = savedTheme;
+          applyTheme(savedTheme);
         } else {
-            applyTheme(bgTheme.value);
+          applyTheme(bgTheme.value);
         }
-    }
-  </script>
+      }
+    </script>
 
-  <script>
-    // --- 3. 视障模式业务逻辑 (API / Voice / File) ---
-    // 移植自 "吐槽视障.html"
-    
-    // 语音识别功能
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let recognitionInstance = null;
-    let activeVoiceTarget = null;
-    let isListening = false;
+    <script>
+      // --- 3. 视障模式业务逻辑 (API / Voice / File) ---
+      // 移植自 "吐槽视障.html"
 
-    function ensureRecognition() {
+      // 语音识别功能
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+      let recognitionInstance = null;
+      let activeVoiceTarget = null;
+      let isListening = false;
+
+      function ensureRecognition() {
         if (!SpeechRecognition) {
-            alert("当前浏览器不支持语音输入。");
-            return null;
+          alert("当前浏览器不支持语音输入。");
+          return null;
         }
         if (recognitionInstance) return recognitionInstance;
-        
+
         const recognition = new SpeechRecognition();
         recognition.lang = "zh-CN";
         recognition.interimResults = false;
         recognition.continuous = false;
-        
-        recognition.onstart = () => { isListening = true; };
-        recognition.onend = () => { isListening = false; };
-        recognition.onerror = () => { isListening = false; };
-        
-        recognition.onresult = (event) => {
-            const transcript = Array.from(event.results)
-                .map((result) => result[0].transcript)
-                .join("").trim();
-            if (!transcript) return;
 
-            if (activeVoiceTarget === "__vision_help__") {
-                if (typeof window.__visionHelpCommit === "function") {
-                    window.__visionHelpCommit(transcript);
-                }
-                return;
-            }
-            
-            const field = document.getElementById(activeVoiceTarget);
-            if (!field) return;
-            
-            const current = (field.value || "").trim();
-            field.value = current ? `${current} ${transcript}` : transcript;
-            field.focus();
-            field.dispatchEvent(new Event("input", { bubbles: true }));
+        recognition.onstart = () => {
+          isListening = true;
         };
-        
+        recognition.onend = () => {
+          isListening = false;
+        };
+        recognition.onerror = () => {
+          isListening = false;
+        };
+
+        recognition.onresult = (event) => {
+          const transcript = Array.from(event.results)
+            .map((result) => result[0].transcript)
+            .join("")
+            .trim();
+          if (!transcript) return;
+
+          if (activeVoiceTarget === "__vision_help__") {
+            if (typeof window.__visionHelpCommit === "function") {
+              window.__visionHelpCommit(transcript);
+            }
+            return;
+          }
+
+          const field = document.getElementById(activeVoiceTarget);
+          if (!field) return;
+
+          const current = (field.value || "").trim();
+          field.value = current ? `${current} ${transcript}` : transcript;
+          field.focus();
+          field.dispatchEvent(new Event("input", { bubbles: true }));
+        };
+
         recognitionInstance = recognition;
         return recognitionInstance;
-    }
+      }
 
-    function startVoiceInput(targetId) {
+      function startVoiceInput(targetId) {
         if (isListening) return;
         const recognition = ensureRecognition();
         if (!recognition) return;
         activeVoiceTarget = targetId;
         recognition.start();
-    }
+      }
 
-    function initVisionMode() {
-        if(window.visionInitialized) return;
+      function initVisionMode() {
+        if (window.visionInitialized) return;
         window.visionInitialized = true;
 
         const submitBtn = document.getElementById("v-submitBtn");
@@ -999,139 +1562,153 @@
         let activeHelpKey = "";
 
         const state = {
-            scene: "",
-            severity: "",
-            summary: "",
-            detail: "",
-            contact: "",
+          scene: "",
+          severity: "",
+          summary: "",
+          detail: "",
+          contact: "",
         };
 
-        function setStatus(message) { if (statusEl) statusEl.textContent = message; }
+        function setStatus(message) {
+          if (statusEl) statusEl.textContent = message;
+        }
 
         const questionMap = {
-            summary: "一句话描述（必填）",
-            detail: "详细描述（必填）",
-            scene: "发生场景（可选）",
-            severity: "影响程度（可选）",
-            contact: "联系方式（可选）",
+          summary: "一句话描述（必填）",
+          detail: "详细描述（必填）",
+          scene: "发生场景（可选）",
+          severity: "影响程度（可选）",
+          contact: "联系方式（可选）",
         };
 
         function getDetailPrompts(text) {
-            const prompts = [
-                "发生了什么？",
-                "你尝试了哪些操作？",
-                "哪里卡住了？",
-            ];
-            if (/读屏|屏幕|看不见|朗读/.test(text)) {
-                prompts.unshift("读屏具体读出了什么？哪些信息缺失？");
-            }
-            if (/按钮|表单|验证码|购票|支付/.test(text)) {
-                prompts.unshift("具体卡在哪一步？");
-            }
-            return prompts.slice(0, 3);
+          const prompts = [
+            "发生了什么？",
+            "你尝试了哪些操作？",
+            "哪里卡住了？",
+          ];
+          if (/读屏|屏幕|看不见|朗读/.test(text)) {
+            prompts.unshift("读屏具体读出了什么？哪些信息缺失？");
+          }
+          if (/按钮|表单|验证码|购票|支付/.test(text)) {
+            prompts.unshift("具体卡在哪一步？");
+          }
+          return prompts.slice(0, 3);
         }
 
         function formatStatePreview() {
-            const lines = [];
-            if (state.summary.trim()) lines.push(`已记录·一句话：${state.summary.trim()}`);
-            if (state.detail.trim()) lines.push(`已记录·详细：${state.detail.trim()}`);
-            if (state.scene.trim()) lines.push(`已记录·场景：${state.scene.trim()}`);
-            if (state.severity.trim()) lines.push(`已记录·影响：${state.severity.trim()}`);
-            if (state.contact.trim()) lines.push(`已记录·联系方式：${state.contact.trim()}`);
-            return lines.join("\n");
+          const lines = [];
+          if (state.summary.trim())
+            lines.push(`已记录·一句话：${state.summary.trim()}`);
+          if (state.detail.trim())
+            lines.push(`已记录·详细：${state.detail.trim()}`);
+          if (state.scene.trim())
+            lines.push(`已记录·场景：${state.scene.trim()}`);
+          if (state.severity.trim())
+            lines.push(`已记录·影响：${state.severity.trim()}`);
+          if (state.contact.trim())
+            lines.push(`已记录·联系方式：${state.contact.trim()}`);
+          return lines.join("\n");
         }
 
         function renderHelp(requiredMissing, optionalMissing) {
-            if (!helpPanel || !promptBox) return;
-            helpPanel.hidden = false;
+          if (!helpPanel || !promptBox) return;
+          helpPanel.hidden = false;
 
-            if (requiredMissing.length === 0 && optionalMissing.length === 0) {
-                activeHelpKey = "";
-                const preview = formatStatePreview();
-                promptBox.value = [preview, "信息已完整，可以提交或继续补充细节。"].filter(Boolean).join("\n\n");
-                return;
-            }
-
-            const queue = [...requiredMissing, ...optionalMissing];
-            activeHelpKey = queue[0] || "";
-
-            let promptLine = questionMap[activeHelpKey] || "请补充信息";
-            if (activeHelpKey === "detail") {
-                const prompts = getDetailPrompts(state.detail.trim() || state.summary.trim());
-                if (prompts.length) promptLine = prompts[0];
-            }
+          if (requiredMissing.length === 0 && optionalMissing.length === 0) {
+            activeHelpKey = "";
             const preview = formatStatePreview();
-            promptBox.value = [preview, `请补充：${promptLine}`].filter(Boolean).join("\n\n");
+            promptBox.value = [preview, "信息已完整，可以提交或继续补充细节。"]
+              .filter(Boolean)
+              .join("\n\n");
+            return;
+          }
+
+          const queue = [...requiredMissing, ...optionalMissing];
+          activeHelpKey = queue[0] || "";
+
+          let promptLine = questionMap[activeHelpKey] || "请补充信息";
+          if (activeHelpKey === "detail") {
+            const prompts = getDetailPrompts(
+              state.detail.trim() || state.summary.trim(),
+            );
+            if (prompts.length) promptLine = prompts[0];
+          }
+          const preview = formatStatePreview();
+          promptBox.value = [preview, `请补充：${promptLine}`]
+            .filter(Boolean)
+            .join("\n\n");
         }
 
         function updateHelp() {
-            const requiredMissing = [];
-            const optionalMissing = [];
-            if (!state.summary.trim()) requiredMissing.push("summary");
-            if (!state.detail.trim()) requiredMissing.push("detail");
-            if (!state.scene.trim()) optionalMissing.push("scene");
-            if (!state.severity.trim()) optionalMissing.push("severity");
-            if (!state.contact.trim()) optionalMissing.push("contact");
-            renderHelp(requiredMissing, optionalMissing);
+          const requiredMissing = [];
+          const optionalMissing = [];
+          if (!state.summary.trim()) requiredMissing.push("summary");
+          if (!state.detail.trim()) requiredMissing.push("detail");
+          if (!state.scene.trim()) optionalMissing.push("scene");
+          if (!state.severity.trim()) optionalMissing.push("severity");
+          if (!state.contact.trim()) optionalMissing.push("contact");
+          renderHelp(requiredMissing, optionalMissing);
         }
 
         function commitHelpAnswer(value) {
-            const normalized = (value || "").trim();
-            if (!normalized) return;
-            const targetKey = activeHelpKey || (state.summary.trim() ? "detail" : "summary");
-            if (targetKey === "summary") {
-                state.summary = normalized;
-            } else if (targetKey === "detail") {
-                const current = state.detail.trim();
-                state.detail = current ? `${current}；${normalized}` : normalized;
-            } else if (targetKey === "scene") {
-                state.scene = normalized;
-            } else if (targetKey === "severity") {
-                state.severity = normalized;
-            } else if (targetKey === "contact") {
-                state.contact = normalized;
-            }
-            updateHelp();
+          const normalized = (value || "").trim();
+          if (!normalized) return;
+          const targetKey =
+            activeHelpKey || (state.summary.trim() ? "detail" : "summary");
+          if (targetKey === "summary") {
+            state.summary = normalized;
+          } else if (targetKey === "detail") {
+            const current = state.detail.trim();
+            state.detail = current ? `${current}；${normalized}` : normalized;
+          } else if (targetKey === "scene") {
+            state.scene = normalized;
+          } else if (targetKey === "severity") {
+            state.severity = normalized;
+          } else if (targetKey === "contact") {
+            state.contact = normalized;
+          }
+          updateHelp();
         }
 
         function startHelpVoice() {
-            startVoiceInput("__vision_help__");
+          startVoiceInput("__vision_help__");
         }
 
         async function submitComplaint() {
-            if (!state.summary.trim() || !state.detail.trim()) {
-                updateHelp();
-                setStatus("请先补全必填信息再提交。");
-                return;
-            }
-            setStatus("正在提交到服务器…");
-            try {
-                const payload = {
-                    scene: state.scene,
-                    severity: state.severity,
-                    summary: state.summary,
-                    detail: state.detail,
-                    contact: state.contact,
-                    created_at: new Date().toISOString(),
-                    mode: "vision",
-                };
+          if (!state.summary.trim() || !state.detail.trim()) {
+            updateHelp();
+            setStatus("请先补全必填信息再提交。");
+            return;
+          }
+          setStatus("正在提交到服务器…");
+          try {
+            const payload = {
+              scene: state.scene,
+              severity: state.severity,
+              summary: state.summary,
+              detail: state.detail,
+              contact: state.contact,
+              created_at: new Date().toISOString(),
+              mode: "vision",
+            };
 
-                const result = await postComplaint(payload);
-                if (!result.ok) {
-                    setStatus(`提交失败：${result.error || "未知错误"}`);
-                    return;
-                }
-                setStatus("提交成功，已保存到服务器。");
-
-                state.summary = "";
-                state.detail = "";
-                state.scene = "";
-                state.severity = "";
-                state.contact = "";
-                updateHelp();
-            } catch (err) {
-                setStatus("提交失败，请重试。");
+            const result = await postComplaint(payload);
+            if (!result.ok) {
+              setStatus(`提交失败：${result.error || "未知错误"}`);
+              return;
             }
+            setStatus("提交成功，已保存到服务器。");
+
+            state.summary = "";
+            state.detail = "";
+            state.scene = "";
+            state.severity = "";
+            state.contact = "";
+            updateHelp();
+          } catch (err) {
+            setStatus("提交失败，请重试。");
+          }
         }
 
         if (submitBtn) submitBtn.addEventListener("click", submitComplaint);
@@ -1140,8 +1717,7 @@
         window.__visionHelpCommit = commitHelpAnswer;
 
         updateHelp();
-
-    }
-  </script>
-</body>
+      }
+    </script>
+  </body>
 </html>

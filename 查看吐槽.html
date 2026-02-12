@@ -658,11 +658,7 @@
     </main>
 
     <script>
-      const DEFAULT_API_BASE = ["localhost", "127.0.0.1"].includes(
-        window.location.hostname
-      )
-        ? ""
-        : "https://complaints-api.ton-ton.fun";
+      const DEFAULT_API_BASE = "https://complaints-api.ton-ton.fun";
       const API_BASE = localStorage.getItem("apiBase") || DEFAULT_API_BASE;
 
       function apiUrl(path) {
