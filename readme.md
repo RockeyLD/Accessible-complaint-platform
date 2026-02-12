@@ -4,7 +4,7 @@
 
 ## 1. 在线预览（可选）
 在线页面地址（若已开启 GitHub Pages）：  
-https://rockeyld.github.io/Accessible-complaint-platform/
+https://complaints-api.ton-ton.fun 
 
 ## 2. 功能
 - 提交吐槽：听障与视障两种模式均可提交到后端。
