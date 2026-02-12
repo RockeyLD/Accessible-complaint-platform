@@ -8,8 +8,6 @@ const questionMap = {
   contact: "联系方式（可选）"
 };
 
-const severityOptions = ["非常影响", "比较影响", "轻微影响"];
-
 Page({
   data: {
     form: {
@@ -22,8 +20,8 @@ Page({
     promptText: "",
     activeHelpKey: "",
     quickAnswer: "",
-    statusText: "",
-    severityOptions
+    quickFocus: false,
+    statusText: ""
   },
 
   onLoad() {
@@ -34,19 +32,8 @@ Page({
     wx.navigateTo({ url: "/pages/list/index" });
   },
 
-  onFieldInput(e) {
-    const key = e.currentTarget.dataset.field;
-    const value = e.detail.value;
-    const form = { ...this.data.form, [key]: value };
-    this.setData({ form });
-    this.updateHelp();
-  },
-
-  onSeverityChange(e) {
-    const index = Number(e.detail.value);
-    const severity = this.data.severityOptions[index] || "";
-    this.setData({ "form.severity": severity });
-    this.updateHelp();
+  setStatus(message) {
+    this.setData({ statusText: message });
   },
 
   onQuickAnswerInput(e) {
@@ -55,7 +42,12 @@ Page({
 
   onCommitAnswer() {
     this.commitHelpAnswer(this.data.quickAnswer);
-    this.setData({ quickAnswer: "" });
+    this.setData({ quickAnswer: "", quickFocus: false });
+  },
+
+  onStartVoice() {
+    this.setData({ quickFocus: true });
+    wx.showToast({ title: "请使用系统语音输入", icon: "none" });
   },
 
   getDetailPrompts(text) {
@@ -129,10 +121,10 @@ Page({
   async onSubmit() {
     if (!this.data.form.summary.trim() || !this.data.form.detail.trim()) {
       this.updateHelp();
-      this.setData({ statusText: "请先补全必填信息再提交。" });
+      this.setStatus("请先补全必填信息再提交。");
       return;
     }
-    this.setData({ statusText: "正在提交到服务器…" });
+    this.setStatus("正在提交到服务器…");
     const payload = {
       ...this.data.form,
       created_at: new Date().toISOString(),
@@ -140,7 +132,7 @@ Page({
     };
     const result = await postComplaint(payload);
     if (!result.ok) {
-      this.setData({ statusText: `提交失败：${result.error || "未知错误"}` });
+      this.setStatus(`提交失败：${result.error || "未知错误"}`);
       return;
     }
     this.setData({
