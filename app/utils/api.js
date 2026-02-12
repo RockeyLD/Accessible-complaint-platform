@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE = "https://complaints-api.rl-longdragon.workers.dev";
+const DEFAULT_API_BASE = "https://complaints-api.ton-ton.fun";
 const API_BASE_KEY = "apiBase";
 const API_KEY_KEY = "apiKey";
 
