@@ -16,13 +16,13 @@
         <text class="tool-label">文字大小</text>
         <slider min="90" max="130" value="{{fontSize}}" bindchange="onFontSizeChange" />
       </view>
-      <view class="tool">
+      <view class="tool tool-wide">
         <text class="tool-label">高对比度</text>
         <button class="toggle-btn {{contrast ? 'active' : ''}}" bindtap="onToggleContrast">
           {{contrast ? "关闭高对比" : "开启高对比"}}
         </button>
       </view>
-      <view class="tool">
+      <view class="tool tool-wide">
         <text class="tool-label">管理员模式</text>
         <button class="toggle-btn {{isAdmin ? 'active' : ''}}" bindtap="onAdminToggle">
           {{isAdmin ? "管理员模式已开启" : "进入管理员模式"}}
