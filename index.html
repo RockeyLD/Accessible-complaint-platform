@@ -1,1724 +1,1205 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>无障碍吐槽平台 - 综合版</title>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>无障碍AI倾诉平台</title>
+  <style>
+    :root {
+      --bg: #f5f3ef;
+      --card: #ffffff;
+      --ink: #1a1a1a;
+      --muted: #5a5a5a;
+      --accent: #0b6e4f;
+      --accent-light: #e8f5f0;
+      --ai-bubble: #f0f0f0;
+      --user-bubble: #0b6e4f;
+      --user-text: #ffffff;
+      --focus: #1c7ed6;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
 
-    <style id="style-landing">
-      :root {
-        --lp-bg: #f0f4f8;
-        --lp-text: #102a43;
-        --lp-accent: #0b6e4f;
-        --lp-focus: #1c7ed6;
-      }
-      body {
-        margin: 0;
-        font-family: "Noto Sans SC", sans-serif;
-        background: var(--lp-bg);
-      }
+    * { box-sizing: border-box; }
 
-      #view-landing {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 20px;
-      }
+    body {
+      margin: 0;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
 
-      .landing-title {
-        font-size: clamp(2rem, 5vw, 3rem);
-        margin-bottom: 40px;
-        color: var(--lp-text);
-      }
+    /* 高对比模式 */
+    body.high-contrast {
+      --bg: #ffffff;
+      --card: #ffffff;
+      --ink: #000000;
+      --muted: #333333;
+      --accent: #004d00;
+      --ai-bubble: #f5f5f5;
+      --shadow: 0 0 0 2px #000;
+    }
 
-      .card-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 30px;
-        justify-content: center;
-        max-width: 900px;
-      }
+    /* 大号字体模式 */
+    body.large-text { font-size: 120%; }
+    body.large-text .message-content { font-size: 1.1em; }
 
-      .role-card {
-        background: white;
-        border: 3px solid transparent;
-        border-radius: 20px;
-        padding: 40px;
-        width: 300px;
-        cursor: pointer;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        transition:
-          transform 0.2s,
-          box-shadow 0.2s;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative;
-      }
+    /* 隐藏/显示 */
+    .hidden { display: none !important; }
 
-      .role-card:hover,
-      .role-card:focus {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        border-color: var(--lp-accent);
-        outline: 4px solid var(--lp-focus);
-        outline-offset: 4px;
-      }
+    /* ========== 首页 ========== */
+    #landing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
 
-      .role-icon {
-        font-size: 4rem;
-        margin-bottom: 20px;
-        display: block;
-      }
-      .role-name {
-        font-size: 1.8rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: var(--lp-text);
-      }
-      .role-desc {
-        color: #555;
-        font-size: 1rem;
-        line-height: 1.5;
-      }
+    .landing-title {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
 
-      .back-home-btn {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 9999;
-        background: #333;
-        color: #fff;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 14px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      }
-      .back-home-btn:hover,
-      .back-home-btn:focus {
-        background: #000;
-        outline: 3px solid var(--lp-focus);
-      }
+    .landing-subtitle {
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 500px;
+    }
 
-      .hidden-view {
-        display: none !important;
-      }
-    </style>
+    .mode-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: center;
+      max-width: 800px;
+    }
 
-    <style id="style-hearing" disabled>
-      :root {
-        --bg-1: #fef6e4;
-        --bg-2: #dff4ef;
-        --ink: #102a43;
-        --muted: #5b6b7a;
-        --accent: #0b6e4f;
-        --accent-2: #f08a24;
-        --danger: #d64550;
-        --card: #ffffff;
-        --focus: #1c7ed6;
-        --glow-1: rgba(240, 138, 36, 0.18);
-        --glow-2: rgba(11, 110, 79, 0.18);
-        --shadow: 0 24px 60px rgba(16, 42, 67, 0.16);
-        --radius: 18px;
-        --radius-sm: 12px;
-        --font-title:
-          "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", serif;
-        --font-body:
-          "Noto Sans SC", "Source Han Sans SC", "PingFang SC",
-          "Microsoft YaHei", "Heiti SC", sans-serif;
-      }
+    .mode-card {
+      background: var(--card);
+      border: 3px solid transparent;
+      border-radius: var(--radius);
+      padding: 40px 32px;
+      width: 280px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
 
-      #view-hearing * {
-        box-sizing: border-box;
-      }
+    .mode-card:hover, .mode-card:focus {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      outline: 3px solid var(--focus);
+      outline-offset: 4px;
+    }
 
-      #view-hearing {
-        font-family: var(--font-body);
-        color: var(--ink);
-        background:
-          radial-gradient(circle at top left, var(--glow-1), transparent 55%),
-          radial-gradient(circle at 80% 20%, var(--glow-2), transparent 50%),
-          linear-gradient(130deg, var(--bg-1), var(--bg-2));
-        min-height: 100vh;
-        line-height: 1.6;
-        padding-top: 50px;
-      }
+    .mode-icon {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+    }
 
-      body.contrast #view-hearing {
-        --bg-1: #ffffff;
-        --bg-2: #f2f2f2;
-        --ink: #0b0b0b;
-        --muted: #2a2a2a;
-        --accent: #004f3a;
-        --accent-2: #b45309;
-        --card: #ffffff;
-        --glow-1: rgba(0, 0, 0, 0);
-        --glow-2: rgba(0, 0, 0, 0);
-      }
+    .mode-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
 
-      #view-hearing header {
-        padding: 40px 24px 12px;
-        text-align: center;
-      }
-      #view-hearing header h1 {
-        font-family: var(--font-title);
-        font-size: clamp(2rem, 4vw, 3.4rem);
-        margin: 0 0 12px;
-        letter-spacing: 0.04em;
-      }
-      #view-hearing header p {
-        margin: 0 auto;
-        max-width: 760px;
-        color: var(--muted);
-        font-size: 1.05rem;
-      }
-      #view-hearing main {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 24px 24px 60px;
-        display: grid;
-        gap: 24px;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      }
+    .mode-desc {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
 
-      .panel {
-        background: var(--card);
-        border-radius: var(--radius);
-        padding: 24px;
-        box-shadow: var(--shadow);
-        position: relative;
-        overflow: hidden;
-      }
-      .panel::before {
-        content: "";
-        position: absolute;
-        width: 160px;
-        height: 160px;
-        background: rgba(11, 110, 79, 0.08);
-        border-radius: 50%;
-        top: -60px;
-        right: -40px;
-      }
-      .panel h2 {
-        margin: 0 0 12px;
-        font-size: 1.4rem;
-      }
+    /* ========== 聊天界面 ========== */
+    #chat-app {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-      .toolbar {
-        display: grid;
-        gap: 12px;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        margin-bottom: 18px;
-      }
-      .tool {
-        background: rgba(11, 110, 79, 0.08);
-        border-radius: var(--radius-sm);
-        padding: 12px;
-      }
-      .tool label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 6px;
-      }
+    /* 头部 */
+    .chat-header {
+      background: var(--card);
+      padding: 16px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
 
-      .toggle-btn {
-        border: 2px solid var(--accent);
-        background: transparent;
-        color: var(--accent);
-        padding: 8px 12px;
-        border-radius: 999px;
-        font-weight: 600;
-        cursor: pointer;
-        width: 100%;
-        transition:
-          transform 0.2s ease,
-          background 0.2s ease;
-      }
-      .toggle-btn[aria-pressed="true"] {
-        background: var(--accent);
-        color: #fff;
-      }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-      .toggle-btn:focus-visible,
-      button:focus-visible,
-      input:focus-visible,
-      textarea:focus-visible,
-      select:focus-visible {
-        outline: 3px solid var(--focus);
-        outline-offset: 2px;
-      }
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--muted);
+    }
 
-      .field {
-        margin-bottom: 16px;
-      }
-      .field label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 6px;
-      }
+    .back-btn:hover, .back-btn:focus {
+      background: var(--bg);
+      outline: 2px solid var(--focus);
+    }
 
-      #view-hearing input[type="text"],
-      #view-hearing textarea,
-      #view-hearing select {
-        width: 100%;
-        border-radius: var(--radius-sm);
-        border: 2px solid rgba(16, 42, 67, 0.15);
-        padding: 10px 12px;
-        font-size: 1rem;
-        font-family: inherit;
-        transition:
-          border 0.2s ease,
-          box-shadow 0.2s ease;
-        background: #fff;
-      }
-      #view-hearing textarea {
-        min-height: 96px;
-        resize: vertical;
-      }
+    .header-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
 
-      .chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .chip {
-        border: 2px solid rgba(16, 42, 67, 0.2);
-        padding: 6px 12px;
-        border-radius: 999px;
-        background: #fff;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.2s ease;
-      }
-      .chip[aria-pressed="true"] {
-        border-color: var(--accent);
-        color: var(--accent);
-        background: rgba(11, 110, 79, 0.08);
-      }
+    .header-status {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
 
-      .grid-2 {
-        display: grid;
-        gap: 12px;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      }
-      .range-wrap {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-      }
-      .range-wrap input[type="range"] {
-        flex: 1;
-      }
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: rgba(240, 138, 36, 0.18);
-        font-size: 0.85rem;
-        font-weight: 600;
-      }
+    .header-status.online::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
 
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 16px;
-      }
-      button.primary {
-        background: var(--accent);
-        color: #fff;
-        border: none;
-        padding: 12px 18px;
-        border-radius: 999px;
-        font-weight: 700;
-        cursor: pointer;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-      button.secondary {
-        background: transparent;
-        color: var(--accent);
-        border: 2px solid var(--accent);
-        padding: 10px 18px;
-        border-radius: 999px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-      button.ghost {
-        background: rgba(16, 42, 67, 0.06);
-        color: var(--ink);
-        border: none;
-        padding: 8px 12px;
-        border-radius: 999px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-      button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
 
-      .status {
-        padding: 12px;
-        border-radius: var(--radius-sm);
-        background: rgba(11, 110, 79, 0.08);
-        color: var(--ink);
-        font-weight: 600;
-        margin-bottom: 12px;
-      }
-      .status.warn {
-        background: rgba(214, 69, 80, 0.12);
-        color: var(--danger);
-      }
-      .status.info {
-        background: rgba(240, 138, 36, 0.16);
-      }
+    .icon-btn {
+      background: none;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
 
-      .preview-card {
-        border: 2px dashed rgba(16, 42, 67, 0.2);
-        border-radius: var(--radius-sm);
-        padding: 16px;
-        background: rgba(255, 255, 255, 0.7);
-        min-height: 180px;
-      }
-      .preview-card h3 {
-        margin: 0 0 8px;
-      }
-      .missing-panel {
-        margin-top: 16px;
-        padding: 16px;
-        border-radius: var(--radius-sm);
-        background: rgba(214, 69, 80, 0.08);
-      }
+    .icon-btn:hover, .icon-btn:focus {
+      background: var(--bg);
+      outline: 2px solid var(--focus);
+    }
 
-      .question {
-        margin-bottom: 12px;
-      }
-      .question input {
-        margin-top: 6px;
-      }
-      .progress-wrap {
-        margin: 16px 0 10px;
-      }
-      .progress-label {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.9rem;
-        color: var(--muted);
-        margin-bottom: 6px;
-      }
-      .progress-bar {
-        height: 10px;
-        background: rgba(16, 42, 67, 0.1);
-        border-radius: 999px;
-        overflow: hidden;
-      }
-      .progress-fill {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, var(--accent), var(--accent-2));
-        transition: width 0.3s ease;
-      }
+    .icon-btn.active {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
 
-      .access-list {
-        display: grid;
-        gap: 8px;
-        margin: 12px 0 0;
-        padding: 0;
-        list-style: none;
-        color: var(--muted);
-      }
-      .access-list li::before {
-        content: "●";
-        color: var(--accent-2);
-        margin-right: 8px;
-      }
-    </style>
+    /* 消息区域 */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: linear-gradient(180deg, var(--bg) 0%, #fafafa 100%);
+    }
 
-    <style id="style-vision" disabled>
-      :root {
-        /* 使用视障吐槽.html 的配色变量 */
-        --v-bg: #f5f3ef;
-        --v-bg-2: #efe7dd;
-        --v-ink: #141414;
-        --v-muted: #3d3d3d;
-        --v-accent: #0f5c5c; /* 深青色 */
-        --v-danger: #a02920;
-        --v-card: #ffffff;
-        --v-focus: #ffb100; /* 高对比黄 */
-        --v-shadow: 0 14px 35px rgba(0, 0, 0, 0.12);
-      }
-      #view-vision * {
-        box-sizing: border-box;
-      }
-      #view-vision {
-        font-family: "Source Serif 4", "Noto Serif SC", "Songti SC", serif;
-        color: var(--v-ink);
-        /* 背景渐变保持原设计 */
-        background:
-          radial-gradient(
-            1200px 600px at 20% -20%,
-            #f0d9c7 0%,
-            transparent 60%
-          ),
-          radial-gradient(1000px 500px at 90% 10%, #d9f0ea 0%, transparent 55%),
-          linear-gradient(180deg, var(--v-bg), var(--v-bg-2));
-        min-height: 100vh;
-        padding-top: 50px;
-      }
+    .message {
+      display: flex;
+      margin-bottom: 20px;
+      animation: fadeIn 0.3s ease;
+    }
 
-      /* 统一链接颜色 */
-      #view-vision a {
-        color: var(--v-accent);
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-      /* 统一聚焦样式 - 黄色高亮 */
-      #view-vision a:focus,
-      #view-vision button:focus,
-      #view-vision input:focus,
-      #view-vision textarea:focus,
-      #view-vision select:focus {
-        outline: 3px solid var(--v-focus);
-        outline-offset: 2px;
-      }
+    .message.ai { justify-content: flex-start; }
+    .message.user { justify-content: flex-end; }
 
-      .skip-link {
-        position: absolute;
-        left: -999px;
-        top: 10px;
-        background: var(--v-card);
-        color: var(--v-ink);
-        padding: 10px 14px;
-        border-radius: 8px;
-        box-shadow: var(--v-shadow);
-        z-index: 10;
-      }
-      .skip-link:focus {
-        left: 12px;
-      }
-      #view-vision header {
-        padding: 28px 20px 16px;
-      }
-      .wrap {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 20px 60px;
-      }
-      .brand {
-        font-family: "Noto Serif SC", "Source Serif 4", serif;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        font-size: 12px;
-      }
-      #view-vision h1 {
-        font-size: clamp(28px, 4vw, 48px);
-        margin: 10px 0 14px;
-      }
-      .lead {
-        font-size: 18px;
-        line-height: 1.6;
-        color: var(--v-muted);
-      }
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
 
-      .v-card {
-        background: var(--v-card);
-        border-radius: 16px;
-        padding: 18px;
-        box-shadow: var(--v-shadow);
-      }
+    .message.ai .message-avatar {
+      background: var(--accent-light);
+      margin-right: 12px;
+    }
 
-      #view-vision form {
-        display: grid;
-        gap: 14px;
-      }
-      #view-vision label {
-        font-weight: 600;
-      }
+    .message.user .message-avatar {
+      background: var(--accent);
+      margin-left: 12px;
+      order: 2;
+    }
 
-      /* 输入框样式统一 */
-      #view-vision input,
-      #view-vision textarea,
-      #view-vision select {
-        width: 100%;
-        padding: 12px 14px;
-        border-radius: 12px;
-        border: 1px solid #cfcfcf;
-        font-size: 16px;
-      }
-      .input-with-mic {
-        position: relative;
-      }
-      .input-with-mic input,
-      .input-with-mic textarea {
-        padding-right: 50px;
-      }
+    .message-content {
+      max-width: 70%;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
 
-      /* 麦克风按钮样式 */
-      .mic-btn {
-        position: absolute;
-        right: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #f0f0f0;
-        color: var(--v-ink);
-        border: 0;
-        padding: 8px 10px;
-        border-radius: 999px;
-        cursor: pointer;
-      }
-      .mic-btn svg {
-        display: block;
-      }
-      #view-vision textarea {
-        min-height: 120px;
-        resize: vertical;
-      }
-      .row {
-        display: grid;
-        gap: 12px;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      }
-      #view-vision fieldset {
-        border: 0;
-        padding: 0;
-        margin: 0;
-      }
-      #view-vision legend {
-        font-weight: 600;
-        margin-bottom: 6px;
-      }
-      #view-vision .help-panel {
-        margin: 12px 0;
-        padding: 12px;
-        border-radius: 12px;
-        border: 1px dashed #cfcfcf;
-        background: #fff;
-      }
-      #view-vision .help-panel strong {
-        display: block;
-        margin-bottom: 8px;
-      }
-      #view-vision .help-actions {
-        display: flex;
-        justify-content: center;
-        margin-top: 8px;
-      }
-      #view-vision .help-mic {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 46px;
-        height: 46px;
-        border-radius: 999px;
-        border: 0;
-        background: var(--v-accent);
-        color: #fff;
-        cursor: pointer;
-      }
-      #view-vision .help-mic:focus-visible {
-        outline: 3px solid var(--v-focus);
-        outline-offset: 2px;
-      }
-      #view-vision .prompt-box {
-        width: 100%;
-        min-height: 110px;
-        padding: 12px 14px;
-        border-radius: 12px;
-        border: 1px solid #cfcfcf;
-        background: #f9f7f3;
-        color: var(--v-ink);
-        resize: none;
-      }
+    .message.ai .message-content {
+      background: var(--ai-bubble);
+      color: var(--ink);
+      border-bottom-left-radius: 4px;
+    }
 
-      #view-vision .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
-      }
+    .message.user .message-content {
+      background: var(--user-bubble);
+      color: var(--user-text);
+      border-bottom-right-radius: 4px;
+    }
 
-      /* 提交按钮使用 Accent 色 */
-      #view-vision .primary-btn {
-        background: var(--v-accent);
-        color: white;
-        border: 0;
-        padding: 12px 18px;
-        border-radius: 999px;
-        font-size: 16px;
-        cursor: pointer;
-      }
-      /* 次要按钮 */
-      #view-vision .button-link {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        padding: 12px 18px;
-        border-radius: 999px;
-        font-size: 16px;
-        background: #f0f0f0;
-        color: var(--v-ink);
-      }
+    .message-time {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 4px;
+      text-align: right;
+    }
 
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        border: 0;
-      }
-      .note {
-        font-size: 14px;
-        color: var(--v-muted);
-      }
-      #view-vision footer {
-        margin-top: 50px;
-        font-size: 12px;
-        color: var(--v-muted);
-      }
-    </style>
-  </head>
+    .message.ai .message-time { text-align: left; }
 
-  <body>
-    <div id="view-landing">
-      <h1 class="landing-title">欢迎使用无障碍吐槽平台</h1>
-      <p class="note" style="margin-bottom: 20px">
-        提示：支持鼠标点击、Tab 键切换焦点。单击或回车进入。
-      </p>
-      <div class="card-container">
-        <button
-          class="role-card"
-          onclick="switchMode('hearing')"
-          aria-label="我是听障用户，进入文字辅助模式。单击进入。"
-        >
-          <span class="role-icon" aria-hidden="true">🧏</span>
-          <span class="role-name">我是听障用户</span>
-          <span class="role-desc"
-            >提供清晰的文字提示、高对比度界面，不依赖声音反馈。</span
-          >
-        </button>
+    /* 正在输入指示器 */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 8px 4px;
+    }
 
-        <button
-          class="role-card"
-          onclick="switchMode('vision')"
-          aria-label="我是视障用户，进入视障辅助模式。单击进入。"
-        >
-          <span class="role-icon" aria-hidden="true">👨‍🦯</span>
-          <span class="role-name">我是视障用户</span>
-          <span class="role-desc">提供大号字体、清晰层级与键盘操作支持。</span>
-        </button>
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background: var(--muted);
+      border-radius: 50%;
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-10px); }
+    }
+
+    /* 输入区域 */
+    .chat-input-area {
+      background: var(--card);
+      padding: 16px 20px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
+
+    .input-container {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    .message-input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 24px;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: none;
+      min-height: 52px;
+      max-height: 150px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .message-input:focus {
+      border-color: var(--accent);
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .voice-btn, .send-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      transition: all 0.2s;
+    }
+
+    .voice-btn {
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .voice-btn:hover, .voice-btn:focus {
+      background: #e0e0e0;
+      outline: 3px solid var(--focus);
+    }
+
+    .voice-btn.recording {
+      background: #ef4444;
+      color: white;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .send-btn {
+      background: var(--accent);
+      color: white;
+    }
+
+    .send-btn:hover:not(:disabled), .send-btn:focus:not(:disabled) {
+      background: #095c40;
+      outline: 3px solid var(--focus);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* 快速回复按钮 */
+    .quick-replies {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      padding: 0 70px;
+      justify-content: center;
+    }
+
+    .quick-reply {
+      background: var(--card);
+      border: 1px solid #e0e0e0;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quick-reply:hover, .quick-reply:focus {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      outline: 2px solid var(--focus);
+    }
+
+    /* 最终确认卡片 */
+    .confirm-card {
+      background: var(--card);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: var(--shadow);
+    }
+
+    .confirm-card h3 {
+      margin: 0 0 12px;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+
+    .confirm-content {
+      background: var(--accent-light);
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 16px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 24px;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover, .btn-primary:focus {
+      background: #095c40;
+      outline: 3px solid var(--focus);
+    }
+
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--ink);
+      border: 1px solid #e0e0e0;
+    }
+
+    .btn-secondary:hover, .btn-secondary:focus {
+      background: #e0e0e0;
+      outline: 3px solid var(--focus);
+    }
+
+    /* 提示消息 */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-size: 0.95rem;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* 设置面板 */
+    .settings-panel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      min-width: 250px;
+      z-index: 100;
+    }
+
+    .settings-panel h4 {
+      margin: 0 0 16px;
+      font-size: 1rem;
+    }
+
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .setting-item label {
+      font-size: 0.9rem;
+    }
+
+    .toggle-switch {
+      width: 44px;
+      height: 24px;
+      background: #e0e0e0;
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .toggle-switch.active {
+      background: var(--accent);
+    }
+
+    .toggle-switch::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s;
+    }
+
+    .toggle-switch.active::after {
+      transform: translateX(20px);
+    }
+
+    /* 链接按钮 */
+    .link-btn {
+      display: inline-block;
+      margin-top: 16px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .link-btn:hover {
+      text-decoration: underline;
+    }
+
+    /* 响应式 */
+    @media (max-width: 600px) {
+      .mode-card { width: 100%; padding: 30px 24px; }
+      .message-content { max-width: 85%; }
+      .quick-replies { padding: 0 20px; }
+    }
+
+    /* 减少动画 */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 首页 -->
+  <div id="landing">
+    <h1 class="landing-title">无障碍AI倾诉平台</h1>
+    <p class="landing-subtitle">用你最自然的方式表达，AI帮你整理成专业的倾诉。无需填写复杂表格，就像聊天一样简单。</p>
+    <div class="mode-cards">
+      <button class="mode-card" onclick="enterMode('hearing')" aria-label="我是听障用户，进入文字优先模式">
+        <div class="mode-icon">🧏</div>
+        <div class="mode-name">我是听障用户</div>
+        <div class="mode-desc">文字输入，清晰对话框，高对比度界面，视觉反馈优先</div>
+      </button>
+      <button class="mode-card" onclick="enterMode('vision')" aria-label="我是视障用户，进入语音辅助模式">
+        <div class="mode-icon">👨‍🦯</div>
+        <div class="mode-name">我是视障用户</div>
+        <div class="mode-desc">支持语音输入，兼容读屏软件，大字体显示，键盘操作友好</div>
+      </button>
+    </div>
+    <a href="查看吐槽.html" class="link-btn">查看吐槽广场 →</a>
+  </div>
+
+  <!-- 聊天应用 -->
+  <div id="chat-app" class="hidden">
+    <!-- 头部 -->
+    <header class="chat-header">
+      <div class="header-left">
+        <button class="back-btn" onclick="backToLanding()" aria-label="返回首页">←</button>
+        <div>
+          <div class="header-title">AI倾诉助手</div>
+          <div class="header-status online" id="statusText">在线</div>
+        </div>
       </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="fontSizeBtn" onclick="toggleFontSize()" title="切换大字体" aria-label="切换大字体">🔤</button>
+        <button class="icon-btn" id="contrastBtn" onclick="toggleContrast()" title="切换高对比" aria-label="切换高对比度">◐</button>
+        <button class="icon-btn" id="ttsBtn" onclick="toggleTTS()" title="语音朗读" aria-label="开启语音朗读">🔊</button>
+      </div>
+    </header>
+
+    <!-- 消息区域 -->
+    <div class="chat-messages" id="messages" role="log" aria-live="polite" aria-label="聊天记录">
+      <!-- 消息将动态插入这里 -->
     </div>
 
-    <div id="view-hearing" class="hidden-view">
-      <button class="back-home-btn" onclick="switchMode('landing')">
-        ← 返回首页
-      </button>
-      <header>
-        <h1>听障友好 · 吐槽平台</h1>
-        <p>
-          用清晰的文字说清楚你的吐槽。平台不依赖声音提示，全部反馈都有明确的视觉提醒与可读文本。
-        </p>
-      </header>
-      <main>
-        <section class="panel" aria-labelledby="form-title">
-          <h2 id="form-title">写下你的吐槽</h2>
-          <div class="toolbar" role="group" aria-label="无障碍工具">
-            <div class="tool">
-              <label for="bgTheme">背景主题</label>
-              <select id="bgTheme">
-                <option value="warm">暖晨橙绿</option>
-                <option value="sea">海风蓝绿</option>
-                <option value="sun">日光米黄</option>
-                <option value="stone">清爽灰白</option>
-              </select>
-            </div>
-            <div class="tool">
-              <label for="fontSize">文字大小</label>
-              <input
-                id="fontSize"
-                type="range"
-                min="90"
-                max="120"
-                value="100"
-              />
-            </div>
-            <div class="tool">
-              <label>高对比</label>
-              <button
-                class="toggle-btn"
-                type="button"
-                data-toggle="contrast"
-                aria-pressed="false"
-              >
-                开启高对比
-              </button>
-            </div>
-          </div>
-
-          <form id="complaintForm" novalidate>
-            <div class="field">
-              <label>类别（可多选）</label>
-              <div class="chips" id="categoryChips">
-                <button class="chip" type="button" aria-pressed="false">
-                  公共服务
-                </button>
-                <button class="chip" type="button" aria-pressed="false">
-                  出行
-                </button>
-                <button class="chip" type="button" aria-pressed="false">
-                  医疗
-                </button>
-                <button class="chip" type="button" aria-pressed="false">
-                  教育
-                </button>
-                <button class="chip" type="button" aria-pressed="false">
-                  线上平台
-                </button>
-                <button class="chip" type="button" aria-pressed="false">
-                  工作场所
-                </button>
-              </div>
-            </div>
-
-            <div class="grid-2">
-              <div class="field">
-                <label for="subject">吐槽对象（必填）</label>
-                <input
-                  id="subject"
-                  type="text"
-                  placeholder="如：地铁站服务台 / 某应用客服"
-                />
-              </div>
-              <div class="field">
-                <label for="scene">发生场景（推荐）</label>
-                <input
-                  id="scene"
-                  type="text"
-                  placeholder="如：早高峰 / 线上咨询 / 医院窗口"
-                />
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="problem">具体问题（必填）</label>
-              <textarea
-                id="problem"
-                placeholder="问题发生了什么？有哪些信息没有被文字化？"
-              ></textarea>
-            </div>
-
-            <div class="field">
-              <label for="impact">影响了什么（推荐）</label>
-              <textarea
-                id="impact"
-                placeholder="例：错过排队号，无法及时办理业务。"
-              ></textarea>
-            </div>
-
-            <div class="field">
-              <label for="wish">期望的改进（推荐）</label>
-              <textarea
-                id="wish"
-                placeholder="例：提供屏幕实时字幕、写字板或短信提醒。"
-              ></textarea>
-            </div>
-
-            <div class="field">
-              <label>情绪强度</label>
-              <div class="range-wrap">
-                <input id="emotion" type="range" min="1" max="5" value="3" />
-                <span class="badge" id="emotionLabel">中等</span>
-              </div>
-            </div>
-
-            <div class="progress-wrap">
-              <div class="progress-label">
-                <span>填写进度</span>
-                <span id="progressText">0 / 2</span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-              </div>
-            </div>
-
-            <div class="actions">
-              <button class="primary" type="button" id="buildBtn">
-                生成吐槽卡片
-              </button>
-              <button class="secondary" type="reset">清空内容</button>
-            </div>
-          </form>
-        </section>
-
-        <section class="panel" aria-labelledby="preview-title">
-          <h2 id="preview-title">吐槽卡片预览</h2>
-          <div
-            class="status info"
-            id="statusBox"
-            role="status"
-            aria-live="polite"
-          >
-            填写内容后会在这里生成清晰可读的吐槽卡片。
-          </div>
-          <div class="preview-card" id="preview">
-            <p>填写后会生成一句话吐槽，方便直接提交。</p>
-          </div>
-          <div
-            class="missing-panel"
-            id="missingPanel"
-            hidden
-            aria-live="polite"
-          ></div>
-          <div class="actions">
-            <button class="secondary" type="button" id="saveBtn" disabled>
-              上传到服务器
-            </button>
-          </div>
-          <ul class="access-list">
-            <li>所有反馈均为文字提示，无语音依赖。</li>
-            <li>高对比、字号调节与减少动画适配听障用户与多样视觉需求。</li>
-            <li>缺失信息会自动询问并提示补全。</li>
-          </ul>
-        </section>
-      </main>
+    <!-- 输入区域 -->
+    <div class="chat-input-area">
+      <div class="input-container">
+        <button class="voice-btn" id="voiceBtn" onclick="toggleVoiceInput()" title="语音输入" aria-label="语音输入">🎤</button>
+        <div class="input-wrapper">
+          <textarea 
+            class="message-input" 
+            id="messageInput" 
+            placeholder="跟我说说发生了什么..." 
+            rows="1"
+            aria-label="输入消息"
+          ></textarea>
+        </div>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" aria-label="发送">➤</button>
+      </div>
+      <div class="quick-replies" id="quickReplies"></div>
     </div>
+  </div>
 
-    <div id="view-vision" class="hidden-view">
-      <button
-        class="back-home-btn"
-        onclick="switchMode('landing')"
-        aria-label="返回首页"
-      >
-        ← 返回首页
-      </button>
-      <header class="wrap">
-        <div class="brand">Vision-First</div>
-        <h1>直接吐槽</h1>
-        <p class="lead">把问题说清楚就行，表单尽量短。</p>
-        <p class="note">单击或按 Tab 切换焦点即可操作。</p>
-      </header>
-
-      <main id="main-vision" class="wrap">
-        <section id="submit">
-          <div class="v-card">
-            <form aria-describedby="form-note">
-              <p class="note">点击下方麦克风，按提示补充信息。</p>
-              <div class="help-panel" id="visionHelp" hidden>
-                <strong>补全提示</strong>
-                <textarea
-                  id="visionPromptBox"
-                  class="prompt-box"
-                  readonly
-                  aria-live="polite"
-                ></textarea>
-                <div class="help-actions">
-                  <button
-                    class="help-mic"
-                    type="button"
-                    id="visionHelpMic"
-                    aria-label="语音输入到补充框"
-                  >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <p class="note">
-                提示：语音输入需要浏览器支持（建议 https 或 localhost）。
-              </p>
-
-              <div class="actions">
-                <button id="v-submitBtn" class="primary-btn" type="button">
-                  提交吐槽
-                </button>
-                <a class="button-link" href="查看吐槽.html">吐槽广场</a>
-                <span id="form-note" class="note"
-                  >提交后会自动生成结构化报告，方便查看。</span
-                >
-              </div>
-              <p class="sr-only" aria-live="polite">
-                提示：所有输入项均支持键盘访问。
-              </p>
-              <p
-                id="v-status"
-                class="note"
-                role="status"
-                aria-live="polite"
-              ></p>
-            </form>
+  <script>
+    // ==================== 配置 ====================
+    const API_SECRET = 'bIezpEZXlEQae97gwZNVuH5Pvv16UVNl4bbesOvXFzmsLbVnUabxHLJi3HjnQtkrQyQfPPzqmeQVXwxCVX-6-kC5Lw4rzDjYU7hHCLcBENc';
+    const API_BASE = 'https://edu.weixin.qq.com';
+    const SERVER_API = window.location.origin || '';
+    
+    // ==================== 状态 ====================
+    let currentMode = null; // 'hearing' | 'vision'
+    let messages = [];
+    let isProcessing = false;
+    let ttsEnabled = false;
+    let isRecording = false;
+    let recognition = null;
+    let conversationStage = 'initial'; // initial | collecting | confirming | completed
+    let collectedInfo = {};
+    
+    // ==================== 初始化 ====================
+    function enterMode(mode) {
+      currentMode = mode;
+      document.getElementById('landing').classList.add('hidden');
+      document.getElementById('chat-app').classList.remove('hidden');
+      
+      // 视障模式自动启用语音相关功能
+      if (mode === 'vision') {
+        document.body.classList.add('large-text');
+        initSpeechRecognition();
+      }
+      
+      // 初始化对话
+      initChat();
+    }
+    
+    function backToLanding() {
+      if (confirm('确定要返回首页吗？当前对话将重置。')) {
+        location.reload();
+      }
+    }
+    
+    // ==================== 聊天初始化 ====================
+    function initChat() {
+      messages = [];
+      conversationStage = 'initial';
+      collectedInfo = {};
+      document.getElementById('messages').innerHTML = '';
+      
+      const welcomeMsg = currentMode === 'hearing' 
+        ? '你好！我是你的AI倾诉助手。请用你自己的话告诉我：遇到了什么让你困扰的事情？不用担心组织语言，就像跟朋友聊天一样说出来就好。'
+        : '你好！我是你的AI倾诉助手。你可以直接语音告诉我发生了什么，或者打字输入。我会帮你整理成专业的倾诉内容。';
+      
+      addAIMessage(welcomeMsg);
+      updateQuickReplies([
+        '在医院排队听不清叫号',
+        'APP没有文字提示',
+        '工作人员不耐烦',
+        '其他问题'
+      ]);
+    }
+    
+    // ==================== 消息渲染 ====================
+    function addAIMessage(text, options = {}) {
+      const msg = { role: 'assistant', content: text, time: new Date(), ...options };
+      messages.push(msg);
+      renderMessage(msg);
+      if (ttsEnabled) speak(text);
+      return msg;
+    }
+    
+    function addUserMessage(text) {
+      const msg = { role: 'user', content: text, time: new Date() };
+      messages.push(msg);
+      renderMessage(msg);
+      return msg;
+    }
+    
+    function renderMessage(msg) {
+      const container = document.getElementById('messages');
+      const isAI = msg.role === 'assistant';
+      
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${isAI ? 'ai' : 'user'}`;
+      
+      const timeStr = msg.time.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+      const avatar = isAI ? '🤖' : '👤';
+      
+      msgDiv.innerHTML = `
+        <div class="message-avatar" aria-hidden="true">${avatar}</div>
+        <div>
+          <div class="message-content">${escapeHtml(msg.content)}</div>
+          <div class="message-time">${timeStr}</div>
+        </div>
+      `;
+      
+      container.appendChild(msgDiv);
+      scrollToBottom();
+    }
+    
+    function showTyping() {
+      const container = document.getElementById('messages');
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'message ai typing';
+      typingDiv.id = 'typingIndicator';
+      typingDiv.innerHTML = `
+        <div class="message-avatar" aria-hidden="true">🤖</div>
+        <div class="message-content">
+          <div class="typing-indicator">
+            <span></span><span></span><span></span>
           </div>
-        </section>
-      </main>
+        </div>
+      `;
+      container.appendChild(typingDiv);
+      scrollToBottom();
+    }
+    
+    function hideTyping() {
+      const typing = document.getElementById('typingIndicator');
+      if (typing) typing.remove();
+    }
+    
+    function scrollToBottom() {
+      const container = document.getElementById('messages');
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    // ==================== 用户输入 ====================
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+      if (!text || isProcessing) return;
+      
+      input.value = '';
+      input.style.height = 'auto';
+      addUserMessage(text);
+      processUserInput(text);
+    }
+    
+    // 回车发送，Shift+回车换行
+    document.getElementById('messageInput')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+    
+    // 自动调整高度
+    document.getElementById('messageInput')?.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+    });
+    
+    // ==================== AI处理逻辑 ====================
+    async function processUserInput(userInput) {
+      if (isProcessing) return;
+      isProcessing = true;
+      showTyping();
+      updateQuickReplies([]);
+      
+      try {
+        // 构建系统提示词
+        const systemPrompt = buildSystemPrompt();
+        
+        // 构建对话历史
+        const chatMessages = buildChatMessages(userInput);
+        
+        // 调用AI
+        const response = await callHunyuanAPI(chatMessages);
+        
+        hideTyping();
+        
+        // 解析AI回复
+        handleAIResponse(response, userInput);
+        
+      } catch (error) {
+        hideTyping();
+        addAIMessage('抱歉，我暂时遇到了一些问题。你可以稍后再试，或者直接告诉我你想怎么继续。');
+        console.error('AI Error:', error);
+      }
+      
+      isProcessing = false;
+    }
+    
+    function buildSystemPrompt() {
+      return `你是一位专业的无障碍倾诉助手，帮助残障人士将口语化的表达转化为正式、专业的投诉/倾诉内容。
 
-      <footer class="wrap">
-        <p>提示：页面为视障优先原型，所有交互元素支持键盘访问。</p>
-      </footer>
-    </div>
+你的任务：
+1. 引导用户表达：用温暖、耐心的方式询问细节
+2. 信息收集：了解事件的对象、场景、问题、影响、期望
+3. 整理输出：将口语转化为结构清晰的专业倾诉
 
-    <script>
-      // --- 0. 全局的状态与路由控制 ---
-      let currentMode = "landing";
+输出格式要求：
+- 使用JSON格式回复
+- 包含字段：type(类型: question/confirm/complete)、content(对话内容)、data(整理后的结构化数据)
+- 如果信息不足，type为"question"，继续询问
+- 如果信息足够，type为"confirm"，展示整理后的内容让用户确认
 
-      function switchMode(mode) {
-        const landing = document.getElementById("view-landing");
-        const hearing = document.getElementById("view-hearing");
-        const vision = document.getElementById("view-vision");
-        const styleHearing = document.getElementById("style-hearing");
-        const styleVision = document.getElementById("style-vision");
-
-        currentMode = mode;
-
-        if (mode === "landing") {
-          landing.classList.remove("hidden-view");
-          hearing.classList.add("hidden-view");
-          vision.classList.add("hidden-view");
-          styleHearing.disabled = true;
-          styleVision.disabled = true;
-          document.title = "无障碍吐槽平台 - 首页";
-        } else if (mode === "hearing") {
-          landing.classList.add("hidden-view");
-          hearing.classList.remove("hidden-view");
-          vision.classList.add("hidden-view");
-          styleHearing.disabled = false;
-          styleVision.disabled = true;
-          document.title = "听障友好吐槽平台";
-          initHearingMode();
-        } else if (mode === "vision") {
-          landing.classList.add("hidden-view");
-          hearing.classList.add("hidden-view");
-          vision.classList.remove("hidden-view");
-          styleHearing.disabled = true;
-          styleVision.disabled = false;
-          document.title = "吐槽广场 - 视障模式";
-          initVisionMode();
+请确保：
+- 语气友善、尊重
+- 不打断用户，先让用户说完
+- 适时总结确认理解正确
+- 最终输出适合正式提交的格式`;
+    }
+    
+    function buildChatMessages(newUserMessage) {
+      const msgs = [];
+      
+      // 系统提示
+      msgs.push({
+        role: 'system',
+        content: buildSystemPrompt()
+      });
+      
+      // 历史对话（最近10条）
+      const recentMessages = messages.slice(-10);
+      for (const msg of recentMessages) {
+        if (msg.role === 'user' || msg.role === 'assistant') {
+          msgs.push({
+            role: msg.role,
+            content: msg.content
+          });
         }
       }
-    </script>
-
-    <script>
-      // 网页端：默认使用当前页面所在域名作为 API 根地址，避免和历史测试地址（如 Workers）混淆
-      const DEFAULT_API_BASE = window.location.origin || "";
-      const API_BASE = DEFAULT_API_BASE;
-
-      function apiUrl(path) {
-        if (!API_BASE) return path;
-        return `${API_BASE.replace(/\/+$/, "")}${path}`;
+      
+      // 新消息
+      msgs.push({
+        role: 'user',
+        content: newUserMessage
+      });
+      
+      return msgs;
+    }
+    
+    // ==================== 混元API调用 ====================
+    async function callHunyuanAPI(messages) {
+      const queryId = 'req_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      
+      // 步骤1：创建任务
+      const createRes = await fetch(`${API_BASE}/api/open/chat/create?ai_secret=${API_SECRET}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: messages,
+          model: 'hunyuan-turbos-latest',
+          query_id: queryId
+        })
+      });
+      
+      if (!createRes.ok) {
+        throw new Error('创建任务失败');
       }
-
-      async function postComplaint(payload) {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 8000);
-        try {
-          const headers = { "Content-Type": "application/json" };
-          const apiKey = localStorage.getItem("apiKey");
-          if (apiKey) headers["X-API-Key"] = apiKey;
-          const res = await fetch(apiUrl("/api/complaints"), {
-            method: "POST",
-            headers,
-            body: JSON.stringify(payload),
-            signal: controller.signal,
-          });
-          if (!res.ok) {
-            let message = "提交失败";
+      
+      const createData = await createRes.json();
+      const taskId = createData.data?.data?.task_id;
+      
+      if (!taskId) {
+        throw new Error('未获取到任务ID');
+      }
+      
+      // 步骤2：轮询查询
+      let retries = 0;
+      const maxRetries = 30; // 最多60秒
+      
+      while (retries < maxRetries) {
+        await new Promise(r => setTimeout(r, 2000));
+        
+        const queryRes = await fetch(`${API_BASE}/api/open/chat/task`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task_id: taskId })
+        });
+        
+        if (!queryRes.ok) continue;
+        
+        const queryData = await queryRes.json();
+        const status = queryData.data?.data?.status;
+        
+        if (status === 'completed') {
+          const contentStr = queryData.data?.data?.content;
+          if (contentStr) {
             try {
-              const err = await res.json();
-              if (err && err.error) message = err.error;
-            } catch (e) {}
-            return { ok: false, error: message };
-          }
-          const data = await res.json().catch(() => ({}));
-          return { ok: true, data };
-        } catch (err) {
-          const message =
-            err && err.name === "AbortError" ? "请求超时" : "无法连接后端";
-          return { ok: false, error: message };
-        } finally {
-          clearTimeout(timer);
-        }
-      }
-    </script>
-
-    <script>
-      // --- 1. 听障模式逻辑 ---
-      function initHearingMode() {
-        if (window.hearingInitialized) return;
-        window.hearingInitialized = true;
-
-        const form = document.getElementById("complaintForm");
-        const subject = document.getElementById("subject");
-        const scene = document.getElementById("scene");
-        const problem = document.getElementById("problem");
-        const impact = document.getElementById("impact");
-        const wish = document.getElementById("wish");
-        const emotion = document.getElementById("emotion");
-        const emotionLabel = document.getElementById("emotionLabel");
-        const progressText = document.getElementById("progressText");
-        const progressFill = document.getElementById("progressFill");
-        const preview = document.getElementById("preview");
-        const statusBox = document.getElementById("statusBox");
-        const missingPanel = document.getElementById("missingPanel");
-        const saveBtn = document.getElementById("saveBtn");
-        const buildBtn = document.getElementById("buildBtn");
-        const toggleButtons = document.querySelectorAll(".toggle-btn");
-        const chips = document.querySelectorAll("#categoryChips .chip");
-        const fontSize = document.getElementById("fontSize");
-        const bgTheme = document.getElementById("bgTheme");
-
-        const state = { categories: new Set() };
-        const storeKey = "hearing-complaints";
-        const themeKey = "hearing-theme";
-
-        const questionMap = {
-          subject: "你在吐槽哪个对象/服务/平台？",
-          scene: "发生场景（地点/时间，如：医院窗口/早高峰）？",
-          problem: "具体问题是什么？缺少了哪些文字或视觉提示？",
-          impact: "造成了什么影响或不便？",
-          wish: "你希望对方如何改进？",
-        };
-        const detailLabelMap = {
-          impact: "影响了什么",
-          wish: "期望的改进",
-        };
-        const detailAnswers = { impact: [], wish: [] };
-        const autoFillCache = { impact: "", wish: "" };
-        let lastProblemSeed = "";
-
-        const emotionMap = {
-          1: "很平静",
-          2: "轻微不满",
-          3: "中等",
-          4: "明显不满",
-          5: "非常生气",
-        };
-
-        const themeMap = {
-          warm: {
-            bg1: "#fef6e4",
-            bg2: "#dff4ef",
-            glow1: "rgba(240, 138, 36, 0.18)",
-            glow2: "rgba(11, 110, 79, 0.18)",
-          },
-          sea: {
-            bg1: "#e8f3ff",
-            bg2: "#d9f7f3",
-            glow1: "rgba(59, 130, 246, 0.16)",
-            glow2: "rgba(20, 184, 166, 0.18)",
-          },
-          sun: {
-            bg1: "#fff3d6",
-            bg2: "#fceee1",
-            glow1: "rgba(245, 158, 11, 0.18)",
-            glow2: "rgba(251, 191, 36, 0.16)",
-          },
-          stone: {
-            bg1: "#f2f4f8",
-            bg2: "#ffffff",
-            glow1: "rgba(148, 163, 184, 0.16)",
-            glow2: "rgba(100, 116, 139, 0.12)",
-          },
-        };
-
-        function setStatus(message, type = "info") {
-          statusBox.textContent = message;
-          statusBox.className = `status ${type}`;
-        }
-
-        function applyTheme(key) {
-          const theme = themeMap[key] || themeMap.warm;
-          const root = document.documentElement.style;
-          root.setProperty("--bg-1", theme.bg1);
-          root.setProperty("--bg-2", theme.bg2);
-          root.setProperty("--glow-1", theme.glow1);
-          root.setProperty("--glow-2", theme.glow2);
-        }
-
-        function updateEmotionLabel() {
-          emotionLabel.textContent = emotionMap[emotion.value];
-        }
-
-        function updateProgress() {
-          const filled = [subject.value.trim(), problem.value.trim()].filter(
-            Boolean,
-          ).length;
-          progressText.textContent = `${filled} / 2`;
-          progressFill.style.width = `${(filled / 2) * 100}%`;
-        }
-
-        function collectData() {
-          return {
-            subject: subject.value.trim(),
-            scene: scene.value.trim(),
-            problem: problem.value.trim(),
-            impact: impact.value.trim(),
-            wish: wish.value.trim(),
-            emotion: emotionMap[emotion.value],
-            emotionValue: emotion.value,
-            categories: Array.from(state.categories),
-          };
-        }
-
-        function buildSentence(data) {
-          const parts = [];
-          const subjectText = data.subject || "【待补充】";
-          const problemText = data.problem || "【待补充】";
-          const sceneText = data.scene ? data.scene.trim() : "";
-
-          let intro = `我想吐槽${subjectText}`;
-          if (sceneText) {
-            if (!subjectText.includes(sceneText))
-              intro = `在${sceneText}，我想吐槽${subjectText}`;
-          }
-
-          parts.push(intro.trim());
-          parts.push(`主要问题是${problemText}`);
-          if (data.impact) parts.push(`导致${data.impact}`);
-          if (data.wish) parts.push(`希望${data.wish}`);
-
-          const meta = [];
-          if (data.categories.length)
-            meta.push(`类别：${data.categories.join("、")}`);
-          meta.push(`情绪：${data.emotion}`);
-          if (meta.length) parts.push(`（${meta.join("，")}）`);
-
-          return `${parts.join("，").replace(/，（/g, "（")}。`;
-        }
-
-        function renderPreview(data) {
-          preview.innerHTML = "";
-          const title = document.createElement("h3");
-          title.textContent = "一句话吐槽";
-          const sentence = document.createElement("p");
-          sentence.textContent = buildSentence(data);
-          preview.appendChild(title);
-          preview.appendChild(sentence);
-        }
-
-        function getDetailPrompts(problemText) {
-          const text = (problemText || "").trim();
-          const impactPrompts = [
-            "这个问题让你错过或延误了什么？",
-            "它导致你无法完成哪些具体操作？",
-          ];
-          const wishPrompts = [
-            "你希望增加哪些文字或视觉提示？",
-            "希望提供哪些替代沟通方式？",
-          ];
-          if (/语音|叫号|播报|广播|喊/.test(text)) {
-            wishPrompts.unshift("希望语音信息如何同步（字幕/短信/震动等）？");
-          }
-          if (/排队|窗口|柜台|现场|大厅|服务台/.test(text)) {
-            impactPrompts.unshift("是否影响排队/办理时机？");
-          }
-          if (/没有提示|未提示|缺少提示|提示不足|看不见/.test(text)) {
-            wishPrompts.unshift("希望哪些关键信息被文字化/可视化？");
-          }
-          return {
-            impact: impactPrompts.slice(0, 3),
-            wish: wishPrompts.slice(0, 3),
-          };
-        }
-
-        function buildAutoText(key) {
-          return detailAnswers[key]
-            .map((value) => value.trim())
-            .filter(Boolean)
-            .join("；");
-        }
-
-        function applyAutoFill(key) {
-          const field = key === "impact" ? impact : wish;
-          const nextValue = buildAutoText(key);
-          const current = field.value.trim();
-          const last = autoFillCache[key];
-          if (!nextValue) {
-            if (!current || current === last) {
-              field.value = "";
-              autoFillCache[key] = "";
+              const parsed = JSON.parse(contentStr);
+              return parsed.choices?.[0]?.message?.content || contentStr;
+            } catch (e) {
+              return contentStr;
             }
-            return;
           }
-          if (current && current !== last) return;
-          field.value = nextValue;
-          autoFillCache[key] = nextValue;
+          break;
+        } else if (status === 'failed') {
+          throw new Error('任务执行失败');
         }
-
-        function renderMissing(requiredMissing, optionalMissing) {
-          if (requiredMissing.length === 0 && optionalMissing.length === 0) {
-            missingPanel.hidden = true;
-            missingPanel.innerHTML = "";
-            return;
-          }
-          missingPanel.hidden = false;
-          missingPanel.innerHTML = "";
-
-          const heading = document.createElement("strong");
-          heading.textContent =
-            requiredMissing.length > 0
-              ? "缺少关键信息，请回答以下问题："
-              : "可选补充，让吐槽更完整：";
-          missingPanel.appendChild(heading);
-
-          const problemText = problem.value.trim();
-          const needDetail =
-            problemText &&
-            (optionalMissing.includes("impact") ||
-              optionalMissing.includes("wish"));
-          if (problemText && problemText !== lastProblemSeed) {
-            lastProblemSeed = problemText;
-            detailAnswers.impact = [];
-            detailAnswers.wish = [];
-            autoFillCache.impact = "";
-            autoFillCache.wish = "";
-          }
-
-          const appendQuestion = (key, isOptional = false) => {
-            const wrap = document.createElement("div");
-            wrap.className = "question";
-            const label = document.createElement("label");
-            label.textContent = `${questionMap[key]}${isOptional ? "（可选）" : ""}`;
-            const input = document.createElement("input");
-            input.type = "text";
-            input.placeholder = "输入后会自动补全";
-            input.addEventListener("input", () => {
-              const value = input.value.trim();
-              if (!value) return;
-              if (key === "subject") subject.value = value;
-              if (key === "scene") scene.value = value;
-              if (key === "problem") problem.value = value;
-              if (key === "impact") impact.value = value;
-              if (key === "wish") wish.value = value;
-              updateProgress();
-              const data = collectData();
-              renderPreview(data);
-            });
-            wrap.appendChild(label);
-            wrap.appendChild(input);
-            missingPanel.appendChild(wrap);
-          };
-
-          const appendDetailQuestions = (key, prompts) => {
-            const title = document.createElement("div");
-            title.className = "question";
-            const strong = document.createElement("strong");
-            strong.textContent = `为补全「${detailLabelMap[key]}」请回答：`;
-            title.appendChild(strong);
-            missingPanel.appendChild(title);
-
-            const nextPrompts = prompts || [];
-            detailAnswers[key] = detailAnswers[key].slice(
-              0,
-              nextPrompts.length,
-            );
-
-            nextPrompts.forEach((prompt, index) => {
-              const wrap = document.createElement("div");
-              wrap.className = "question";
-              const label = document.createElement("label");
-              label.textContent = prompt;
-              const input = document.createElement("input");
-              input.type = "text";
-              input.placeholder = `回答后会自动补全到「${detailLabelMap[key]}」`;
-              input.value = detailAnswers[key][index] || "";
-              input.addEventListener("input", () => {
-                detailAnswers[key][index] = input.value || "";
-                applyAutoFill(key);
-                const data = collectData();
-                renderPreview(data);
-              });
-              wrap.appendChild(label);
-              wrap.appendChild(input);
-              missingPanel.appendChild(wrap);
-            });
-
-            applyAutoFill(key);
-          };
-
-          requiredMissing.forEach((key) => appendQuestion(key, false));
-          if (needDetail) {
-            const prompts = getDetailPrompts(problemText);
-            if (optionalMissing.includes("impact"))
-              appendDetailQuestions("impact", prompts.impact);
-            if (optionalMissing.includes("wish"))
-              appendDetailQuestions("wish", prompts.wish);
-            optionalMissing
-              .filter((key) => key !== "impact" && key !== "wish")
-              .forEach((key) => appendQuestion(key, true));
-          } else {
-            optionalMissing.forEach((key) => appendQuestion(key, true));
-          }
+        
+        retries++;
+      }
+      
+      throw new Error('查询超时');
+    }
+    
+    // ==================== 处理AI回复 ====================
+    function handleAIResponse(response, userInput) {
+      // 尝试解析JSON响应
+      let parsed;
+      try {
+        // 提取JSON部分
+        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          parsed = JSON.parse(jsonMatch[0]);
         }
-
-        function buildCard() {
-          const data = collectData();
-          const requiredMissing = [];
-          const optionalMissing = [];
-          if (!data.subject) requiredMissing.push("subject");
-          if (!data.problem) requiredMissing.push("problem");
-          if (!data.scene) optionalMissing.push("scene");
-          if (!data.impact) optionalMissing.push("impact");
-          if (!data.wish) optionalMissing.push("wish");
-
-          renderPreview(data);
-          renderMissing(requiredMissing, optionalMissing);
-          updateProgress();
-
-          if (requiredMissing.length > 0) {
-            setStatus("还缺少关键内容，请先补全再生成一句话吐槽。", "warn");
-            saveBtn.disabled = true;
-            return;
-          }
-
-          setStatus("一句话吐槽已生成，可提交。", "info");
-          saveBtn.disabled = false;
-        }
-
-        chips.forEach((chip) => {
-          chip.addEventListener("click", () => {
-            const name = chip.textContent.trim();
-            const selected = chip.getAttribute("aria-pressed") === "true";
-            chip.setAttribute("aria-pressed", String(!selected));
-            if (selected) state.categories.delete(name);
-            else state.categories.add(name);
-          });
-        });
-
-        toggleButtons.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const type = btn.dataset.toggle;
-            const pressed = btn.getAttribute("aria-pressed") === "true";
-            btn.setAttribute("aria-pressed", String(!pressed));
-            if (type === "contrast")
-              document.body.classList.toggle("contrast", !pressed);
-          });
-        });
-
-        fontSize.addEventListener("input", () => {
-          document.documentElement.style.fontSize = `${fontSize.value}%`;
-        });
-
-        bgTheme.addEventListener("change", () => {
-          applyTheme(bgTheme.value);
-          localStorage.setItem(themeKey, bgTheme.value);
-        });
-
-        [subject, scene, problem, impact, wish].forEach((input) =>
-          input.addEventListener("input", updateProgress),
-        );
-        emotion.addEventListener("input", updateEmotionLabel);
-
-        buildBtn.addEventListener("click", buildCard);
-
-        saveBtn.addEventListener("click", async () => {
-          buildCard();
-          const data = collectData();
-          if (!data.subject || !data.problem) return;
-          saveBtn.disabled = true;
-          setStatus("正在提交到服务器…", "info");
-          const payload = {
-            ...data,
-            sentence: buildSentence(data),
-            created_at: new Date().toISOString(),
-            mode: "hearing",
-          };
-          const result = await postComplaint(payload);
-          if (result.ok) {
-            setStatus("提交成功，已保存到服务器。", "info");
-            resetForm();
-            return;
-          }
-          setStatus(`提交失败：${result.error || "未知错误"}`, "warn");
-          saveBtn.disabled = false;
-        });
-
-        function resetForm() {
-          state.categories.clear();
-          chips.forEach((chip) => chip.setAttribute("aria-pressed", "false"));
-          missingPanel.hidden = true;
-          missingPanel.innerHTML = "";
-          detailAnswers.impact = [];
-          detailAnswers.wish = [];
-          autoFillCache.impact = "";
-          autoFillCache.wish = "";
-          lastProblemSeed = "";
-          preview.innerHTML = "<p>填写后会生成一句话吐槽，方便直接提交。</p>";
-          saveBtn.disabled = true;
-          updateProgress();
-          updateEmotionLabel();
-          setStatus("内容已清空，可以重新填写。", "info");
-        }
-
-        form.addEventListener("reset", resetForm);
-
-        // 初始化
-        updateEmotionLabel();
-        updateProgress();
-        const savedTheme = localStorage.getItem(themeKey);
-        if (savedTheme && themeMap[savedTheme]) {
-          bgTheme.value = savedTheme;
-          applyTheme(savedTheme);
+      } catch (e) {
+        // 非JSON格式，使用原始文本
+      }
+      
+      if (parsed) {
+        // 处理结构化响应
+        const type = parsed.type || 'question';
+        const content = parsed.content || response;
+        
+        addAIMessage(content);
+        
+        if (type === 'confirm' && parsed.data) {
+          // 显示确认卡片
+          showConfirmCard(parsed.data);
+          updateQuickReplies(['确认提交', '需要修改', '补充信息']);
+        } else if (type === 'complete') {
+          // 已完成
+          conversationStage = 'completed';
+          submitComplaint(parsed.data);
         } else {
-          applyTheme(bgTheme.value);
+          // 继续收集信息
+          updateQuickRepliesBasedOnStage();
         }
+      } else {
+        // 使用原始文本回复
+        addAIMessage(response);
+        updateQuickRepliesBasedOnStage();
       }
-    </script>
-
-    <script>
-      // --- 3. 视障模式业务逻辑 (API / Voice / File) ---
-      // 移植自 "吐槽视障.html"
-
-      // 语音识别功能
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-      let recognitionInstance = null;
-      let activeVoiceTarget = null;
-      let isListening = false;
-
-      function ensureRecognition() {
-        if (!SpeechRecognition) {
-          alert("当前浏览器不支持语音输入。");
-          return null;
+    }
+    
+    function showConfirmCard(data) {
+      const container = document.getElementById('messages');
+      
+      const card = document.createElement('div');
+      card.className = 'message ai';
+      card.innerHTML = `
+        <div class="message-avatar" aria-hidden="true">🤖</div>
+        <div style="max-width: 70%;">
+          <div class="confirm-card">
+            <h3>📋 整理后的倾诉内容</h3>
+            <div class="confirm-content">${formatComplaintData(data)}</div>
+            <div class="confirm-actions">
+              <button class="btn btn-primary" onclick="submitFromCard()">确认提交</button>
+              <button class="btn btn-secondary" onclick="modifyComplaint()">需要修改</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      container.appendChild(card);
+      scrollToBottom();
+      
+      // 保存数据
+      collectedInfo = data;
+      conversationStage = 'confirming';
+    }
+    
+    function formatComplaintData(data) {
+      let text = '';
+      if (data.subject) text += `【对象】${data.subject}\n`;
+      if (data.scene) text += `【场景】${data.scene}\n`;
+      if (data.problem) text += `【问题】${data.problem}\n`;
+      if (data.impact) text += `【影响】${data.impact}\n`;
+      if (data.wish) text += `【期望】${data.wish}\n`;
+      if (data.emotion) text += `【情绪】${data.emotion}\n`;
+      return text || '暂无详细内容';
+    }
+    
+    function updateQuickRepliesBasedOnStage() {
+      const replies = {
+        initial: ['在医院遇到问题', '使用APP遇到困难', '公共交通问题', '其他'],
+        collecting: ['还有别的', '就是这样', '我不知道怎么说'],
+        confirming: ['确认提交', '需要修改', '补充信息']
+      };
+      
+      updateQuickReplies(replies[conversationStage] || replies.initial);
+    }
+    
+    function updateQuickReplies(replies) {
+      const container = document.getElementById('quickReplies');
+      container.innerHTML = '';
+      
+      for (const text of replies) {
+        const btn = document.createElement('button');
+        btn.className = 'quick-reply';
+        btn.textContent = text;
+        btn.onclick = () => {
+          document.getElementById('messageInput').value = text;
+          sendMessage();
+        };
+        container.appendChild(btn);
+      }
+    }
+    
+    // ==================== 提交逻辑 ====================
+    function submitFromCard() {
+      if (collectedInfo && Object.keys(collectedInfo).length > 0) {
+        submitComplaint(collectedInfo);
+      }
+    }
+    
+    function modifyComplaint() {
+      addAIMessage('好的，请告诉我需要修改哪里，或者补充什么信息？');
+      conversationStage = 'collecting';
+      updateQuickReplies(['改一下对象', '补充场景', '重新描述问题', '换个说法']);
+    }
+    
+    async function submitComplaint(data) {
+      showTyping();
+      
+      const payload = {
+        ...data,
+        mode: currentMode,
+        sentence: buildSentence(data),
+        created_at: new Date().toISOString()
+      };
+      
+      try {
+        const res = await fetch(`${SERVER_API}/api/complaints`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        hideTyping();
+        
+        if (res.ok) {
+          addAIMessage('✅ 你的倾诉已成功提交！感谢你分享这些，这会让世界变得更好。\n\n你可以：\n• 继续跟我聊聊别的\n• 去「吐槽广场」看看其他人的倾诉\n• 或者直接关闭页面');
+          conversationStage = 'completed';
+          updateQuickReplies(['我想再说一个', '去吐槽广场看看', '结束对话']);
+        } else {
+          throw new Error('提交失败');
         }
-        if (recognitionInstance) return recognitionInstance;
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = "zh-CN";
-        recognition.interimResults = false;
-        recognition.continuous = false;
-
-        recognition.onstart = () => {
-          isListening = true;
-        };
-        recognition.onend = () => {
-          isListening = false;
-        };
-        recognition.onerror = () => {
-          isListening = false;
-        };
-
-        recognition.onresult = (event) => {
-          const transcript = Array.from(event.results)
-            .map((result) => result[0].transcript)
-            .join("")
-            .trim();
-          if (!transcript) return;
-
-          if (activeVoiceTarget === "__vision_help__") {
-            if (typeof window.__visionHelpCommit === "function") {
-              window.__visionHelpCommit(transcript);
-            }
-            return;
-          }
-
-          const field = document.getElementById(activeVoiceTarget);
-          if (!field) return;
-
-          const current = (field.value || "").trim();
-          field.value = current ? `${current} ${transcript}` : transcript;
-          field.focus();
-          field.dispatchEvent(new Event("input", { bubbles: true }));
-        };
-
-        recognitionInstance = recognition;
-        return recognitionInstance;
+      } catch (error) {
+        hideTyping();
+        addAIMessage('❌ 提交时遇到了问题，但你的倾诉内容我都记录好了。请稍后重试，或者直接联系管理员。');
       }
-
-      function startVoiceInput(targetId) {
-        if (isListening) return;
-        const recognition = ensureRecognition();
-        if (!recognition) return;
-        activeVoiceTarget = targetId;
+    }
+    
+    function buildSentence(data) {
+      const parts = [];
+      if (data.scene) parts.push(`在${data.scene}`);
+      if (data.subject) parts.push(`想吐槽${data.subject}`);
+      if (data.problem) parts.push(`主要问题是${data.problem}`);
+      if (data.impact) parts.push(`导致${data.impact}`);
+      if (data.wish) parts.push(`希望${data.wish}`);
+      return parts.join('，') + '。';
+    }
+    
+    // ==================== 语音输入 ====================
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return;
+      
+      recognition = new SpeechRecognition();
+      recognition.lang = 'zh-CN';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      
+      recognition.onstart = () => {
+        isRecording = true;
+        document.getElementById('voiceBtn').classList.add('recording');
+        showToast('正在聆听...');
+      };
+      
+      recognition.onend = () => {
+        isRecording = false;
+        document.getElementById('voiceBtn').classList.remove('recording');
+      };
+      
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const input = document.getElementById('messageInput');
+        input.value = (input.value + ' ' + transcript).trim();
+        input.focus();
+        // 视障模式下自动发送
+        if (currentMode === 'vision') {
+          setTimeout(() => sendMessage(), 500);
+        }
+      };
+      
+      recognition.onerror = () => {
+        showToast('语音识别失败，请重试');
+        isRecording = false;
+        document.getElementById('voiceBtn').classList.remove('recording');
+      };
+    }
+    
+    function toggleVoiceInput() {
+      if (!recognition) {
+        showToast('你的浏览器不支持语音输入');
+        return;
+      }
+      
+      if (isRecording) {
+        recognition.stop();
+      } else {
         recognition.start();
       }
-
-      function initVisionMode() {
-        if (window.visionInitialized) return;
-        window.visionInitialized = true;
-
-        const submitBtn = document.getElementById("v-submitBtn");
-        const statusEl = document.getElementById("v-status");
-        const helpPanel = document.getElementById("visionHelp");
-        const promptBox = document.getElementById("visionPromptBox");
-        const helpMic = document.getElementById("visionHelpMic");
-        let activeHelpKey = "";
-
-        const state = {
-          scene: "",
-          severity: "",
-          summary: "",
-          detail: "",
-          contact: "",
-        };
-
-        function setStatus(message) {
-          if (statusEl) statusEl.textContent = message;
-        }
-
-        const questionMap = {
-          summary: "一句话描述（必填）",
-          detail: "详细描述（必填）",
-          scene: "发生场景（可选）",
-          severity: "影响程度（可选）",
-          contact: "联系方式（可选）",
-        };
-
-        function getDetailPrompts(text) {
-          const prompts = [
-            "发生了什么？",
-            "你尝试了哪些操作？",
-            "哪里卡住了？",
-          ];
-          if (/读屏|屏幕|看不见|朗读/.test(text)) {
-            prompts.unshift("读屏具体读出了什么？哪些信息缺失？");
-          }
-          if (/按钮|表单|验证码|购票|支付/.test(text)) {
-            prompts.unshift("具体卡在哪一步？");
-          }
-          return prompts.slice(0, 3);
-        }
-
-        function formatStatePreview() {
-          const lines = [];
-          if (state.summary.trim())
-            lines.push(`已记录·一句话：${state.summary.trim()}`);
-          if (state.detail.trim())
-            lines.push(`已记录·详细：${state.detail.trim()}`);
-          if (state.scene.trim())
-            lines.push(`已记录·场景：${state.scene.trim()}`);
-          if (state.severity.trim())
-            lines.push(`已记录·影响：${state.severity.trim()}`);
-          if (state.contact.trim())
-            lines.push(`已记录·联系方式：${state.contact.trim()}`);
-          return lines.join("\n");
-        }
-
-        function renderHelp(requiredMissing, optionalMissing) {
-          if (!helpPanel || !promptBox) return;
-          helpPanel.hidden = false;
-
-          if (requiredMissing.length === 0 && optionalMissing.length === 0) {
-            activeHelpKey = "";
-            const preview = formatStatePreview();
-            promptBox.value = [preview, "信息已完整，可以提交或继续补充细节。"]
-              .filter(Boolean)
-              .join("\n\n");
-            return;
-          }
-
-          const queue = [...requiredMissing, ...optionalMissing];
-          activeHelpKey = queue[0] || "";
-
-          let promptLine = questionMap[activeHelpKey] || "请补充信息";
-          if (activeHelpKey === "detail") {
-            const prompts = getDetailPrompts(
-              state.detail.trim() || state.summary.trim(),
-            );
-            if (prompts.length) promptLine = prompts[0];
-          }
-          const preview = formatStatePreview();
-          promptBox.value = [preview, `请补充：${promptLine}`]
-            .filter(Boolean)
-            .join("\n\n");
-        }
-
-        function updateHelp() {
-          const requiredMissing = [];
-          const optionalMissing = [];
-          if (!state.summary.trim()) requiredMissing.push("summary");
-          if (!state.detail.trim()) requiredMissing.push("detail");
-          if (!state.scene.trim()) optionalMissing.push("scene");
-          if (!state.severity.trim()) optionalMissing.push("severity");
-          if (!state.contact.trim()) optionalMissing.push("contact");
-          renderHelp(requiredMissing, optionalMissing);
-        }
-
-        function commitHelpAnswer(value) {
-          const normalized = (value || "").trim();
-          if (!normalized) return;
-          const targetKey =
-            activeHelpKey || (state.summary.trim() ? "detail" : "summary");
-          if (targetKey === "summary") {
-            state.summary = normalized;
-          } else if (targetKey === "detail") {
-            const current = state.detail.trim();
-            state.detail = current ? `${current}；${normalized}` : normalized;
-          } else if (targetKey === "scene") {
-            state.scene = normalized;
-          } else if (targetKey === "severity") {
-            state.severity = normalized;
-          } else if (targetKey === "contact") {
-            state.contact = normalized;
-          }
-          updateHelp();
-        }
-
-        function startHelpVoice() {
-          startVoiceInput("__vision_help__");
-        }
-
-        async function submitComplaint() {
-          if (!state.summary.trim() || !state.detail.trim()) {
-            updateHelp();
-            setStatus("请先补全必填信息再提交。");
-            return;
-          }
-          setStatus("正在提交到服务器…");
-          try {
-            const payload = {
-              scene: state.scene,
-              severity: state.severity,
-              summary: state.summary,
-              detail: state.detail,
-              contact: state.contact,
-              created_at: new Date().toISOString(),
-              mode: "vision",
-            };
-
-            const result = await postComplaint(payload);
-            if (!result.ok) {
-              setStatus(`提交失败：${result.error || "未知错误"}`);
-              return;
-            }
-            setStatus("提交成功，已保存到服务器。");
-
-            state.summary = "";
-            state.detail = "";
-            state.scene = "";
-            state.severity = "";
-            state.contact = "";
-            updateHelp();
-          } catch (err) {
-            setStatus("提交失败，请重试。");
-          }
-        }
-
-        if (submitBtn) submitBtn.addEventListener("click", submitComplaint);
-        if (helpMic) helpMic.addEventListener("click", startHelpVoice);
-
-        window.__visionHelpCommit = commitHelpAnswer;
-
-        updateHelp();
-      }
-    </script>
-  </body>
+    }
+    
+    // ==================== 辅助功能 ====================
+    function toggleFontSize() {
+      document.body.classList.toggle('large-text');
+      const btn = document.getElementById('fontSizeBtn');
+      btn.classList.toggle('active');
+      showToast(document.body.classList.contains('large-text') ? '大字体已开启' : '大字体已关闭');
+    }
+    
+    function toggleContrast() {
+      document.body.classList.toggle('high-contrast');
+      const btn = document.getElementById('contrastBtn');
+      btn.classList.toggle('active');
+      showToast(document.body.classList.contains('high-contrast') ? '高对比度已开启' : '高对比度已关闭');
+    }
+    
+    function toggleTTS() {
+      ttsEnabled = !ttsEnabled;
+      const btn = document.getElementById('ttsBtn');
+      btn.classList.toggle('active');
+      showToast(ttsEnabled ? '语音朗读已开启' : '语音朗读已关闭');
+    }
+    
+    function speak(text) {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'zh-CN';
+      window.speechSynthesis.speak(utter);
+    }
+    
+    function showToast(message) {
+      const existing = document.querySelector('.toast');
+      if (existing) existing.remove();
+      
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      toast.setAttribute('role', 'alert');
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.remove(), 3000);
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // 快速回复特殊处理
+    window.addEventListener('load', () => {
+      // 检查URL参数
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('mode') === 'hearing') enterMode('hearing');
+      if (params.get('mode') === 'vision') enterMode('vision');
+    });
+  </script>
+</body>
 </html>
