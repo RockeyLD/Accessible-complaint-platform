@@ -819,24 +819,54 @@
     }
     
     function buildSystemPrompt() {
-      return `你是一位专业的无障碍倾诉助手，帮助残障人士将口语化的表达转化为正式、专业的投诉/倾诉内容。
+      return `你是一位专业的无障碍倾诉助手，帮助听障和视障人士将他们的困扰整理成清晰、专业的倾诉内容。
 
-你的任务：
-1. 引导用户表达：用温暖、耐心的方式询问细节
-2. 信息收集：了解事件的对象、场景、问题、影响、期望
-3. 整理输出：将口语转化为结构清晰的专业倾诉
+## 你的角色
+你是残障人士的朋友和代言人，用温暖、理解、耐心的态度倾听他们的困扰，帮助他们把口语化的表达整理成结构清晰、有理有据的正式倾诉。
 
-输出格式要求：
-- 使用JSON格式回复
-- 包含字段：type(类型: question/confirm/complete)、content(对话内容)、data(整理后的结构化数据)
-- 如果信息不足，type为"question"，继续询问
-- 如果信息足够，type为"confirm"，展示整理后的内容让用户确认
+## 对话策略
+1. 首先要建立信任，让用户感到被理解和尊重
+2. 通过开放式问题引导用户描述：
+   - 发生了什么？（对象、场景）
+   - 具体遇到了什么困难？（问题细节）
+   - 这造成了什么影响？（后果）
+   - 希望如何改进？（建议）
+3. 每次只问1-2个问题，不要一次问太多
+4. 对用户的内容进行共情和确认
 
-请确保：
-- 语气友善、尊重
-- 不打断用户，先让用户说完
-- 适时总结确认理解正确
-- 最终输出适合正式提交的格式`;
+## 信息收集要点
+必须收集以下信息才能生成完整倾诉：
+- 对象：吐槽的是什么服务/场所/产品（如：某地铁站、某医院、某App）
+- 场景：在什么情况下发生的（如：早高峰、挂号时、使用某功能时）
+- 问题：具体的无障碍障碍是什么（如：没有字幕、标识不清、无法操作）
+- 影响：造成了什么实际困扰（如：错过车次、延误就医、无法完成操作）
+- 期望：希望对方如何改进（如：增加字幕提示、优化界面、提供辅助服务）
+
+## 输出格式
+当信息收集完整后（至少有对象和问题），输出格式如下：
+
+【倾诉内容】
+对象：[具体对象名称]
+场景：[发生场景描述]
+问题：[具体问题描述，包含细节]
+影响：[造成的实际影响]
+期望：[具体的改进建议]
+
+## 对话示例
+用户：我在地铁站遇到了问题
+助手：谢谢你的分享。能具体说说是在哪个地铁站，遇到了什么问题吗？
+
+用户：某某站，听不见广播
+助手：明白了，在某某站听不到广播提示。这发生在什么情况下呢？比如是在等车的时候，还是在换乘时？
+
+用户：等车的时候，不知道车到哪了
+助手：了解了，等车的时候听不到广播，不知道列车进站信息，这确实很不方便。这个问题对你造成了什么影响吗？比如错过了车或者上错了车？
+
+## 重要规则
+- 不要生成【倾诉内容】除非信息确实完整
+- 每次回复控制在100字以内，简洁明了
+- 使用口语化表达，像朋友聊天一样
+- 对用户提到的困难表示理解和共情`;
     }
     
     function buildChatMessages(newUserMessage) {
@@ -904,7 +934,7 @@
         const queryRes = await fetch(`${API_BASE}/api/open/chat/task`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ task_id: taskId })
+          body: JSON.stringify({ task_id: taskId, ai_secret: API_SECRET })
         });
         
         if (!queryRes.ok) continue;
@@ -935,42 +965,59 @@
     
     // ==================== 处理AI回复 ====================
     function handleAIResponse(response, userInput) {
-      // 尝试解析JSON响应
-      let parsed;
-      try {
-        // 提取JSON部分
-        const jsonMatch = response.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          parsed = JSON.parse(jsonMatch[0]);
+      // 检查是否包含【倾诉内容】标记
+      if (response.includes('【倾诉内容】')) {
+        // 解析结构化数据
+        const data = parseComplaintFromResponse(response);
+        
+        if (data.isComplete) {
+          // 提取对话部分和整理部分
+          const parts = response.split('【倾诉内容】');
+          const dialogContent = parts[0].trim() || '我已经帮你整理好了倾诉内容，请确认：';
+          
+          addAIMessage(dialogContent);
+          showConfirmCard(data);
+          updateQuickReplies(['确认提交', '需要修改', '补充信息']);
+          conversationStage = 'confirming';
+          collectedInfo = data;
+          return;
         }
-      } catch (e) {
-        // 非JSON格式，使用原始文本
       }
       
-      if (parsed) {
-        // 处理结构化响应
-        const type = parsed.type || 'question';
-        const content = parsed.content || response;
-        
-        addAIMessage(content);
-        
-        if (type === 'confirm' && parsed.data) {
-          // 显示确认卡片
-          showConfirmCard(parsed.data);
-          updateQuickReplies(['确认提交', '需要修改', '补充信息']);
-        } else if (type === 'complete') {
-          // 已完成
-          conversationStage = 'completed';
-          submitComplaint(parsed.data);
-        } else {
-          // 继续收集信息
-          updateQuickRepliesBasedOnStage();
+      // 普通对话回复
+      addAIMessage(response);
+      updateQuickRepliesBasedOnStage();
+    }
+    
+    function parseComplaintFromResponse(response) {
+      const result = {
+        subject: '',
+        scene: '',
+        problem: '',
+        impact: '',
+        wish: '',
+        isComplete: false
+      };
+      
+      const patterns = {
+        subject: /对象[：:]\s*([^\n]+)/,
+        scene: /场景[：:]\s*([^\n]+)/,
+        problem: /问题[：:]\s*([\s\S]+?)(?=\n(?:影响|期望)|\n*$)/,
+        impact: /影响[：:]\s*([\s\S]+?)(?=\n(?:期望)|\n*$)/,
+        wish: /期望[：:]\s*([\s\S]+?)(?=\n*$)/
+      };
+      
+      for (const [key, pattern] of Object.entries(patterns)) {
+        const match = response.match(pattern);
+        if (match) {
+          result[key] = match[1].trim();
         }
-      } else {
-        // 使用原始文本回复
-        addAIMessage(response);
-        updateQuickRepliesBasedOnStage();
       }
+      
+      // 检查是否完整（至少包含对象和问题）
+      result.isComplete = result.subject && result.problem;
+      
+      return result;
     }
     
     function showConfirmCard(data) {

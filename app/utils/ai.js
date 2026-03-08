@@ -9,27 +9,55 @@ const API_BASE = 'https://edu.weixin.qq.com';
 // 系统提示词 - 帮助残障人士整理专业倾诉内容
 const SYSTEM_PROMPT = `你是一位专业的无障碍倾诉助手，帮助听障和视障人士将他们的困扰整理成清晰、专业的倾诉内容。
 
-你的任务：
-1. 用温暖、耐心的语气与用户对话
-2. 引导用户说出遇到的问题（对象、场景、具体问题、影响、期望改进）
-3. 将用户的口语化表达整理成结构化的专业倾诉
-4. 如果信息不完整，友好地询问缺失的部分
+## 你的角色
+你是残障人士的朋友和代言人，用温暖、理解、耐心的态度倾听他们的困扰，帮助他们把口语化的表达整理成结构清晰、有理有据的正式倾诉。
 
-输出格式要求：
-当信息收集完整后，输出格式如下：
+## 对话策略
+1. 首先要建立信任，让用户感到被理解和尊重
+2. 通过开放式问题引导用户描述：
+   - 发生了什么？（对象、场景）
+   - 具体遇到了什么困难？（问题细节）
+   - 这造成了什么影响？（后果）
+   - 希望如何改进？（建议）
+3. 每次只问1-2个问题，不要一次问太多
+4. 对用户的内容进行共情和确认
+
+## 信息收集要点
+必须收集以下信息才能生成完整倾诉：
+- 对象：吐槽的是什么服务/场所/产品（如：某地铁站、某医院、某App）
+- 场景：在什么情况下发生的（如：早高峰、挂号时、使用某功能时）
+- 问题：具体的无障碍障碍是什么（如：没有字幕、标识不清、无法操作）
+- 影响：造成了什么实际困扰（如：错过车次、延误就医、无法完成操作）
+- 期望：希望对方如何改进（如：增加字幕提示、优化界面、提供辅助服务）
+
+## 输出格式
+当信息收集完整后（至少有对象和问题），输出格式如下：
 
 【倾诉内容】
-对象：[吐槽对象]
-场景：[发生场景]
-问题：[具体问题描述]
-影响：[造成的影响]
-期望：[期望的改进]
+对象：[具体对象名称]
+场景：[发生场景描述]
+问题：[具体问题描述，包含细节]
+影响：[造成的实际影响]
+期望：[具体的改进建议]
 
-对话风格：
-- 温暖、理解、耐心
-- 不使用专业术语
-- 鼓励用户表达
-- 每轮对话简洁明了`;
+## 对话示例
+用户：我在地铁站遇到了问题
+助手：谢谢你的分享。能具体说说是在哪个地铁站，遇到了什么问题吗？
+
+用户：某某站，听不见广播
+助手：明白了，在某某站听不到广播提示。这发生在什么情况下呢？比如是在等车的时候，还是在换乘时？
+
+用户：等车的时候，不知道车到哪了
+助手：了解了，等车的时候听不到广播，不知道列车进站信息，这确实很不方便。这个问题对你造成了什么影响吗？比如错过了车或者上错了车？
+
+## 重要规则
+- 不要生成【倾诉内容】除非信息确实完整
+- 每次回复控制在100字以内，简洁明了
+- 使用口语化表达，像朋友聊天一样
+- 对用户提到的困难表示理解和共情`;
+
+// 初始欢迎语（仅用于界面显示，不发送给API）
+const WELCOME_MESSAGE = '你好！我是你的无障碍倾诉助手。我在这里倾听你的困扰，帮你把想说的话整理得更清晰。你想聊聊最近遇到的什么问题吗？';
 
 /**
  * 创建AI对话任务
@@ -40,6 +68,8 @@ function createTask(messages) {
   return new Promise((resolve) => {
     const queryId = 'wx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     
+    console.log('创建AI任务，消息数:', messages.length);
+    
     wx.request({
       url: `${API_BASE}/api/open/chat/create?ai_secret=${AI_SECRET}`,
       method: 'POST',
@@ -48,11 +78,14 @@ function createTask(messages) {
       },
       data: {
         messages: messages,
-        model: 'hunyuan-turbos-20250716',
+        model: 'hunyuan-turbos-latest',
         query_id: queryId
       },
       success: (res) => {
+        console.log('创建任务响应:', res.statusCode, res.data);
+        
         if (res.statusCode === 200 && res.data?.data?.data?.task_id) {
+          console.log('任务创建成功，ID:', res.data.data.data.task_id);
           resolve({ taskId: res.data.data.data.task_id });
         } else {
           console.error('创建任务失败:', res);
@@ -81,9 +114,12 @@ function pollTaskResult(taskId, maxAttempts = 30) {
       attempts++;
       
       if (attempts > maxAttempts) {
+        console.log('轮询超时');
         resolve(null);
         return;
       }
+      
+      console.log(`轮询第${attempts}次...`);
       
       wx.request({
         url: `${API_BASE}/api/open/chat/task`,
@@ -91,31 +127,48 @@ function pollTaskResult(taskId, maxAttempts = 30) {
         header: {
           'Content-Type': 'application/json'
         },
-        data: { task_id: taskId },
+        data: { 
+          task_id: taskId,
+          ai_secret: AI_SECRET
+        },
         success: (res) => {
+          console.log('轮询响应:', res.statusCode, res.data);
+          
           if (res.statusCode !== 200) {
             setTimeout(poll, 2000);
             return;
           }
           
-          const data = res.data?.data;
-          if (!data) {
+          // 处理嵌套的数据结构
+          const responseData = res.data?.data;
+          if (!responseData) {
             setTimeout(poll, 2000);
             return;
           }
           
-          const status = data.data?.status;
+          // 检查错误码
+          if (responseData.ret !== 0) {
+            console.error('API错误:', responseData.errmsg);
+            setTimeout(poll, 2000);
+            return;
+          }
+          
+          const status = responseData.data?.status;
+          console.log('任务状态:', status);
           
           if (status === 'completed') {
             // 解析返回的JSON字符串
             try {
-              const contentStr = data.data?.content;
+              const contentStr = responseData.data?.content;
               if (!contentStr) {
+                console.error('响应内容为空');
                 resolve(null);
                 return;
               }
               
+              console.log('解析content字符串...');
               const result = JSON.parse(contentStr);
+              
               if (result.error?.message) {
                 console.error('AI返回错误:', result.error.message);
                 resolve(null);
@@ -123,10 +176,12 @@ function pollTaskResult(taskId, maxAttempts = 30) {
               }
               
               const aiReply = result.choices?.[0]?.message?.content;
+              console.log('AI回复内容:', aiReply ? '成功获取' : '为空');
               resolve(aiReply || null);
             } catch (e) {
               console.error('解析AI响应失败:', e);
-              resolve(null);
+              // 如果解析失败，可能直接返回了文本
+              resolve(responseData.data?.content || null);
             }
           } else if (status === 'processing') {
             // 继续轮询，每2秒一次
@@ -136,7 +191,8 @@ function pollTaskResult(taskId, maxAttempts = 30) {
             setTimeout(poll, 2000);
           }
         },
-        fail: () => {
+        fail: (err) => {
+          console.error('轮询请求失败:', err);
           setTimeout(poll, 2000);
         }
       });
@@ -152,16 +208,39 @@ function pollTaskResult(taskId, maxAttempts = 30) {
  * @returns {Promise<string|null>} AI回复内容
  */
 async function chatWithAI(messages) {
-  // 确保消息格式正确
-  const validMessages = messages.filter(m => m.content && m.content.trim());
+  // 确保消息格式正确 - 过滤掉空的和system消息后的第一条必须是user
+  let validMessages = messages.filter(m => m.content && m.content.trim());
+  
+  // 确保消息符合API要求：system -> user -> assistant -> user ...
+  // 如果最后一条是assistant的欢迎语，需要保留，但用户消息必须是user角色
+  validMessages = validMessages.map((m, index) => {
+    // 确保每条消息都有正确的字段
+    return {
+      role: m.role,
+      content: m.content.trim()
+    };
+  });
   
   if (validMessages.length === 0) {
+    console.error('没有有效的消息');
     return null;
   }
+  
+  // 检查消息顺序：第一条可以是system，然后必须user和assistant交替
+  // 最后一条必须是user
+  const lastMessage = validMessages[validMessages.length - 1];
+  if (lastMessage.role !== 'user') {
+    console.error('最后一条消息必须是user角色，当前是:', lastMessage.role);
+    return null;
+  }
+  
+  console.log('准备调用AI，有效消息数:', validMessages.length);
+  console.log('消息角色顺序:', validMessages.map(m => m.role).join(' -> '));
   
   // 创建任务
   const taskResult = await createTask(validMessages);
   if (!taskResult) {
+    console.error('创建任务失败');
     return null;
   }
   
@@ -171,14 +250,22 @@ async function chatWithAI(messages) {
 }
 
 /**
- * 初始化对话消息（添加system prompt）
+ * 初始化对话消息（仅添加system prompt）
+ * API要求：system后必须是user消息，不能有assistant消息
  * @returns {Array} 初始消息数组
  */
 function initMessages() {
   return [
-    { role: 'system', content: SYSTEM_PROMPT },
-    { role: 'assistant', content: '你好！我是你的无障碍倾诉助手。我在这里倾听你的困扰，帮你把想说的话整理得更清晰。你想聊聊最近遇到的什么问题吗？' }
+    { role: 'system', content: SYSTEM_PROMPT }
   ];
+}
+
+/**
+ * 获取欢迎语（用于界面显示）
+ * @returns {string} 欢迎语
+ */
+function getWelcomeMessage() {
+  return WELCOME_MESSAGE;
 }
 
 /**
@@ -258,6 +345,7 @@ function buildSentence(data) {
 module.exports = {
   chatWithAI,
   initMessages,
+  getWelcomeMessage,
   parseComplaint,
   buildSentence,
   SYSTEM_PROMPT

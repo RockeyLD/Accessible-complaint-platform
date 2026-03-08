@@ -1,8 +1,7 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/hearing/index",
-    "pages/vision/index",
+    "pages/chat/index",
     "pages/list/index"
   ],
   "window": {
@@ -12,5 +11,10 @@
     "backgroundColor": "#f0f4f8",
     "backgroundTextStyle": "light"
   },
-  "style": "v2"
+  "style": "v2",
+  "permission": {
+    "scope.record": {
+      "desc": "用于语音输入功能"
+    }
+  }
 }
