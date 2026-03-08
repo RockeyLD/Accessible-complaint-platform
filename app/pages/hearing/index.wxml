@@ -1,173 +1,128 @@
 <view class="page hearing-page theme-{{theme}} {{contrast ? 'contrast' : ''}}" style="font-size: {{fontSize}}%;">
-  <view class="header">
-    <text class="title">听障友好 · 吐槽平台</text>
-    <text class="subtitle">用清晰的文字说清楚你的吐槽。平台不依赖声音提示，全部反馈都有明确的视觉提醒与可读文本。</text>
-  </view>
-
-  <view class="panel">
-    <text class="panel-title">写下你的吐槽</text>
-    <view class="toolbar">
-      <view class="tool">
-        <text class="tool-label">背景主题</text>
-        <picker mode="selector" range="{{themeOptions}}" range-key="label" bindchange="onThemeChange">
-          <view class="picker">{{currentThemeLabel}}</view>
-        </picker>
-      </view>
-      <view class="tool">
-        <text class="tool-label">文字大小</text>
-        <picker mode="selector" range="{{fontSizeOptions}}" range-key="label" bindchange="onFontSizeChange">
-          <view class="picker">{{currentFontSizeLabel}}</view>
-        </picker>
-      </view>
-      <view class="tool">
-        <text class="tool-label">高对比</text>
-        <button class="toggle-btn {{contrast ? 'active' : ''}}" bindtap="onToggleContrast">
-          {{contrast ? "关闭高对比" : "开启高对比"}}
-        </button>
-      </view>
-    </view>
-
-    <view class="field">
-      <text class="label">类别（可多选）</text>
-      <view class="chips">
-        <button
-          class="chip {{item.selected ? 'active' : ''}}"
-          wx:for="{{categories}}"
-          wx:key="name"
-          data-index="{{index}}"
-          bindtap="onToggleCategory"
-        >
-          {{item.name}}
-        </button>
-      </view>
-    </view>
-
-    <view class="grid-2">
-      <view class="field">
-        <text class="label">吐槽对象（必填）</text>
-        <input
-          value="{{form.subject}}"
-          placeholder="如：地铁站服务台 / 某应用客服"
-          data-field="subject"
-          bindinput="onInputField"
-        />
-      </view>
-      <view class="field">
-        <text class="label">发生场景（推荐）</text>
-        <input
-          value="{{form.scene}}"
-          placeholder="如：早高峰 / 线上咨询 / 医院窗口"
-          data-field="scene"
-          bindinput="onInputField"
-        />
-      </view>
-    </view>
-
-    <view class="field">
-      <text class="label">具体问题（必填）</text>
-      <textarea
-        value="{{form.problem}}"
-        placeholder="问题发生了什么？有哪些信息没有被文字化？"
-        data-field="problem"
-        bindinput="onInputField"
-      />
-    </view>
-
-    <view class="field">
-      <text class="label">影响了什么（推荐）</text>
-      <textarea
-        value="{{form.impact}}"
-        placeholder="例：错过排队号，无法及时办理业务。"
-        data-field="impact"
-        bindinput="onInputField"
-      />
-    </view>
-
-    <view class="field">
-      <text class="label">期望的改进（推荐）</text>
-      <textarea
-        value="{{form.wish}}"
-        placeholder="例：提供屏幕实时字幕、写字板或短信提醒。"
-        data-field="wish"
-        bindinput="onInputField"
-      />
-    </view>
-
-    <view class="field">
-      <text class="label">情绪强度</text>
-      <picker mode="selector" range="{{emotionOptions}}" range-key="label" bindchange="onEmotionChange">
-        <view class="picker">{{emotionLabel}}</view>
+  <!-- 顶部工具栏 -->
+  <view class="toolbar">
+    <view class="tool">
+      <text class="tool-label">主题</text>
+      <picker mode="selector" range="{{themeOptions}}" range-key="label" bindchange="onThemeChange">
+        <view class="picker">{{currentThemeLabel}}</view>
       </picker>
     </view>
-
-    <view class="progress-wrap">
-      <view class="progress-label">
-        <text>填写进度</text>
-        <text>{{progressText}}</text>
-      </view>
-      <view class="progress-bar">
-        <view class="progress-fill" style="width: {{progressPercent}}%;"></view>
-      </view>
+    <view class="tool">
+      <text class="tool-label">字号</text>
+      <picker mode="selector" range="{{fontSizeOptions}}" range-key="label" bindchange="onFontSizeChange">
+        <view class="picker">{{currentFontSizeLabel}}</view>
+      </picker>
     </view>
-
-    <view class="actions">
-      <button class="primary" bindtap="buildCard">生成吐槽卡片</button>
-      <button class="secondary" bindtap="resetForm">清空内容</button>
+    <view class="tool">
+      <button class="toggle-btn {{contrast ? 'active' : ''}}" bindtap="onToggleContrast">
+        {{contrast ? "高对比" : "正常"}}
+      </button>
     </view>
   </view>
 
-  <view class="panel">
-    <text class="panel-title">吐槽卡片预览</text>
-    <view class="status {{statusType}}">{{statusText}}</view>
-    <view class="preview-card">
-      <text>{{previewSentence}}</text>
+  <!-- 欢迎语 -->
+  <view class="welcome-panel" wx:if="{{showWelcome}}">
+    <text class="welcome-title">🧏 听障友好 · AI倾诉助手</text>
+    <text class="welcome-desc">我会陪你聊天，帮你把想说的话整理成清晰的倾诉。就像跟朋友聊天一样，自然地说出你的困扰。</text>
+    <button class="start-btn" bindtap="startChat">开始倾诉</button>
+  </view>
+
+  <!-- 对话区域 -->
+  <scroll-view wx:else class="chat-container" scroll-y scroll-into-view="{{scrollToMessage}}" enhanced show-scrollbar>
+    <!-- AI初始欢迎 -->
+    <view class="message ai-message">
+      <view class="avatar">🤖</view>
+      <view class="bubble">
+        <text class="text">你好！我是你的无障碍倾诉助手。我在这里倾听你的困扰，帮你把想说的话整理得更清晰。你想聊聊最近遇到的什么问题吗？</text>
+      </view>
     </view>
 
-    <view class="missing-panel" wx:if="{{missingVisible}}">
-      <text class="missing-title">{{missingTitle}}</text>
-      <view wx:for="{{missingQuestions}}" wx:key="key" class="question">
-        <text class="question-label">
-          {{item.label}}{{item.optional ? "（可选）" : ""}}
-        </text>
-        <input
-          placeholder="输入后会自动补全"
-          data-field="{{item.key}}"
-          bindinput="onMissingInput"
-        />
+    <!-- 消息列表 -->
+    <view wx:for="{{messages}}" wx:key="index" id="msg-{{index}}" class="message {{item.role === 'user' ? 'user-message' : 'ai-message'}} {{item.isError ? 'error-message' : ''}}">
+      <view class="avatar">{{item.role === 'user' ? '🧏' : '🤖'}}</view>
+      <view class="bubble">
+        <text class="text" user-select>{{item.content}}</text>
+        <view wx:if="{{item.parsed && item.parsed.isComplete}}" class="parsed-badge">✓ 已整理</view>
       </view>
+    </view>
 
-      <view wx:if="{{detailPromptsImpact.length}}">
-        <text class="question-group">为补全「{{detailLabelMap.impact}}」请回答：</text>
-        <view wx:for="{{detailPromptsImpact}}" wx:key="prompt" class="question">
-          <text class="question-label">{{item.prompt}}</text>
-          <input
-            value="{{item.value}}"
-            placeholder="回答后会自动补全到「影响了什么」"
-            data-key="impact"
-            data-index="{{index}}"
-            bindinput="onDetailInput"
-          />
-        </view>
-      </view>
-
-      <view wx:if="{{detailPromptsWish.length}}">
-        <text class="question-group">为补全「{{detailLabelMap.wish}}」请回答：</text>
-        <view wx:for="{{detailPromptsWish}}" wx:key="prompt" class="question">
-          <text class="question-label">{{item.prompt}}</text>
-          <input
-            value="{{item.value}}"
-            placeholder="回答后会自动补全到「期望的改进」"
-            data-key="wish"
-            data-index="{{index}}"
-            bindinput="onDetailInput"
-          />
+    <!-- 加载中 -->
+    <view wx:if="{{isLoading}}" class="message ai-message loading-message">
+      <view class="avatar">🤖</view>
+      <view class="bubble loading">
+        <view class="loading-dots">
+          <view class="dot"></view>
+          <view class="dot"></view>
+          <view class="dot"></view>
         </view>
       </view>
     </view>
 
-    <view class="actions">
-      <button class="secondary" bindtap="onSave" disabled="{{!canSubmit}}">上传到服务器</button>
-      <button class="ghost" bindtap="goList">吐槽广场</button>
+    <!-- 确认卡片 -->
+    <view wx:if="{{showConfirm && complaintData.isComplete}}" class="confirm-card" id="confirm-card">
+      <view class="confirm-header">
+        <text class="confirm-title">📋 整理完成，确认提交</text>
+      </view>
+      <view class="confirm-content">
+        <view class="confirm-item" wx:if="{{complaintData.subject}}">
+          <text class="confirm-label">对象：</text>
+          <text class="confirm-value">{{complaintData.subject}}</text>
+        </view>
+        <view class="confirm-item" wx:if="{{complaintData.scene}}">
+          <text class="confirm-label">场景：</text>
+          <text class="confirm-value">{{complaintData.scene}}</text>
+        </view>
+        <view class="confirm-item" wx:if="{{complaintData.problem}}">
+          <text class="confirm-label">问题：</text>
+          <text class="confirm-value">{{complaintData.problem}}</text>
+        </view>
+        <view class="confirm-item" wx:if="{{complaintData.impact}}">
+          <text class="confirm-label">影响：</text>
+          <text class="confirm-value">{{complaintData.impact}}</text>
+        </view>
+        <view class="confirm-item" wx:if="{{complaintData.wish}}">
+          <text class="confirm-label">期望：</text>
+          <text class="confirm-value">{{complaintData.wish}}</text>
+        </view>
+      </view>
+      <view class="confirm-actions">
+        <button class="confirm-btn primary" bindtap="submitComplaint">确认提交</button>
+        <button class="confirm-btn secondary" bindtap="continueChat">继续聊聊</button>
+      </view>
     </view>
+
+    <view style="height: 20px;"></view>
+  </scroll-view>
+
+  <!-- 输入区域 -->
+  <view wx:if="{{!showWelcome}}" class="input-area">
+    <view class="input-wrap">
+      <textarea 
+        class="input-field" 
+        placeholder="{{inputPlaceholder}}" 
+        value="{{inputValue}}"
+        bindinput="onInputChange"
+        bindconfirm="sendMessage"
+        maxlength="500"
+        auto-height
+        show-confirm-bar="{{false}}"
+        adjust-position
+      />
+      <button class="send-btn {{inputValue.trim() ? 'active' : ''}}" bindtap="sendMessage" disabled="{{!inputValue.trim() || isLoading}}">
+        发送
+      </button>
+    </view>
+    <text class="input-hint">按回车或点击发送按钮</text>
+  </view>
+
+  <!-- 底部导航 -->
+  <view wx:if="{{!showWelcome}}" class="bottom-nav">
+    <button class="nav-btn" bindtap="resetChat">重新开始</button>
+    <button class="nav-btn" bindtap="goList">吐槽广场</button>
+  </view>
+
+  <!-- 状态提示 -->
+  <view wx:if="{{statusText}}" class="status-toast {{statusType}}">
+    <text>{{statusText}}</text>
   </view>
 </view>

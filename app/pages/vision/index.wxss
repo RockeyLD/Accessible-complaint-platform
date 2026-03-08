@@ -1,123 +1,405 @@
-.vision-page {
+/** 视障页面样式 - AI对话式界面，优化语音交互 */
+
+.page {
   min-height: 100vh;
-  padding: 32rpx;
-  background: #f5f3ef;
-  color: #141414;
+  display: flex;
+  flex-direction: column;
+  background: #0d1b2a;
+  color: #e0e1dd;
 }
 
-.header {
-  text-align: left;
-  margin-bottom: 24rpx;
+/* ========== 主题 ========== */
+.theme-dark { --primary: #778da9; --accent: #415a77; }
+.theme-light { background: #f5f7fa; color: #333; }
+
+/* ========== 高对比度模式 ========== */
+.high-contrast {
+  background: #000 !important;
+  color: #fff !important;
+}
+.high-contrast .toolbar {
+  background: #000 !important;
+  border-color: #fff !important;
+}
+.high-contrast .message {
+  background: #000 !important;
+  border: 2px solid #fff !important;
+}
+.high-contrast .voice-btn {
+  background: #fff !important;
+  color: #000 !important;
+  border: 3px solid #fff !important;
+}
+.high-contrast .confirm-card {
+  background: #000 !important;
+  border: 3px solid #fff !important;
+}
+.high-contrast .confirm-btn.primary {
+  background: #fff !important;
+  color: #000 !important;
 }
 
-.brand {
-  font-size: 22rpx;
-  letter-spacing: 2rpx;
-  text-transform: uppercase;
-  display: block;
+/* ========== 顶部工具栏 ========== */
+.toolbar {
+  display: flex;
+  padding: 16px;
+  gap: 16px;
+  background: rgba(13, 27, 42, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.title {
-  font-size: 44rpx;
-  font-weight: 700;
-  display: block;
-  margin: 8rpx 0;
+.tool {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.subtitle {
-  color: #3d3d3d;
-  font-size: 28rpx;
-}
-
-.panel {
-  background: #ffffff;
-  border-radius: 18rpx;
-  padding: 24rpx;
-  box-shadow: 0 14rpx 35rpx rgba(0, 0, 0, 0.12);
-  margin-bottom: 24rpx;
-}
-
-.panel-title {
-  font-size: 30rpx;
-  font-weight: 700;
-  margin-bottom: 12rpx;
-}
-
-.prompt-box {
-  min-height: 160rpx;
-  width: 100%;
-  padding: 12rpx;
-  border-radius: 12rpx;
-  border: 1rpx dashed #cfcfcf;
-  background: #f9f7f3;
-  font-size: 26rpx;
-}
-
-.quick-answer {
-  margin-top: 12rpx;
-  display: grid;
-  gap: 12rpx;
-}
-
-.field {
-  margin-bottom: 16rpx;
-}
-
-.label {
-  font-weight: 600;
-  display: block;
-  margin-bottom: 6rpx;
-}
-
-input,
-textarea {
-  width: 100%;
-  padding: 10rpx 12rpx;
-  border-radius: 12rpx;
-  border: 1rpx solid #cfcfcf;
-  font-size: 26rpx;
-  background: #ffffff;
-}
-
-textarea {
-  min-height: 140rpx;
+.tool-label {
+  font-size: 16px;
+  color: #778da9;
 }
 
 .picker {
-  padding: 10rpx 12rpx;
-  border-radius: 12rpx;
-  border: 1rpx solid #cfcfcf;
-  background: #ffffff;
-  color: #3d3d3d;
+  padding: 10px 16px;
+  background: #1b263b;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #e0e1dd;
+  min-width: 60px;
+  text-align: center;
 }
 
-.actions {
-  display: grid;
-  gap: 12rpx;
-  grid-template-columns: repeat(auto-fit, minmax(220rpx, 1fr));
-  margin-top: 12rpx;
+.toggle-btn {
+  padding: 10px 16px;
+  background: #1b263b;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #778da9;
+  border: none;
+  line-height: 1.4;
 }
 
-.actions button {
-  width: 100%;
+.toggle-btn.active {
+  background: #415a77;
+  color: #fff;
 }
 
-.primary {
-  background: #0f5c5c;
-  color: #ffffff;
-  border-radius: 999rpx;
-  padding: 12rpx 18rpx;
+/* ========== 欢迎面板 ========== */
+.welcome-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
 }
 
-.ghost {
-  background: #f0f0f0;
-  color: #141414;
-  border-radius: 999rpx;
-  padding: 12rpx 18rpx;
+.welcome-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #e0e1dd;
+  margin-bottom: 24px;
 }
 
-.status {
+.welcome-desc {
+  font-size: 20px;
+  color: #778da9;
+  line-height: 1.8;
+  margin-bottom: 48px;
+  max-width: 340px;
+}
+
+.start-btn {
+  padding: 24px 64px;
+  background: #415a77;
+  color: #fff;
+  border-radius: 16px;
+  font-size: 24px;
+  font-weight: 600;
+  border: none;
+}
+
+/* ========== 对话区域 ========== */
+.chat-container {
+  flex: 1;
+  padding: 16px;
+}
+
+/* ========== 语音输入区域 ========== */
+.voice-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0;
+  margin-bottom: 24px;
+}
+
+.voice-btn {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #415a77 0%, #778da9 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 8px 32px rgba(65, 90, 119, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.voice-btn.recording {
+  background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
+  box-shadow: 0 8px 32px rgba(230, 57, 70, 0.5);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.voice-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.voice-text {
+  font-size: 18px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.voice-hint {
+  margin-top: 16px;
+  font-size: 16px;
+  color: #778da9;
+  text-align: center;
+}
+
+/* ========== 消息列表 ========== */
+.messages-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message {
+  padding: 20px;
+  border-radius: 12px;
+  background: #1b263b;
+}
+
+.user-message {
+  background: #415a77;
+}
+
+.ai-message {
+  background: #1b263b;
+  border-left: 4px solid #778da9;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sender-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #778da9;
+}
+
+.user-message .sender-name {
+  color: #e0e1dd;
+}
+
+.speak-btn {
+  font-size: 16px;
+  color: #778da9;
+  padding: 6px 12px;
+  background: rgba(119, 141, 169, 0.2);
+  border-radius: 16px;
+}
+
+.message-body {
+  line-height: 1.8;
+}
+
+.message-text {
+  font-size: 20px;
+  color: #e0e1dd;
+  line-height: 1.8;
   display: block;
-  margin-top: 12rpx;
-  color: #3d3d3d;
 }
+
+.complete-badge {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: rgba(76, 175, 80, 0.2);
+  color: #81c784;
+  font-size: 16px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+/* 加载中 */
+.loading-text {
+  font-size: 18px;
+  color: #778da9;
+  font-style: italic;
+}
+
+/* ========== 确认卡片 ========== */
+.confirm-card {
+  margin: 24px 0;
+  background: #1b263b;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid #415a77;
+}
+
+.confirm-header {
+  background: #415a77;
+  padding: 20px;
+}
+
+.confirm-title {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.confirm-content {
+  padding: 20px;
+}
+
+.confirm-item {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #415a77;
+}
+
+.confirm-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.confirm-label {
+  font-size: 16px;
+  color: #778da9;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.confirm-value {
+  font-size: 20px;
+  color: #e0e1dd;
+  line-height: 1.6;
+}
+
+.confirm-actions {
+  display: flex;
+  padding: 20px;
+  gap: 16px;
+  border-top: 1px solid #415a77;
+}
+
+.confirm-btn {
+  flex: 1;
+  padding: 18px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: 600;
+  border: none;
+}
+
+.confirm-btn.primary {
+  background: #415a77;
+  color: #fff;
+}
+
+.confirm-btn.secondary {
+  background: transparent;
+  color: #778da9;
+  border: 2px solid #415a77;
+}
+
+/* ========== 底部区域 ========== */
+.bottom-area {
+  background: #1b263b;
+  padding: 16px;
+  border-top: 1px solid #415a77;
+}
+
+/* 文字输入 */
+.text-input-section {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.text-input {
+  flex: 1;
+  height: 56px;
+  padding: 0 20px;
+  background: #0d1b2a;
+  border-radius: 12px;
+  font-size: 18px;
+  color: #e0e1dd;
+  border: 2px solid #415a77;
+}
+
+.send-btn {
+  padding: 0 28px;
+  height: 56px;
+  background: #415a77;
+  color: #778da9;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 500;
+  border: none;
+}
+
+.send-btn.active {
+  background: #778da9;
+  color: #fff;
+}
+
+/* 底部导航 */
+.bottom-nav {
+  display: flex;
+  gap: 16px;
+}
+
+.nav-btn {
+  flex: 1;
+  padding: 16px;
+  background: #0d1b2a;
+  color: #778da9;
+  border-radius: 12px;
+  font-size: 18px;
+  border: 2px solid #415a77;
+}
+
+/* ========== 状态提示 ========== */
+.status-toast {
+  position: fixed;
+  bottom: 180px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 18px;
+  color: #fff;
+  background: rgba(0,0,0,0.9);
+  z-index: 100;
+}
+
+.status-toast.success { background: #2e7d32; }
+.status-toast.error { background: #c62828; }
+.status-toast.warn { background: #ef6c00; }
