@@ -1,81 +1,158 @@
-/** 统一入口页面 */
+/** 统一入口页面 - 现代美化版（适配修复） */
 
 .page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 24px;
+  padding: 60rpx 32rpx;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景装饰 */
+.page::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -30%;
+  width: 500rpx;
+  height: 500rpx;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+.page::after {
+  content: '';
+  position: absolute;
+  bottom: -10%;
+  left: -20%;
+  width: 400rpx;
+  height: 400rpx;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: float-slow 10s ease-in-out infinite reverse;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30rpx, -30rpx) scale(1.05); }
 }
 
 .landing-header {
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 40rpx;
+  position: relative;
+  z-index: 1;
+  width: 100%;
 }
 
 .landing-title {
   display: block;
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 44rpx;
+  font-weight: 800;
   color: #fff;
-  margin-bottom: 12px;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  margin-bottom: 16rpx;
+  text-shadow: 0 8rpx 32rpx rgba(0,0,0,0.2);
+  letter-spacing: 2rpx;
+  word-wrap: break-word;
 }
 
 .landing-subtitle {
   display: block;
-  font-size: 16px;
+  font-size: 26rpx;
   color: rgba(255,255,255,0.9);
+  font-weight: 500;
+  letter-spacing: 1rpx;
+  word-wrap: break-word;
+  padding: 0 20rpx;
 }
 
+/* 特性展示 - 玻璃拟态 */
 .features {
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 48px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
+  border-radius: 24rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 40rpx;
   width: 100%;
-  max-width: 320px;
+  max-width: 600rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+  padding: 14rpx 16rpx;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
 }
 
 .feature-item:last-child {
   margin-bottom: 0;
 }
 
+.feature-item:active {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(8rpx);
+}
+
 .feature-icon {
-  font-size: 24px;
+  font-size: 36rpx;
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 14rpx;
+  flex-shrink: 0;
 }
 
 .feature-text {
-  font-size: 15px;
+  font-size: 26rpx;
   color: #fff;
+  font-weight: 500;
+  word-wrap: break-word;
+  flex: 1;
+  min-width: 0;
 }
 
+/* 开始区域 */
 .start-section {
   width: 100%;
-  max-width: 320px;
+  max-width: 600rpx;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
 }
 
 .start-hint {
   display: block;
   text-align: center;
-  font-size: 14px;
-  color: rgba(255,255,255,0.8);
-  margin-bottom: 16px;
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 24rpx;
+  font-weight: 500;
+  word-wrap: break-word;
 }
 
+/* 模式按钮 - 3D效果 */
 .mode-buttons {
   display: flex;
-  gap: 16px;
+  gap: 20rpx;
+  width: 100%;
 }
 
 .mode-btn {
@@ -83,39 +160,149 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 16px;
-  background: #fff;
-  border-radius: 16px;
+  padding: 36rpx 16rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24rpx;
   border: none;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  transition: transform 0.2s;
+  box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.mode-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6rpx;
+  background: var(--accent-color);
+}
+
+.mode-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(to top, var(--accent-bg), transparent);
+  opacity: 0.5;
 }
 
 .mode-btn:active {
-  transform: scale(0.98);
-}
-
-.mode-icon {
-  font-size: 40px;
-  margin-bottom: 12px;
-}
-
-.mode-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 4px;
-}
-
-.mode-desc {
-  font-size: 12px;
-  color: #888;
+  transform: scale(0.95) translateY(4rpx);
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.15);
 }
 
 .text-mode {
-  border-top: 4px solid #667eea;
+  --accent-color: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  --accent-bg: rgba(102, 126, 234, 0.1);
 }
 
 .voice-mode {
-  border-top: 4px solid #764ba2;
+  --accent-color: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+  --accent-bg: rgba(240, 147, 251, 0.1);
+}
+
+.mode-icon {
+  font-size: 56rpx;
+  margin-bottom: 12rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.mode-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 6rpx;
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
+.mode-desc {
+  font-size: 22rpx;
+  color: #888;
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
+/* 底部装饰 */
+.landing-footer {
+  margin-top: auto;
+  padding-top: 40rpx;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-text {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 1rpx;
+}
+
+/* 动画效果 */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* 小屏幕适配 */
+@media screen and (max-height: 700px) {
+  .page {
+    padding: 40rpx 24rpx;
+  }
+  
+  .landing-header {
+    margin-bottom: 24rpx;
+  }
+  
+  .landing-title {
+    font-size: 36rpx;
+  }
+  
+  .landing-subtitle {
+    font-size: 22rpx;
+  }
+  
+  .features {
+    margin-bottom: 24rpx;
+    padding: 20rpx;
+  }
+  
+  .feature-item {
+    margin-bottom: 12rpx;
+    padding: 10rpx 12rpx;
+  }
+  
+  .mode-btn {
+    padding: 28rpx 12rpx;
+  }
+  
+  .mode-icon {
+    font-size: 44rpx;
+  }
+  
+  .mode-name {
+    font-size: 26rpx;
+  }
+  
+  .mode-desc {
+    font-size: 20rpx;
+  }
 }
