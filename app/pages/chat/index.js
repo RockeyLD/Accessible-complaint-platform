@@ -1,4 +1,4 @@
-const { chatWithAI, initMessages, getWelcomeMessage, parseComplaint, buildSentence } = require("../../utils/ai");
+const { chatWithAI, initMessages, getWelcomeMessage, parseComplaint, parseSuggestions, cleanReplyForDisplay, buildSentence } = require("../../utils/ai");
 const { postComplaint } = require("../../utils/api");
 
 const themeOptions = [
@@ -11,6 +11,13 @@ const fontSizeOptions = [
   { value: 100, label: "标准" },
   { value: 125, label: "大" },
   { value: 150, label: "特大" }
+];
+
+// 默认推荐输入（初始状态）- 聚焦物理世界无障碍问题
+const defaultSuggestions = [
+  { text: '地铁2号线听不到广播' },
+  { text: '眼科医院挂号不方便' },
+  { text: '长龙路口有个高台阶，轮椅上不去' }
 ];
 
 Page({
@@ -50,7 +57,11 @@ Page({
     
     // 状态
     statusText: '',
-    statusType: 'info'
+    statusType: 'info',
+    
+    // 推荐输入
+    recommendedInputs: [],
+    showSuggestions: true
   },
 
   onLoad(options) {
@@ -75,7 +86,9 @@ Page({
       'fontSize': mode === 'voice' ? 125 : 100,
       'currentFontSizeLabel': mode === 'voice' ? '大' : '标准',
       'largeFont': mode === 'voice',
-      'autoSpeak': mode === 'voice'
+      'autoSpeak': mode === 'voice',
+      recommendedInputs: defaultSuggestions,
+      showSuggestions: true
     });
 
     // 初始化录音管理器
@@ -155,6 +168,24 @@ Page({
 
   onToggleAutoSpeak(e) {
     this.setData({ autoSpeak: e.detail.value });
+  },
+
+  // ========== 推荐输入 ==========
+  onSuggestionTap(e) {
+    const text = e.currentTarget.dataset.text;
+    this.setData({
+      inputText: text,
+      canSend: text.trim().length > 0 && !this.data.isLoading,
+      showSuggestions: false
+    });
+    // 自动发送
+    setTimeout(() => {
+      this.sendTextMessage();
+    }, 100);
+  },
+
+  hideSuggestions() {
+    this.setData({ showSuggestions: false });
   },
 
   // ========== 文字输入 ==========
@@ -286,12 +317,14 @@ Page({
 
     // 3. 解析回复
     const parsed = parseComplaint(reply);
+    const suggestions = parseSuggestions(reply);
+    const displayReply = cleanReplyForDisplay(reply);
     const aiMsgId = userMsgId + 1;
     
     const aiMessage = {
       id: aiMsgId,
       role: 'assistant',
-      content: reply,
+      content: displayReply,
       parsed: parsed
     };
     const aiMessageForHistory = { role: 'assistant', content: reply };
@@ -304,13 +337,15 @@ Page({
       aiMessages: currentAiMessages,
       messageIdCounter: aiMsgId,
       isLoading: false,
-      scrollToMessage: `msg-${aiMsgId}`
+      scrollToMessage: `msg-${aiMsgId}`,
+      recommendedInputs: suggestions.length > 0 ? suggestions : this.data.recommendedInputs,
+      showSuggestions: true
     });
 
     // 4. 自动朗读（语音模式）
     if (this.data.autoSpeak && this.data.inputMode === 'voice') {
       // 清理格式标记后朗读
-      const plainText = reply
+      const plainText = displayReply
         .replace(/【.*?】/g, '')
         .replace(/对象[：:]/g, '对象')
         .replace(/场景[：:]/g, '场景')
@@ -353,19 +388,45 @@ Page({
     const hasImpact = /错过|延误|等|急|难受|麻烦|困扰/.test(history);
     const hasWish = /希望|想要|建议|改进|优化/.test(history);
     
-    // 生成回复
+    // 生成回复和推荐
     let reply = '';
+    let suggestions = [];
     
     if (!hasSubject) {
-      reply = '谢谢你的分享。为了更好地帮你整理倾诉内容，能告诉我你想吐槽的是什么对象或服务吗？比如是某个地铁站、医院、还是App？';
+      reply = '谢谢你的分享。为了更好地帮你整理倾诉内容，能告诉我你想吐槽的是什么对象或服务吗？比如是某个地铁站、医院、还是路口？';
+      suggestions = [
+        { text: '地铁2号线听不到广播' },
+        { text: '眼科医院挂号不方便' },
+        { text: '长龙路口台阶 wheelchair 上不去' }
+      ];
     } else if (!hasProblem) {
       reply = '明白了。具体遇到了什么问题呢？是没有提供文字提示、还是其他无障碍方面的问题？';
+      suggestions = [
+        { text: '听不见广播播报' },
+        { text: '没有字幕提示' },
+        { text: '界面操作不方便' }
+      ];
     } else if (!hasScene) {
       reply = '了解了。这个问题是在什么场景下发生的？比如是早上高峰时段、还是在特定的场所？';
+      suggestions = [
+        { text: '早高峰上班时段' },
+        { text: '去医院挂号时' },
+        { text: '使用某功能时' }
+      ];
     } else if (!hasImpact) {
       reply = '这个问题给你带来什么影响了吗？比如耽误了时间、或者造成了不便？';
+      suggestions = [
+        { text: '错过了车次' },
+        { text: '耽误了很多时间' },
+        { text: '感觉很困扰' }
+      ];
     } else if (!hasWish) {
       reply = '你希望对方怎么改进呢？比如增加字幕提示、或者提供更清晰的标识？';
+      suggestions = [
+        { text: '希望增加字幕显示' },
+        { text: '提供无障碍通道' },
+        { text: '改进语音提示功能' }
+      ];
     } else {
       // 信息基本完整，生成结构化内容
       const subject = this.extractInfo(history, /(银行|医院|地铁|公交|商场|超市|餐厅|车站|机场|客服|app|网站|电梯|厕所|门|路|街)[^，。]*/);
@@ -384,9 +445,16 @@ Page({
 期望：${wish || '希望改进无障碍设施，提供更好的服务'}
 
 如果你觉得还需要补充什么，可以继续告诉我。确认无误后可以点击提交按钮。`;
+      suggestions = [
+        { text: '信息都正确，提交' },
+        { text: '我还想补充一点' },
+        { text: '场景描述要修改' }
+      ];
     }
     
-    return reply;
+    // 将推荐输入附加到回复中
+    const suggestionText = suggestions.map((s, i) => `${i + 1}. ${s.text}`).join('\n');
+    return `${reply}\n\n【推荐输入】\n${suggestionText}`;
   },
 
   extractInfo(text, pattern) {
@@ -487,7 +555,9 @@ Page({
             showConfirm: false,
             complaintData: null,
             inputText: '',
-            canSend: false
+            canSend: false,
+            recommendedInputs: defaultSuggestions,
+            showSuggestions: true
           });
           
           if (this.data.autoSpeak) {

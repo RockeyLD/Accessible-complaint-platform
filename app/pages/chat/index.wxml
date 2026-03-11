@@ -107,6 +107,25 @@
 
   <!-- 输入区域 -->
   <view class="input-section">
+    <!-- 推荐输入 -->
+    <view wx:if="{{showSuggestions && recommendedInputs.length > 0 && !isLoading && !showConfirm}}" class="suggestion-area">
+      <view class="suggestion-header">
+        <text class="suggestion-title">💡 AI推荐输入</text>
+        <text class="suggestion-refresh" bindtap="hideSuggestions">隐藏</text>
+      </view>
+      <view class="suggestion-list">
+        <view 
+          wx:for="{{recommendedInputs}}" 
+          wx:key="index" 
+          class="suggestion-chip"
+          bindtap="onSuggestionTap"
+          data-text="{{item.text}}"
+        >
+          <text class="suggestion-text">{{item.text}}</text>
+        </view>
+      </view>
+    </view>
+    
     <!-- 文字输入模式 -->
     <view wx:if="{{inputMode === 'text'}}" class="text-input-area">
       <view class="input-box">

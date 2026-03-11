@@ -52,17 +52,45 @@ const SYSTEM_PROMPT = `你是一位专业的无障碍倾诉助手，帮助听障
 
 ## 追问模糊的示例
 用户：我的手机有问题
-助手：了解，能具体告诉我是哪个品牌的手机吗？比如是苹果手机、华为手机，还是其他品牌？
+助手：了解，能具体告诉我是哪个品牌的手机吗？需要具体的品牌和型号，这样反馈会更有效。
 
 用户：医院的服务太差了
-助手：明白了，能告诉我是哪家医院吗？比如是协和医院、同仁医院，还是其他医院？这样反馈会更有效。
+助手：明白了，能告诉我是哪家医院的哪个科室吗？请提供具体名称，这样反馈会更有效。
+
+用户：地铁站有问题
+助手：了解，能告诉我是哪个城市的哪条线路的地铁站吗？需要具体站点名称，这样反馈会更有效。
+
+## 推荐输入功能
+每次回复时，根据对话上下文，推测用户最可能输入的3个内容，格式如下：
+
+【推荐输入】
+1. [第一个推荐，简洁具体，15字以内]
+2. [第二个推荐，简洁具体，15字以内]
+3. [第三个推荐，简洁具体，15字以内]
+
+示例1：
+用户：我在地铁站遇到了问题
+助手：谢谢你的分享。能具体说说是在哪个地铁站，遇到了什么问题吗？
+【推荐输入】
+1. 在人民广场站听不到广播
+2. 地铁2号线没有字幕提示
+3. 换乘时找不到无障碍电梯
+
+示例2：
+用户：我的苹果手机有问题
+助手：了解，能具体描述一下遇到了什么问题吗？比如是某个功能无法使用，还是界面显示有问题？
+【推荐输入】
+1. 语音助手识别不准确
+2. 屏幕阅读器无法使用
+3. 字幕显示不完整
 
 ## 重要规则
 - **对象必须具体**：如果用户只说"手机""医院""App"这类笼统的词，必须追问具体品牌/名称，不能生成【倾诉内容】
 - 不要生成【倾诉内容】除非信息确实完整（对象具体+问题清楚）
-- 每次回复控制在100字以内，简洁明了
+- 每次回复控制在100字以内（不含推荐输入），简洁明了
 - 使用口语化表达，像朋友聊天一样
-- 对用户提到的困难表示理解和共情`;
+- 对用户提到的困难表示理解和共情
+- 【推荐输入】必须紧跟在回复内容后面，不要省略`;
 
 // 初始欢迎语（仅用于界面显示，不发送给API）
 const WELCOME_MESSAGE = '你好！我是你的无障碍倾诉助手。我在这里倾听你的困扰，帮你把想说的话整理得更清晰。你想聊聊最近遇到的什么问题吗？';
@@ -321,6 +349,49 @@ function parseComplaint(reply) {
 }
 
 /**
+ * 解析AI回复中的推荐输入
+ * @param {string} reply - AI回复
+ * @returns {Array<{text: string}>} 推荐输入列表
+ */
+function parseSuggestions(reply) {
+  if (!reply || !reply.includes('【推荐输入】')) {
+    return [];
+  }
+  
+  const suggestions = [];
+  // 匹配推荐输入部分
+  const suggestionMatch = reply.match(/【推荐输入】([\s\S]*?)(?=【|$)/);
+  
+  if (suggestionMatch) {
+    const suggestionText = suggestionMatch[1];
+    // 匹配数字开头的行
+    const lines = suggestionText.match(/\d+\.\s*([^\n]+)/g);
+    
+    if (lines) {
+      lines.forEach(line => {
+        const text = line.replace(/^\d+\.\s*/, '').trim();
+        if (text && text.length > 0) {
+          suggestions.push({ text });
+        }
+      });
+    }
+  }
+  
+  // 只返回前3个
+  return suggestions.slice(0, 3);
+}
+
+/**
+ * 清理AI回复，移除推荐输入部分（用于显示）
+ * @param {string} reply - AI回复
+ * @returns {string} 清理后的回复
+ */
+function cleanReplyForDisplay(reply) {
+  if (!reply) return reply;
+  return reply.replace(/【推荐输入】[\s\S]*$/, '').trim();
+}
+
+/**
  * 构建提交到服务器的句子
  * @param {Object} data - 倾诉数据
  * @returns {string} 格式化句子
@@ -355,6 +426,8 @@ module.exports = {
   initMessages,
   getWelcomeMessage,
   parseComplaint,
+  parseSuggestions,
+  cleanReplyForDisplay,
   buildSentence,
   SYSTEM_PROMPT
 };

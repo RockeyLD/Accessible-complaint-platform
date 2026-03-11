@@ -16,10 +16,10 @@
   --bg: linear-gradient(135deg, #fff8f5 0%, #fff0eb 100%); 
 }
 .theme-blue { 
-  --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-  --primary-solid: #667eea;
-  --primary-light: rgba(102, 126, 234, 0.1);
-  --bg: linear-gradient(135deg, #f0f4ff 0%, #e8edff 100%); 
+  --primary: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); 
+  --primary-solid: #0ea5e9;
+  --primary-light: rgba(14, 165, 233, 0.1);
+  --bg: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); 
 }
 .theme-green { 
   --primary: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
@@ -479,6 +479,70 @@
   width: 100%;
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ========== 推荐输入 ========== */
+.suggestion-area {
+  padding: 16rpx 20rpx 12rpx;
+  background: rgba(245, 247, 250, 0.6);
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.suggestion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.suggestion-title {
+  font-size: 22rpx;
+  color: #666;
+  font-weight: 500;
+}
+
+.suggestion-refresh {
+  font-size: 20rpx;
+  color: var(--primary-solid);
+  font-weight: 500;
+  padding: 4rpx 12rpx;
+  background: var(--primary-light);
+  border-radius: 12rpx;
+}
+
+.suggestion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.suggestion-chip {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12rpx;
+  border: 1rpx solid rgba(102, 126, 234, 0.15);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.suggestion-chip:active {
+  transform: scale(0.98);
+  background: var(--primary-light);
+  border-color: var(--primary-solid);
+}
+
+.suggestion-text {
+  font-size: 26rpx;
+  color: #333;
+  font-weight: 500;
+  line-height: 1.4;
+  word-wrap: break-word;
+  word-break: break-all;
+  flex: 1;
 }
 
 /* 文字输入 */
