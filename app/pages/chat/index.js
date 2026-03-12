@@ -13,11 +13,11 @@ const fontSizeOptions = [
   { value: 150, label: "特大" }
 ];
 
-// 默认推荐输入（初始状态）- 聚焦物理世界无障碍问题
+// 默认推荐输入（初始状态）- 聚焦物理世界无障碍问题，不包含具体地名
 const defaultSuggestions = [
-  { text: '地铁2号线听不到广播' },
-  { text: '眼科医院挂号不方便' },
-  { text: '长龙路口有个高台阶，轮椅上不去' }
+  { text: '公共场所听不到广播提示' },
+  { text: '医院挂号没有无障碍服务' },
+  { text: '台阶太高轮椅上不去' }
 ];
 
 Page({
@@ -338,7 +338,7 @@ Page({
       messageIdCounter: aiMsgId,
       isLoading: false,
       scrollToMessage: `msg-${aiMsgId}`,
-      recommendedInputs: suggestions.length > 0 ? suggestions : this.data.recommendedInputs,
+      recommendedInputs: suggestions.length > 0 ? suggestions : [],
       showSuggestions: true
     });
 

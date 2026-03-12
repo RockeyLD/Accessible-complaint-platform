@@ -2,7 +2,7 @@
 
 .page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #10b981 50%, #34d399 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -73,16 +73,14 @@
 
 /* 特性展示 - 玻璃拟态 */
 .features {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20rpx);
-  -webkit-backdrop-filter: blur(20rpx);
+  background: rgba(255, 255, 255, 0.25);
   border-radius: 24rpx;
   padding: 28rpx 24rpx;
   margin-bottom: 40rpx;
   width: 100%;
   max-width: 600rpx;
-  border: 1rpx solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.15);
+  border: 2rpx solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.2);
   position: relative;
   z-index: 1;
   box-sizing: border-box;
@@ -161,9 +159,9 @@
   flex-direction: column;
   align-items: center;
   padding: 36rpx 16rpx;
-  background: rgba(255, 255, 255, 0.95);
+  background: #ffffff;
   border-radius: 24rpx;
-  border: none;
+  border: 3rpx solid #22c55e;
   box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
@@ -199,8 +197,8 @@
 }
 
 .text-mode {
-  --accent-color: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-  --accent-bg: rgba(102, 126, 234, 0.1);
+  --accent-color: linear-gradient(90deg, #22c55e 0%, #10b981 100%);
+  --accent-bg: rgba(34, 197, 94, 0.1);
 }
 
 .voice-mode {

@@ -11,7 +11,7 @@
 .theme-warm { --primary: #ff7e5f; --primary-light: #feb47b; --bg: #fff8f5; }
 .theme-sea { --primary: #4facfe; --primary-light: #00f2fe; --bg: #f0f9ff; }
 .theme-sun { --primary: #f6d365; --primary-light: #fda085; --bg: #fffbf0; }
-.theme-stone { --primary: #667eea; --primary-light: #764ba2; --bg: #f8f9fa; }
+.theme-stone { --primary: #22c55e; --primary-light: #10b981; --bg: #f8f9fa; }
 
 /* ========== 高对比度模式 ========== */
 .contrast {
@@ -110,13 +110,13 @@
 
 .start-btn {
   padding: 16px 48px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
   color: #fff;
   border-radius: 28px;
   font-size: 18px;
   font-weight: 600;
   border: none;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
 }
 
 /* ========== 对话区域 ========== */
@@ -174,7 +174,7 @@
 }
 
 .user-message .bubble {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
   color: #fff;
   border-bottom-right-radius: 4px;
 }
@@ -239,7 +239,7 @@
 }
 
 .confirm-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
   padding: 16px;
 }
 
@@ -295,7 +295,7 @@
 }
 
 .confirm-btn.primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
   color: #fff;
 }
 
@@ -341,7 +341,7 @@
 }
 
 .send-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
   color: #fff;
 }
 

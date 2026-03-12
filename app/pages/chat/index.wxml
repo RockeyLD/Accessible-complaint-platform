@@ -29,11 +29,11 @@
       </picker>
     </view>
     <view class="setting-item">
-      <switch class="setting-switch" checked="{{highContrast}}" bindchange="onToggleContrast" color="#667eea"/>
+      <switch class="setting-switch" checked="{{highContrast}}" bindchange="onToggleContrast" color="#22c55e"/>
       <text class="setting-label">高对比</text>
     </view>
     <view class="setting-item" wx:if="{{inputMode === 'voice'}}">
-      <switch class="setting-switch" checked="{{autoSpeak}}" bindchange="onToggleAutoSpeak" color="#667eea"/>
+      <switch class="setting-switch" checked="{{autoSpeak}}" bindchange="onToggleAutoSpeak" color="#22c55e"/>
       <text class="setting-label">自动读</text>
     </view>
   </view>

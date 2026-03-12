@@ -1,18 +1,18 @@
 .list-page {
   min-height: 100vh;
   padding: 32rpx 24rpx;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 50%, #f0f4f8 100%);
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #e2e8f0 100%);
   color: var(--ink);
-  --ink: #1a1a2e;
-  --muted: #6b7280;
-  --accent: #667eea;
-  --accent-2: #764ba2;
-  --danger: #ef4444;
-  --card: rgba(255, 255, 255, 0.95);
-  --paper: rgba(255, 255, 255, 0.85);
-  --focus: #667eea;
-  --shadow: 0 16rpx 48rpx rgba(102, 126, 234, 0.15);
-  --shadow-soft: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  --ink: #0f172a;
+  --muted: #475569;
+  --accent: #16a34a;
+  --accent-2: #15803d;
+  --danger: #dc2626;
+  --card: #ffffff;
+  --paper: #f8fafc;
+  --focus: #16a34a;
+  --shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.12);
+  --shadow-soft: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
   --radius: 24rpx;
   --radius-sm: 12rpx;
   box-sizing: border-box;
@@ -54,9 +54,7 @@
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(20rpx);
-  -webkit-backdrop-filter: blur(20rpx);
-  border: 1rpx solid rgba(255, 255, 255, 0.8);
+  border: 2rpx solid #cbd5e1;
   box-sizing: border-box;
 }
 
@@ -111,18 +109,18 @@
 }
 
 .tool {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
   border-radius: var(--radius-sm);
   padding: 20rpx 16rpx;
   min-width: 0;
-  border: 1rpx solid rgba(102, 126, 234, 0.1);
+  border: 1rpx solid rgba(34, 197, 94, 0.1);
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .tool:active {
   transform: scale(0.98);
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(16, 185, 129, 0.12) 100%);
 }
 
 .tool-wide {
@@ -142,7 +140,7 @@
   padding: 14rpx 16rpx;
   background: rgba(255, 255, 255, 0.9);
   border-radius: var(--radius-sm);
-  border: 2rpx solid rgba(102, 126, 234, 0.15);
+  border: 2rpx solid rgba(34, 197, 94, 0.15);
   font-size: 26rpx;
   color: var(--ink);
   font-weight: 500;
@@ -153,14 +151,14 @@
 
 .picker:active {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4rpx rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 4rpx rgba(34, 197, 94, 0.1);
 }
 
 input,
 textarea {
   width: 100%;
   border-radius: var(--radius-sm);
-  border: 2rpx solid rgba(102, 126, 234, 0.15);
+  border: 2rpx solid rgba(34, 197, 94, 0.15);
   padding: 16rpx 20rpx;
   background: rgba(255, 255, 255, 0.9);
   font-size: 26rpx;
@@ -173,7 +171,7 @@ textarea {
 input:focus,
 textarea:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4rpx rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 4rpx rgba(34, 197, 94, 0.1);
 }
 
 textarea {
@@ -201,7 +199,7 @@ textarea {
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
   color: #ffffff;
   border: none;
-  box-shadow: 0 6rpx 20rpx rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6rpx 20rpx rgba(34, 197, 94, 0.3);
 }
 
 .toggle-btn:active {
@@ -263,7 +261,7 @@ textarea {
   font-weight: 700;
   font-size: 26rpx;
   border: none;
-  box-shadow: 0 10rpx 28rpx rgba(102, 126, 234, 0.35);
+  box-shadow: 0 10rpx 28rpx rgba(34, 197, 94, 0.35);
   transition: all 0.3s ease;
   white-space: nowrap;
   overflow: hidden;
@@ -273,7 +271,7 @@ textarea {
 
 .primary:active {
   transform: scale(0.96);
-  box-shadow: 0 5rpx 14rpx rgba(102, 126, 234, 0.25);
+  box-shadow: 0 5rpx 14rpx rgba(34, 197, 94, 0.25);
 }
 
 .ghost {
@@ -325,7 +323,7 @@ textarea {
 .report-content {
   margin-top: 16rpx;
   background: var(--paper);
-  border: 2rpx dashed rgba(102, 126, 234, 0.3);
+  border: 2rpx dashed rgba(34, 197, 94, 0.3);
   border-radius: var(--radius-sm);
   padding: 20rpx;
   word-wrap: break-word;
@@ -383,14 +381,12 @@ textarea {
 
 /* 投诉卡片 - 玻璃拟态 */
 .complaint-card {
-  background: var(--paper);
+  background: #ffffff;
   border-radius: var(--radius);
   padding: 24rpx 20rpx;
   margin-bottom: 20rpx;
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(20rpx);
-  -webkit-backdrop-filter: blur(20rpx);
-  border: 1rpx solid rgba(255, 255, 255, 0.8);
+  border: 2rpx solid #cbd5e1;
   transition: all 0.3s ease;
   box-sizing: border-box;
   max-width: 100%;
@@ -404,7 +400,7 @@ textarea {
 .card-header {
   margin-bottom: 16rpx;
   padding-bottom: 16rpx;
-  border-bottom: 2rpx solid rgba(0, 0, 0, 0.04);
+  border-bottom: 2rpx solid #e2e8f0;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -428,7 +424,7 @@ textarea {
   border-radius: 16rpx;
   font-size: 20rpx;
   font-weight: 600;
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(34, 197, 94, 0.1);
   color: var(--accent);
   flex-shrink: 0;
   white-space: nowrap;
@@ -458,7 +454,7 @@ textarea {
   margin-top: 20rpx;
   padding: 20rpx;
   border-radius: var(--radius-sm);
-  border: 2rpx dashed rgba(102, 126, 234, 0.2);
+  border: 2rpx dashed rgba(34, 197, 94, 0.2);
   background: rgba(255, 255, 255, 0.6);
   box-sizing: border-box;
   max-width: 100%;
@@ -499,7 +495,7 @@ textarea {
 
 .card-tag {
   padding: 6rpx 16rpx;
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(34, 197, 94, 0.1);
   border-radius: 16rpx;
   font-size: 20rpx;
   color: var(--accent);
@@ -515,7 +511,7 @@ textarea {
   gap: 12rpx;
   justify-content: flex-end;
   padding-top: 16rpx;
-  border-top: 2rpx solid rgba(0, 0, 0, 0.04);
+  border-top: 2rpx solid #e2e8f0;
 }
 
 .card-actions button {

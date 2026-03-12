@@ -6,8 +6,8 @@
   ],
   "window": {
     "navigationBarTitleText": "无障碍吐槽平台",
-    "navigationBarBackgroundColor": "#f0f4f8",
-    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#22c55e",
+    "navigationBarTextStyle": "white",
     "backgroundColor": "#f0f4f8",
     "backgroundTextStyle": "light"
   },
