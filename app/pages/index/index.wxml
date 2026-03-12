@@ -1,16 +1,37 @@
 <view class="page landing">
-  <view class="landing-title">欢迎使用无障碍吐槽平台</view>
-  <text class="landing-note">提示：支持点击与键盘操作。</text>
-  <view class="card-container">
-    <button class="role-card" bindtap="goHearing">
-      <text class="role-icon">🧏</text>
-      <text class="role-name">我是听障用户</text>
-      <text class="role-desc">提供清晰的文字提示、高对比度界面，不依赖声音反馈。</text>
-    </button>
-    <button class="role-card" bindtap="goVision">
-      <text class="role-icon">👨‍🦯</text>
-      <text class="role-name">我是视障用户</text>
-      <text class="role-desc">提供大号字体、清晰层级与键盘操作支持。</text>
-    </button>
+  <view class="landing-header">
+    <text class="landing-title">无障碍倾诉平台</text>
+    <text class="landing-subtitle">AI帮你把困扰变成专业的倾诉</text>
+  </view>
+  
+  <view class="features">
+    <view class="feature-item">
+      <text class="feature-icon">💬</text>
+      <text class="feature-text">像聊天一样自然表达</text>
+    </view>
+    <view class="feature-item">
+      <text class="feature-icon">🤖</text>
+      <text class="feature-text">AI帮你整理成专业格式</text>
+    </view>
+    <view class="feature-item">
+      <text class="feature-icon">🎤</text>
+      <text class="feature-text">支持文字和语音输入</text>
+    </view>
+  </view>
+
+  <view class="start-section">
+    <text class="start-hint">选择适合你的输入方式开始</text>
+    <view class="mode-buttons">
+      <button class="mode-btn text-mode" bindtap="startWithText">
+        <text class="mode-icon">⌨️</text>
+        <text class="mode-name">文字输入</text>
+        <text class="mode-desc">适合听障用户</text>
+      </button>
+      <button class="mode-btn voice-mode" bindtap="startWithVoice">
+        <text class="mode-icon">🎤</text>
+        <text class="mode-name">语音输入</text>
+        <text class="mode-desc">适合视障用户</text>
+      </button>
+    </view>
   </view>
 </view>

@@ -1,8 +1,13 @@
 Page({
-  goHearing() {
-    wx.navigateTo({ url: "/pages/hearing/index" });
+  startWithText() {
+    wx.navigateTo({
+      url: '/pages/chat/index?mode=text'
+    });
   },
-  goVision() {
-    wx.navigateTo({ url: "/pages/vision/index" });
+
+  startWithVoice() {
+    wx.navigateTo({
+      url: '/pages/chat/index?mode=voice'
+    });
   }
 });

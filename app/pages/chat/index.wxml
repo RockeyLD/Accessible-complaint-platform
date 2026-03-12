@@ -1,0 +1,183 @@
+<view class="page chat-page theme-{{theme}} {{highContrast ? 'high-contrast' : ''}} {{largeFont ? 'large-font' : ''}}">
+  <!-- 顶部工具栏 -->
+  <view class="toolbar">
+    <view class="toolbar-left">
+      <button class="tool-btn" bindtap="goBack">← 返回</button>
+    </view>
+    <view class="toolbar-center">
+      <text class="page-title">AI倾诉助手</text>
+    </view>
+    <view class="toolbar-right">
+      <button class="tool-btn {{inputMode === 'voice' ? 'active' : ''}}" bindtap="toggleInputMode">
+        {{inputMode === 'voice' ? '🎤 语音' : '⌨️ 文字'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 设置面板 -->
+  <view class="settings-bar">
+    <view class="setting-item">
+      <text class="setting-label">主题</text>
+      <picker mode="selector" range="{{themeOptions}}" range-key="label" bindchange="onThemeChange">
+        <view class="setting-value">{{currentThemeLabel}}</view>
+      </picker>
+    </view>
+    <view class="setting-item">
+      <text class="setting-label">字号</text>
+      <picker mode="selector" range="{{fontSizeOptions}}" range-key="label" bindchange="onFontSizeChange">
+        <view class="setting-value">{{currentFontSizeLabel}}</view>
+      </picker>
+    </view>
+    <view class="setting-item">
+      <switch class="setting-switch" checked="{{highContrast}}" bindchange="onToggleContrast" color="#22c55e"/>
+      <text class="setting-label">高对比</text>
+    </view>
+    <view class="setting-item" wx:if="{{inputMode === 'voice'}}">
+      <switch class="setting-switch" checked="{{autoSpeak}}" bindchange="onToggleAutoSpeak" color="#22c55e"/>
+      <text class="setting-label">自动读</text>
+    </view>
+  </view>
+
+  <!-- 对话区域 -->
+  <scroll-view class="chat-container" scroll-y scroll-into-view="{{scrollToMessage}}" enhanced show-scrollbar scroll-with-animation>
+    <!-- 消息列表 -->
+    <view wx:for="{{messages}}" wx:key="id" id="msg-{{item.id}}" class="message {{item.role}}-message {{item.isError ? 'error' : ''}}">
+      <view class="message-avatar">{{item.role === 'user' ? (inputMode === 'voice' ? '🎤' : '🧏') : '🤖'}}</view>
+      <view class="message-content">
+        <view class="message-bubble">
+          <text class="message-text" user-select>{{item.content}}</text>
+        </view>
+        <view wx:if="{{item.parsed && item.parsed.isComplete}}" class="message-meta">✓ 已整理完整</view>
+      </view>
+    </view>
+
+    <!-- 加载中 -->
+    <view wx:if="{{isLoading}}" class="message ai-message loading">
+      <view class="message-avatar">🤖</view>
+      <view class="message-content">
+        <view class="message-bubble loading-bubble">
+          <view class="loading-indicator">
+            <view class="loading-dot"></view>
+            <view class="loading-dot"></view>
+            <view class="loading-dot"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 确认卡片 -->
+    <view wx:if="{{showConfirm && complaintData.isComplete}}" class="confirm-card" id="confirm-card">
+      <view class="card-header">
+        <text class="card-title">📋 倾诉内容已整理完成</text>
+        <text class="card-subtitle">确认信息无误后提交</text>
+      </view>
+      
+      <view class="card-body">
+        <view class="info-row" wx:if="{{complaintData.subject}}">
+          <text class="info-label">吐槽对象</text>
+          <text class="info-value">{{complaintData.subject}}</text>
+        </view>
+        <view class="info-row" wx:if="{{complaintData.scene}}">
+          <text class="info-label">发生场景</text>
+          <text class="info-value">{{complaintData.scene}}</text>
+        </view>
+        <view class="info-row" wx:if="{{complaintData.problem}}">
+          <text class="info-label">具体问题</text>
+          <text class="info-value">{{complaintData.problem}}</text>
+        </view>
+        <view class="info-row" wx:if="{{complaintData.impact}}">
+          <text class="info-label">造成影响</text>
+          <text class="info-value">{{complaintData.impact}}</text>
+        </view>
+        <view class="info-row" wx:if="{{complaintData.wish}}">
+          <text class="info-label">期望改进</text>
+          <text class="info-value">{{complaintData.wish}}</text>
+        </view>
+      </view>
+      
+      <view class="card-actions">
+        <button class="action-btn primary" bindtap="submitComplaint">✓ 确认提交</button>
+        <button class="action-btn secondary" bindtap="continueChat">继续聊聊</button>
+      </view>
+    </view>
+
+    <!-- 底部空白 -->
+    <view style="height: 20px;"></view>
+  </scroll-view>
+
+  <!-- 输入区域 -->
+  <view class="input-section">
+    <!-- 推荐输入 -->
+    <view wx:if="{{showSuggestions && recommendedInputs.length > 0 && !isLoading && !showConfirm}}" class="suggestion-area">
+      <view class="suggestion-header">
+        <text class="suggestion-title">💡 AI推荐输入</text>
+        <text class="suggestion-refresh" bindtap="hideSuggestions">隐藏</text>
+      </view>
+      <view class="suggestion-list">
+        <view 
+          wx:for="{{recommendedInputs}}" 
+          wx:key="index" 
+          class="suggestion-chip"
+          bindtap="onSuggestionTap"
+          data-text="{{item.text}}"
+        >
+          <text class="suggestion-text">{{item.text}}</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 文字输入模式 -->
+    <view wx:if="{{inputMode === 'text'}}" class="text-input-area">
+      <view class="input-box">
+        <textarea
+          class="text-area"
+          placeholder="说说你遇到的问题..."
+          value="{{inputText}}"
+          bindinput="onTextInput"
+          maxlength="500"
+          auto-height
+          show-confirm-bar="{{false}}"
+          adjust-position
+          confirm-type="send"
+          bindconfirm="sendTextMessage"
+        />
+        <button class="send-btn {{canSend ? 'active' : ''}}" bindtap="sendTextMessage" disabled="{{!canSend}}">
+          发送
+        </button>
+      </view>
+      <text class="input-tip">按回车键或点击发送</text>
+    </view>
+
+    <!-- 语音输入模式 - 暂未启用 -->
+    <view wx:if="{{inputMode === 'voice'}}" class="voice-input-area">
+      <view class="voice-disabled-hint">
+        <text class="voice-disabled-icon">🎤</text>
+        <text class="voice-disabled-text">语音输入需额外配置</text>
+        <text class="voice-disabled-sub">点击上方切换为文字输入模式</text>
+      </view>
+      <!-- 备选文字输入 -->
+      <view class="fallback-input">
+        <input 
+          class="fallback-text"
+          placeholder="在此输入文字..."
+          value="{{inputText}}"
+          bindinput="onTextInput"
+          bindconfirm="sendTextMessage"
+          confirm-type="send"
+        />
+        <button class="fallback-send" bindtap="sendTextMessage" disabled="{{!inputText.trim()}}">发送</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部导航 -->
+  <view class="bottom-actions">
+    <button class="bottom-btn" bindtap="resetChat">重新开始</button>
+    <button class="bottom-btn" bindtap="goList">吐槽广场</button>
+  </view>
+
+  <!-- 状态提示 -->
+  <view wx:if="{{statusText}}" class="status-bar {{statusType}}">
+    <text>{{statusText}}</text>
+  </view>
+</view>
